@@ -1,0 +1,61 @@
+.card-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+
+  width: 400px;
+  text-align: center;
+
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.title {
+  color: white;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  flex: 1;
+  padding: 18px;
+  font-size: 18px;
+  font-weight: bold;
+
+  border: none;
+  border-radius: 12px;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.entregar {
+  background: #00c853;
+  color: white;
+}
+
+.entregar:hover {
+  background: #00e676;
+  transform: scale(1.05);
+}
+
+.recoger {
+  background: #2962ff;
+  color: white;
+}
+
+.recoger:hover {
+  background: #448aff;
+  transform: scale(1.05);
+}

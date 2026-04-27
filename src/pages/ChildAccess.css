@@ -1,0 +1,57 @@
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero {
+    display: flex;
+    justify-content: center;  /* centra horizontal */
+    align-items: center;      /* centra vertical */
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.cards {
+  display: flex;
+  gap: 30px;
+  width: 800;
+  height: 300px;
+}
+
+/* CARD BASE */
+.btn {
+  width: 520px;
+  height: 280px;
+
+  border-radius: 18px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 2px solid #D5E3FF;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 10px;
+
+  text-align: center;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  /* box-shadow: 0 10px 25px rgba(0,0,0,0.15); */
+}
+
+.btn h2 {
+    color: #2A64AD;
+}
+
+.btn p {
+    color: #424751;
+}
