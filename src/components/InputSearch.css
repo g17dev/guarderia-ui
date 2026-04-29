@@ -1,3 +1,14 @@
+/* InputSearch.css - Para que el buscador también sea sticky */
+
+.input-group {
+  position: sticky;
+  top: 0;
+  background: inherit;
+  z-index: 5;
+  backdrop-filter: blur(8px);
+  margin: 0;
+}
+
 .input-search-container {
   display: flex;
   flex-direction: column;
@@ -10,7 +21,6 @@
   font-size: 14px;
   font-weight: 500;
   color: #333;
-  margin-bottom: 4px;
 }
 
 /* Wrapper para posicionar ícono y botón */

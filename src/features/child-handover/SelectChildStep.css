@@ -3,22 +3,29 @@
 .select-child-step {
   display: flex;
   flex-direction: column;
+  height: 100%;
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
 }
+
+.step-header {
+  flex-shrink: 0;
+}
+
 
 .step-header h2 {
   color: #333;
   font-size: 1.5rem;
   margin: 0;
   padding: 0;
+  padding-bottom: 5px;
 }
 
 .step-header p {
   color: #666;
   font-size: 0.9rem;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
   margin: 0;
 }
 
@@ -26,7 +33,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 20px;
 }
 
 .error-message {
@@ -36,25 +42,36 @@
 }
 
 /* ========== CARDS EN GRID ========== */
+
 .cards-results {
-  margin-top: 20px;
-  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: visible; /* ← IMPORTANTE: permitir desbordamiento */
 }
 
 .results-header {
+  position: sticky;
+  top: 0;
   padding: 12px 0;
   font-size: 14px;
   color: #666;
   border-bottom: 1px solid #e0e0e0;
-  margin-bottom: 20px;
+  margin-bottom: 1px;
+  z-index: 5; /* ← Aumentar un poco */
 }
 
-/* Grid de cards */
 .children-cards {
+  flex: 1;
+  overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
-  width: 100%;
+  padding: 8px 4px 20px 4px;
+  min-height: 0;
+  overflow-x: visible;
+  scroll-behavior: smooth;
 }
 
 /* Card individual */
@@ -70,9 +87,14 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  z-index: 1;
+  max-height: 200px; /* Altura máxima fija */
+
 }
 
+
 .child-card:hover {
+  z-index: 10;
   border-color: #004B92;
   transform: translateY(-4px);
   box-shadow: 0 6px 16px rgba(0, 75, 146, 0.1);
@@ -157,9 +179,28 @@
   transform: scale(1.1);
 }
 
+/* Scrollbar personalizada */
+.children-cards::-webkit-scrollbar {
+  width: 8px;
+}
+
+.children-cards::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.children-cards::-webkit-scrollbar-thumb {
+  background: #004B92;
+  border-radius: 4px;
+}
+
+.children-cards::-webkit-scrollbar-thumb:hover {
+  background: #003d7a;
+}
+
 /* ========== RESUMEN DE SELECCIONADOS ========== */
 .selected-summary {
-  margin-top: 24px;
+  margin-bottom: 10px;
   background: #e8f5e9;
   border-radius: 12px;
   padding: 16px;
@@ -302,23 +343,11 @@
   animation: fadeIn 0.3s ease;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .children-cards {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
-  }
-  
-  .card-avatar {
-    width: 65px;
-    height: 65px;
-  }
-  
-  .avatar-emoji {
-    font-size: 32px;
-  }
-  
-  .card-name {
-    font-size: 14px;
-  }
+.selected-summary {
+  flex-shrink: 0;
+  background: #e8f5e9;
+  border: 2px solid #4caf50;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
