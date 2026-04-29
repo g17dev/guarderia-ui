@@ -1,0 +1,315 @@
+/* ========== CONTENEDOR PRINCIPAL ========== */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page h2{
+  padding: 30px 0;
+}
+
+/* ========== HEADER DEL STEPPER ========== */
+.stepper-header {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  padding: 20px 20px 0 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stepper-header h2 {
+  text-align: center;
+  margin: 0 0 20px 0;
+  color: #004B92;
+  font-size: 1.8rem;
+}
+
+/* ========== CONTENIDO DEL STEPPER ========== */
+.stepper-content {
+  flex: 1;
+  padding: 30px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ========== PASO DE AUTORIZACIÓN ========== */
+.authorization-step {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.authorization-step h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.authorization-step p {
+  margin: 0 0 24px 0;
+  color: #666;
+}
+
+/* ========== GRUPOS DE INPUT ========== */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.input-group input,
+.input-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  outline: none;
+  border-color: #004B92;
+  box-shadow: 0 0 0 3px rgba(0, 75, 146, 0.1);
+}
+
+.input-group input.error {
+  border-color: #dc3545;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* ========== PASO DE CONFIRMACIÓN ========== */
+.confirmation-step {
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-step h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.confirmation-step > p {
+  margin: 0 0 24px 0;
+  color: #666;
+}
+
+.confirmation-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.confirmation-section {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  background: #fafafa;
+}
+
+.confirmation-section h4 {
+  margin: 0 0 16px 0;
+  color: #004B92;
+  font-size: 1.1rem;
+  border-bottom: 2px solid #004B92;
+  padding-bottom: 8px;
+  display: inline-block;
+}
+
+.info-row {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row .label {
+  font-weight: 600;
+  width: 150px;
+  color: #555;
+}
+
+.info-row .value {
+  flex: 1;
+  color: #333;
+}
+
+/* ========== BOTONES DEL STEPPER ========== */
+.stepper-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  border-top: 1px solid #e0e0e0;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+/* Estilos base para todos los botones */
+.stepper-buttons button {
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+/* ========== BOTÓN ATRÁS ========== */
+.stepper-buttons button:first-child {
+  background: transparent;
+  color: #666;
+  border: 2px solid #e0e0e0;
+}
+
+.stepper-buttons button:first-child:hover {
+  background: #f8f9fa;
+  border-color: #004B92;
+  transform: translateX(-3px);
+}
+
+.stepper-buttons button:first-child:active {
+  transform: translateX(-1px);
+}
+
+/* ========== BOTÓN SIGUIENTE ========== */
+.stepper-buttons button:last-child {
+  background: #004B92;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 75, 146, 0.2);
+  margin-left: auto; /* Empuja el botón a la derecha */
+}
+
+.stepper-buttons button:last-child:hover {
+  background: #003d7a;
+  transform: translateX(3px);
+  box-shadow: 0 4px 12px rgba(0, 75, 146, 0.3);
+}
+
+.stepper-buttons button:last-child:active {
+  transform: translateX(1px);
+}
+
+/* Cuando solo hay un botón (Siguiente o Confirmar) */
+.stepper-buttons button:only-child {
+  margin-left: auto;
+}
+
+/* ========== BOTÓN CONFIRMAR ========== */
+.stepper-buttons .btn-success {
+  background: #10b981;
+  color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.stepper-buttons .btn-success:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* ========== RESPONSIVE ========== */
+/* Tablets */
+@media (max-width: 768px) {
+  .stepper-header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .stepper-content {
+    padding: 20px 16px;
+  }
+  
+  .authorization-step,
+  .confirmation-step {
+    padding: 20px;
+  }
+  
+  .info-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .info-row .label {
+    width: 100%;
+  }
+  
+  .stepper-buttons {
+    padding: 16px 20px;
+    gap: 12px;
+  }
+  
+  .stepper-buttons button {
+    padding: 10px 24px;
+    font-size: 13px;
+    min-width: 100px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 480px) {
+  .stepper-buttons {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  
+  .stepper-buttons button {
+    width: 100%;
+    padding: 12px 20px;
+    min-width: auto;
+    justify-content: center;
+  }
+  
+  /* Resetear márgenes y transformaciones en móvil */
+  .stepper-buttons button:last-child {
+    margin-left: 0;
+  }
+  
+  .stepper-buttons button:first-child:hover {
+    transform: translateY(-2px);
+  }
+  
+  .stepper-buttons button:last-child:hover {
+    transform: translateY(-2px);
+  }
+  
+  .stepper-buttons .btn-success {
+    width: 100%;
+  }
+}

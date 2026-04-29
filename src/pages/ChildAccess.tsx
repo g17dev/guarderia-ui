@@ -1,6 +1,11 @@
 import "./ChildAccess.css";
+import { useNavigate } from "react-router-dom";
+
 
 export default function ChildAccess() {
+
+    const navigate = useNavigate();
+
     return (
         <div className="page">
             <section className="hero">
@@ -15,7 +20,7 @@ export default function ChildAccess() {
                         <p>Registrar ingreso del niño a la guarderia</p>
                     </div>
 
-                    <div className="btn salida">
+                    <div className="btn salida" onClick={() => navigate("/handover")}>
                         <h2>Entregar al menor</h2>
                         <p>Registrar salida segura del niño</p>
                     </div>
