@@ -11,8 +11,8 @@
 
 .step-header {
   flex-shrink: 0;
+  padding-top: 20px;
 }
-
 
 .step-header h2 {
   color: #333;

@@ -12,7 +12,7 @@ interface Child {
 
 interface SeleccionarStepProps {
   data: { childIds: string[]; childrenNames: string };
-  onChange: (data: { childIds: string[]; childrenNames: string }) => void;
+  onChange: (data: { childIds: string[]; childrenNames: string }, selectedChildren: Child[]) => void; // ✅ MODIFICADO
   errors: { [key: string]: string };
   children?: Child[];
 }
@@ -52,11 +52,11 @@ export function SelectChildStep({
       const selected = children.filter(c => data.childIds.includes(c.id));
       setSelectedChildren(selected);
     } else {
-      setSelectedChildren([]); // Limpiar si no hay seleccionados
+      setSelectedChildren([]);
     }
   }, [data.childIds, children]);
 
-  // ✅ Función para seleccionar/deseleccionar (toggle)
+  // ✅ Función para seleccionar/deseleccionar (toggle) - MODIFICADA
   const handleToggleChild = (child: Child) => {
     const isAlreadySelected = selectedChildren.some(c => c.id === child.id);
     let newSelected: Child[];
@@ -68,17 +68,19 @@ export function SelectChildStep({
     }
 
     setSelectedChildren(newSelected);
+    
+    // ✅ MODIFICADO: Pasar también los niños completos como segundo parámetro
     onChange({
       childIds: newSelected.map(c => c.id),
       childrenNames: newSelected.map(c => `${c.name} ${c.lastName}`).join(", ")
-    });
+    }, newSelected);
   };
 
-  // Limpiar toda la selección
+  // ✅ Limpiar toda la selección - MODIFICADA
   const handleClearAllSelection = () => {
     setSelectedChildren([]);
     setSearchTerm("");
-    onChange({ childIds: [], childrenNames: "" });
+    onChange({ childIds: [], childrenNames: "" }, []); // ✅ Pasar array vacío
   };
 
   // Limpiar búsqueda
@@ -99,7 +101,6 @@ export function SelectChildStep({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           showClearButton={true}
-          // ✅ Eliminado disabled
         />
         {errors.childIds && <span className="error-message">{errors.childIds}</span>}
       </div>
@@ -153,7 +154,7 @@ export function SelectChildStep({
       {searchTerm && filteredChildren.length > 0 && (
         <div className="cards-results">
           <div className="results-header">
-            <span>Resultados para "{searchTerm}": {filteredChildren.length} niño(s)</span>
+            <span>Resultados encontrados con "{searchTerm}": {filteredChildren.length} niño(s)</span>
           </div>
           <div className="children-cards">
             {filteredChildren.map((child) => {

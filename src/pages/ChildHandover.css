@@ -32,7 +32,6 @@
 .stepper-content {
   flex: 1; /* Ocupa el espacio restante */
   overflow-y: auto; /* Scroll solo aquí */
-  padding: 35px 0 0 0;
   max-width: 910px;
   margin: 0 auto;
   width: 100%;
