@@ -51,6 +51,8 @@ export function SelectChildStep({
     if (data.childIds.length > 0 && children.length > 0) {
       const selected = children.filter(c => data.childIds.includes(c.id));
       setSelectedChildren(selected);
+    } else {
+      setSelectedChildren([]); // Limpiar si no hay seleccionados
     }
   }, [data.childIds, children]);
 
@@ -109,11 +111,49 @@ export function SelectChildStep({
         </div>
       )}
 
-      {/* ✅ Mostrar resultados de búsqueda (sin !selectedChild) */}
+      {/* Mostrar cards seleccionadas siempre */}
+      {selectedChildren.length > 0 && !searchTerm && (
+        <div className="cards-results">
+          <div className="results-header">
+            <span>{selectedChildren.length} niño(s) seleccionado(s)</span>
+          </div>
+          <div className="children-cards">
+            {selectedChildren.map((child) => {
+              const isSelected = selectedChildren.some(c => c.id === child.id);
+              return (
+                <div 
+                  key={child.id} 
+                  className={`child-card ${isSelected ? 'selected' : ''}`} 
+                  onClick={() => handleToggleChild(child)}
+                >
+                  <div className="card-avatar">
+                    <span className="avatar-emoji">👶</span>
+                  </div>
+                  <div className="card-info">
+                    <div className="card-name">
+                      {child.name} {child.lastName}
+                    </div>
+                    <div className="card-details">
+                      <span className="card-classroom">{child.classroom || "Sin aula"}</span>
+                    </div>
+                  </div>
+                  <div className="card-select-icon">
+                    <span className="select-arrow">
+                      {isSelected ? '✓' : '+'}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Mostrar resultados de búsqueda (solo cuando se busca) */}
       {searchTerm && filteredChildren.length > 0 && (
         <div className="cards-results">
           <div className="results-header">
-            <span>{filteredChildren.length} niño(s) encontrado(s)</span>
+            <span>Resultados para "{searchTerm}": {filteredChildren.length} niño(s)</span>
           </div>
           <div className="children-cards">
             {filteredChildren.map((child) => {

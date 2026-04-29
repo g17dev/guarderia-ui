@@ -241,7 +241,7 @@
 }
 
 .stepper-buttons button:last-child:hover {
-  background: #003d7a;
+  background: #004B92;
   transform: translateX(3px);
   box-shadow: 0 4px 12px rgba(0, 75, 146, 0.3);
 }
@@ -277,15 +277,13 @@
 
 /* Resumen sticky dentro del scroll */
 .selected-summary {
-  position: sticky;
-  bottom: 0;
+  flex-shrink: 0; /* No se encoge */
+  margin-top: auto; /* Empuja hacia abajo */
   background: #e8f5e9;
   border: 2px solid #4caf50;
   border-radius: 12px;
   padding: 16px;
-  z-index: 5;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* ========== RESPONSIVE ========== */

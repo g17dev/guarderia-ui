@@ -71,7 +71,7 @@
 }
 
 .input-search-field:hover:not(:disabled) {
-  border-color: #bbb;
+  border-color: #004B92;
 }
 
 .input-search-field.error {

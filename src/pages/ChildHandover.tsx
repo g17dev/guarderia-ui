@@ -15,11 +15,11 @@
     // Estado para los datos de cada paso
     const [stepData, setStepData] = useState({
         seleccionar: {
-        childIds: [] as string[],      // ← Array, no string
-        childrenNames: "",              // ← Nombres concatenados
+            childIds: [] as string[],
+            childrenNames: "",
         },
         autorizacion: {
-        authorizationCode: "",
+            authorizationCode: "",
         },
     });
 
@@ -70,13 +70,24 @@
         setSteps(updatedSteps);
     }
     };
+    
+    const [refreshKey, setRefreshKey] = useState(0);
 
     // Función para retroceder al paso anterior
-  const prevStep = () => {
+    const prevStep = () => {
+    if (currentStep > 0) {
+        const updatedSteps = [...steps];
+        updatedSteps[currentStep] = { ...updatedSteps[currentStep], status: "pending" };
+        updatedSteps[currentStep - 1] = { ...updatedSteps[currentStep - 1], status: "current" };
+        
+        setSteps(updatedSteps);
         setCurrentStep(currentStep - 1);
-        // Actualiza el estado del stepper
-        steps[currentStep].status = "pending";
-        steps[currentStep - 1].status = "current";
+        
+        // Forzar refresh del componente SelectChildStep
+        if (currentStep - 1 === 0) {
+        setRefreshKey(prev => prev + 1);
+        }
+    }
     };
 
     const handleConfirm = () => {

@@ -102,12 +102,12 @@
 
 /* Card seleccionada */
 .child-card.selected {
-  border-color: #4caf50;
-  background: #f1f8e9;
+  border-color: #004B92;
+  background: #fdfdfd;
 }
 
 .child-card.selected:hover {
-  border-color: #4caf50;
+  border-color: #004B92;
 }
 
 /* Avatar */
@@ -171,7 +171,7 @@
 }
 
 .child-card.selected .select-arrow {
-  background: #4caf50;
+  background: #004B92;
   color: white;
 }
 
