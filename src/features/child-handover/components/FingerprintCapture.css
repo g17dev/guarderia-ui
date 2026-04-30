@@ -1,0 +1,372 @@
+/* AuthorizePickupStep.css - Estilos para FingerprintCapture con efecto Touch ID */
+
+.fingerprint-capture {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  flex: 1;
+}
+
+/* Contenedor del icono */
+.fingerprint-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 200px;
+  position: relative;
+}
+
+/* Animación de la huella - Estilo Apple Touch ID */
+.fingerprint-animation {
+  width: 160px;
+  height: 160px;
+  background: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* ========== ESTADO: DEDO DETECTADO ========== */
+.fingerprint-animation.detected {
+  background: #e8f0fe;
+  transform: scale(0.98);
+  transition: transform 0.1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  box-shadow: 0 0 0 4px rgba(0, 75, 146, 0.2);
+}
+
+.fingerprint-animation.detected .fingerprint-icon {
+  animation: successPop 0.3s ease-out;
+}
+
+/* ========== ESTADO: VERIFICANDO ========== */
+.fingerprint-animation.verifying {
+  background: linear-gradient(135deg, #e8f0fe 0%, #d4e4fc 100%);
+  animation: scanPulse 0.8s ease infinite;
+  position: relative;
+}
+
+/* Efecto de brillo radial (Apple Touch ID) */
+.fingerprint-animation.verifying::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 75, 146, 0.15) 0%, rgba(0, 75, 146, 0) 70%);
+  animation: touchIdRadial 1s ease-out infinite;
+}
+
+/* Efecto de escaneo tipo Apple */
+.fingerprint-animation.verifying::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(180deg, 
+    transparent 0%, 
+    rgba(0, 75, 146, 0.05) 30%,
+    rgba(0, 75, 146, 0.15) 50%,
+    rgba(0, 75, 146, 0.05) 70%,
+    transparent 100%);
+  animation: scanGlow 1.2s linear infinite;
+  pointer-events: none;
+}
+
+/* ========== ESTADO: VERIFICADO ========== */
+.fingerprint-animation.verified {
+  background: #e8f5e9;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+  animation: successPulse 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Línea de escaneo */
+.fingerprint-scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #004B92, transparent);
+  animation: fingerprintScan 1.5s linear infinite;
+}
+
+/* Icono de huella */
+.fingerprint-icon {
+  transition: all 0.3s ease;
+  z-index: 2;
+  position: relative;
+}
+
+.fingerprint-icon.pulse {
+  animation: iconPulse 0.8s ease-in-out infinite;
+}
+
+.fingerprint-icon.glow {
+  filter: drop-shadow(0 0 6px rgba(0, 75, 146, 0.5));
+  animation: iconGlow 0.5s ease-out;
+}
+
+/* Indicador de dedo detectado */
+.fingerprint-detected-indicator {
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 75, 146, 0.9);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: fadeInUp 0.3s ease;
+}
+
+.detected-icon {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Contenedor del mensaje */
+.fingerprint-status-container {
+  margin: 16px 0;
+  text-align: center;
+  min-height: 60px;
+}
+
+.fingerprint-status {
+  font-size: 15px;
+  font-weight: 700;
+  color: #666;
+  margin: 0;
+  transition: all 0.3s ease;
+}
+
+.fingerprint-status.detected {
+  color: #004B92;
+  font-weight: 600;
+  animation: fadeInUp 0.2s ease;
+}
+
+.fingerprint-status.verifying {
+  color: #004B92;
+  font-weight: 600;
+}
+
+.fingerprint-status.success {
+  color: #10b981;
+  font-weight: 600;
+  background: #e8f5e9;
+  padding: 8px 16px;
+  border-radius: 30px;
+  display: inline-block;
+  animation: fadeInUp 0.3s ease;
+}
+
+/* ========== BOTÓN CENTRADO ========== */
+.fingerprint-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* Estilos del botón .btnVerify */
+.btnVerify {
+  width: 100%;
+  max-width: 450px;
+  height: 50px;
+  padding: 12px 24px;
+  font-size: 20px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #004B92;
+  color: white;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.btnVerify:hover:not(:disabled) {
+  background: #003d7a;
+  transform: translateY(-1px);
+}
+
+.btnVerify.active:hover:not(:disabled) {
+  background: #003d7a;
+  transform: translateY(-2px);
+}
+
+/* Botón verificado */
+.btnVerify.verified {
+  background: #10b981;
+  color: white;
+}
+
+.btnVerify.verified:hover {
+  background: #059669;
+}
+
+/* Botón deshabilitado */
+.btnVerify:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ========== ANIMACIONES ========== */
+@keyframes successPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes touchIdRadial {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes scanGlow {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes fingerprintScan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 4px rgba(0, 75, 146, 0.3));
+  }
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 12px rgba(0, 75, 146, 0.6));
+  }
+}
+
+@keyframes iconGlow {
+  0% {
+    filter: drop-shadow(0 0 0px rgba(0, 75, 146, 0));
+  }
+  100% {
+    filter: drop-shadow(0 0 8px rgba(0, 75, 146, 0.6));
+  }
+}
+
+@keyframes scanPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.95;
+  }
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .fingerprint-animation {
+    width: 130px;
+    height: 130px;
+  }
+  
+  .btnVerify {
+    max-width: 100%;
+    font-size: 16px;
+    height: 45px;
+  }
+  
+  .fingerprint-status {
+    font-size: 13px;
+  }
+}
+
+/* Añade esto a tu FingerprintCapture.css */
+
+/* Estado: sensor listo */
+.fingerprint-animation.sensor-ready {
+  background: #e8f0fe;
+  box-shadow: 0 0 0 4px rgba(0, 75, 146, 0.2);
+  animation: pulseGreen 1s ease infinite;
+  transform: scale(1.02);
+}
+
+.sensor-ready-indicator {
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 75, 146, 0.9);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: fadeInUp 0.3s ease;
+}
+
+.ready-icon {
+  font-size: 12px;
+}

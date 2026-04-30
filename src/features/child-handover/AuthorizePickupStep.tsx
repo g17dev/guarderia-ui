@@ -2,6 +2,7 @@ import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import "./AuthorizePickupStep.css";
 import { VerificationStepper } from "./components/VerificationStepper";
 import { FaceCapture } from "./components/FaceCapture";
+import { FingerprintCapture } from "./components/FingerprintCapture";
 
 interface AuthorizePickupStepProps {
   data: {
@@ -90,6 +91,14 @@ export const AuthorizePickupStep = forwardRef<AuthorizePickupStepRef, AuthorizeP
     setActiveTab("fingerprint");
   };
 
+  const handleFingerprintSuccess = () => {
+      onChange({ ...data, fingerprintVerified: true });
+    };
+
+  const handleFingerprintError = (error: string) => {
+    console.error(error);
+  };
+
 
   return (
     <div className="authorize-container">
@@ -114,49 +123,23 @@ export const AuthorizePickupStep = forwardRef<AuthorizePickupStepRef, AuthorizeP
             </div>
           </div>
           <div className="panel">
-            {activeTab === "face" ? (
-            <>
-              <FaceCapture 
-                onCameraReady={handleCameraReady}
-                onVerificationSuccess={handleFaceVerificationSuccess}
-                onVerificationError={handleFaceVerificationError}
-                onContinueToFingerprint={handleContinueToFingerprint}
-                isActive={true}
-              />
-            </>
-          ) : (
-              // Contenido para huella
-              <>
-                <div className="panel-content">
-                  <div className="fingerprint-container">
-                    <div className={`fingerprint ${isFingerprintScanning ? "active" : ""}`} />
-                  </div>
-                  <p className="status">
-                    {!data.fingerprintVerified
-                      ? "Coloca tu dedo en el lector"
-                      : "Verificación completada"}
-                  </p>
-                </div>
-
-                <div className="panel-footer">
-                  {!data.fingerprintVerified ? (
-                    <button
-                      className="btn primary"
-                      onClick={handleFingerprintVerification}
-                      disabled={isFingerprintScanning}
-                    >
-                      {isFingerprintScanning ? <span className="spinner" /> : "Verificar huella"}
-                    </button>
-                  ) : (
-                    <div className="success-message">
-                      <span className="success-icon">✓</span>
-                      <p>Huella verificada correctamente</p>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
+              {activeTab === "face" ? (
+                <FaceCapture 
+                  onCameraReady={handleCameraReady}
+                  onVerificationSuccess={handleFaceVerificationSuccess}
+                  onVerificationError={handleFaceVerificationError}
+                  onContinueToFingerprint={handleContinueToFingerprint}
+                  isActive={true}
+                />
+              ) : (
+                <FingerprintCapture 
+                  onVerificationSuccess={handleFingerprintSuccess}
+                  onVerificationError={handleFingerprintError}
+                  isActive={activeTab === "fingerprint"}
+                  isVerified={data.fingerprintVerified}
+                />
+              )}
+            </div>
 
           {errors.verification && <div className="error">{errors.verification}</div>}
         </div>
