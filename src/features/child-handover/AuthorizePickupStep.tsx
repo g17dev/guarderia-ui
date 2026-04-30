@@ -73,7 +73,7 @@ export const AuthorizePickupStep = forwardRef<AuthorizePickupStepRef, AuthorizeP
       setIsVerifyingFace(false);
       onChange({ ...data, faceVerified: true });
       setFaceMessage(`✅ Identidad verificada: ${nombre}`);
-      setTimeout(() => setActiveTab("fingerprint"), 1500);
+      //setTimeout(() => setActiveTab("fingerprint"), 1500);
     };
 
     const handleFaceVerificationError = (error: string) => {
@@ -81,11 +81,14 @@ export const AuthorizePickupStep = forwardRef<AuthorizePickupStepRef, AuthorizeP
       setFaceMessage(`❌ ${error}`);
     };
 
-    // ✅ NUEVO: Guardar la función de detener cámara
     const handleCameraReady = (stopFn: () => void) => {
       console.log('📷 Recibida función stopCamera desde FaceCapture');
       setCameraStopFn(() => stopFn);
     };
+
+    const handleContinueToFingerprint = () => {
+    setActiveTab("fingerprint");
+  };
 
 
   return (
@@ -112,13 +115,16 @@ export const AuthorizePickupStep = forwardRef<AuthorizePickupStepRef, AuthorizeP
           </div>
           <div className="panel">
             {activeTab === "face" ? (
+            <>
               <FaceCapture 
                 onCameraReady={handleCameraReady}
                 onVerificationSuccess={handleFaceVerificationSuccess}
                 onVerificationError={handleFaceVerificationError}
+                onContinueToFingerprint={handleContinueToFingerprint}
                 isActive={true}
               />
-            ) : (
+            </>
+          ) : (
               // Contenido para huella
               <>
                 <div className="panel-content">

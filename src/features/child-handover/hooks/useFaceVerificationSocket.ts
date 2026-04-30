@@ -1,7 +1,6 @@
 // hooks/useFaceVerificationSocket.ts
 import { useState, useRef, useCallback } from 'react';
 
-// ✅ Definir y exportar el tipo
 export interface VerificationMessage {
   type: 'status' | 'face_detected' | 'verifying' | 'result' | 'error';
   message: string;
@@ -36,7 +35,6 @@ export const useFaceVerificationSocket = () => {
     wsRef.current.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data) as VerificationMessage;
-        // console.log('📨 Mensaje recibido:', data);
         setLastMessage(data);
         onMessage(data);
       } catch (error) {
@@ -57,6 +55,15 @@ export const useFaceVerificationSocket = () => {
         frameIntervalRef.current = null;
       }
     };
+  }, []);
+
+  // ✅ Nueva función para enviar comando de verificación
+  const sendVerificationCommand = useCallback(() => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send("VERIFY_NOW");
+      return true;
+    }
+    return false;
   }, []);
 
   const startSendingFrames = useCallback((
@@ -115,6 +122,7 @@ export const useFaceVerificationSocket = () => {
     sendFrame,
     startSendingFrames,
     stopSendingFrames,
-    disconnect
+    disconnect,
+    sendVerificationCommand,  // ← Exportar nueva función
   };
 };

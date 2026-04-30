@@ -8,6 +8,7 @@ type FaceCaptureProps = {
   onCameraReady?: (stopCamera: () => void) => void;
   onVerificationSuccess: (nombre: string) => void;
   onVerificationError: (error: string) => void;
+  onContinueToFingerprint?: () => void;  // ✅ Nueva prop
   isActive: boolean;
 };
 
@@ -24,7 +25,8 @@ interface VerificationMessage {
 export const FaceCapture = ({ 
   onCameraReady,
   onVerificationSuccess, 
-  onVerificationError, 
+  onVerificationError,
+  onContinueToFingerprint,  // ✅ Recibir la función
   isActive 
 }: FaceCaptureProps) => {
   const { 
@@ -37,9 +39,11 @@ export const FaceCapture = ({
     capturePhoto,
   } = useCamera();
   
-  const { wsStatus, lastMessage, connect, sendFrame, startSendingFrames, stopSendingFrames, disconnect } = useFaceVerificationSocket();
+  const { wsStatus, lastMessage, connect, sendFrame, startSendingFrames, stopSendingFrames, disconnect, sendVerificationCommand } = useFaceVerificationSocket();
   const [isVerifying, setIsVerifying] = useState(false);
-  const [isFaceDetected, setIsFaceDetected] = useState(false); // ← NUEVO: estado para rostro detectado
+  const [isFaceDetected, setIsFaceDetected] = useState(false);
+  const [verificationSuccess, setVerificationSuccess] = useState(false);  // ✅ Estado de éxito
+  const [verifiedNombre, setVerifiedNombre] = useState("");  // ✅ Nombre verificado
   const hasStartedRef = useRef(false);
   const hasNotifiedCameraReady = useRef(false);
 
@@ -58,16 +62,13 @@ export const FaceCapture = ({
       hasStartedRef.current = true;
       startCamera();
       
-      // Conectar WebSocket
       connect((msg: VerificationMessage) => {
         console.log("Mensaje WebSocket:", msg);
         
-        // ✅ Actualizar estado cuando se detecta un rostro
         if (msg.type === 'face_detected' && msg.face_detected) {
           setIsFaceDetected(true);
         }
         
-        // Si ya no hay rostro, desactivar
         if (msg.type === 'status' && !msg.face_detected) {
           setIsFaceDetected(false);
         }
@@ -75,6 +76,8 @@ export const FaceCapture = ({
         if (msg.type === 'result') {
           setIsVerifying(false);
           if (msg.authorized) {
+            setVerificationSuccess(true);  // ✅ Marcar como éxito
+            setVerifiedNombre(msg.nombre || "Usuario");
             onVerificationSuccess(msg.nombre || "Usuario");
           } else {
             onVerificationError(msg.message);
@@ -90,13 +93,14 @@ export const FaceCapture = ({
         hasStartedRef.current = false;
         hasNotifiedCameraReady.current = false;
         setIsFaceDetected(false);
+        setVerificationSuccess(false);  // ✅ Resetear éxito
       }
     };
   }, [isActive, startCamera, stopCamera, connect, disconnect, onVerificationSuccess, onVerificationError]);
 
   // Enviar frames cuando la cámara está activa y WebSocket conectado
   useEffect(() => {
-    if (isCameraActive && wsStatus === 'connected' && !isVerifying) {
+    if (isCameraActive && wsStatus === 'connected' && !isVerifying && !verificationSuccess) {
       if (videoRef.current) {
         startSendingFrames(videoRef as React.RefObject<HTMLVideoElement>, sendFrame, 5);
       }
@@ -105,38 +109,47 @@ export const FaceCapture = ({
     return () => {
       stopSendingFrames();
     };
-  }, [isCameraActive, wsStatus, isVerifying, videoRef, sendFrame, startSendingFrames, stopSendingFrames]);
+  }, [isCameraActive, wsStatus, isVerifying, verificationSuccess, videoRef, sendFrame, startSendingFrames, stopSendingFrames]);
 
   const handleVerify = async () => {
     setIsVerifying(true);
+    const sent = sendVerificationCommand();
     
-    const imageData = capturePhoto();
-    if (imageData) {
-      sendFrame(imageData);
-    } else {
-      onVerificationError("No se pudo capturar la foto");
+    if (!sent) {
+      onVerificationError("Conexión perdida con el servidor");
       setIsVerifying(false);
     }
   };
 
+  const handleContinue = () => {
+    if (onContinueToFingerprint) {
+      onContinueToFingerprint();
+    }
+  };
+
   // Determinar si el botón debe estar habilitado
-  const isVerifyButtonEnabled = isCameraActive && !isVerifying && wsStatus === 'connected' && isFaceDetected;
+  const isVerifyButtonEnabled = isCameraActive && !isVerifying && wsStatus === 'connected' && isFaceDetected && !verificationSuccess;
 
   const getDisplayMessage = () => {
     if (error) return error;
-    if (lastMessage?.message) return lastMessage.message;
+    if (verificationSuccess) return `✅ Identidad verificada: ${verifiedNombre}`;
+    if (isVerifying) return "Verificando identidad...";
+    
+    // ✅ Cuando hay rostro detectado, NO mostrar mensaje de texto
+    if (isFaceDetected) {
+      return ""; // Retorna string vacío para no mostrar nada
+    }
+    
     if (statusMessage) return statusMessage;
     if (wsStatus === 'connecting') return "Conectando con el servidor...";
     if (wsStatus === 'disconnected') return "Conectando al servidor...";
     if (!isCameraActive) return "Iniciando cámara...";
-    if (isVerifying) return "Verificando identidad...";
-    if (!isFaceDetected) return "Coloca tu rostro dentro del marco";
-    return "Rostro detectado - Presiona Verificar";
+    return "Coloca tu rostro dentro del marco";
   };
 
   return (
     <div className="panel-content">
-      <div className="camera-box">
+      <div className={`camera-box ${verificationSuccess ? 'success' : ''} ${isFaceDetected && !verificationSuccess ? 'face-detected' : ''}`}>
         <video
           ref={videoRef}
           autoPlay
@@ -160,25 +173,24 @@ export const FaceCapture = ({
         <div className="frame" />
         {isVerifying && <div className="scan-line" />}
         
-        {/* Indicador visual de detección de rostro */}
-        {isFaceDetected && !isVerifying && (
+        {isFaceDetected && !isVerifying && !verificationSuccess && (
           <div className="face-detected-indicator">
             <span>✓ Rostro detectado</span>
           </div>
         )}
       </div>
 
-      <div className="status-container">
-        <p className="status">{getDisplayMessage()}</p>
-      </div>
+      <p className={`status ${verificationSuccess ? 'success' : ''}`}>
+        {getDisplayMessage()}
+      </p>
 
       <div className="camera-controls">
         <button
-          onClick={handleVerify}
-          disabled={!isVerifyButtonEnabled}
-          className={`btn primary capture-btn ${isFaceDetected ? 'active' : ''}`}
+          onClick={verificationSuccess ? handleContinue : handleVerify}
+          disabled={!verificationSuccess && !isVerifyButtonEnabled}
+          className={`btn primary capture-btn ${isFaceDetected ? 'active' : ''} ${verificationSuccess ? 'success-btn' : ''}`}
         >
-          {isVerifying ? "Verificando..." : "Verificar identidad"}
+          {verificationSuccess ? "Continuar →" : (isVerifying ? "Verificando..." : "Verificar identidad")}
         </button>
       </div>
     </div>

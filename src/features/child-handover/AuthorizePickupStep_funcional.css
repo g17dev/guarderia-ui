@@ -163,19 +163,6 @@
   margin-top: 24px;
 }
 
-.status-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: #666;
-  margin-bottom: 20px;
-}
-
-.status-icon {
-  font-size: 20px;
-}
-
 .verify-btn {
   width: 100%;
   padding: 14px;
