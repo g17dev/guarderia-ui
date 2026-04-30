@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import "./AuthorizePickupStep.css";
 import { VerificationStepper } from "./components/VerificationStepper";
-import { ScanFace } from 'lucide-react';
-import { FingerprintPattern } from 'lucide-react';
+import { FaceCapture } from "./components/FaceCapture";
 
 interface AuthorizePickupStepProps {
   data: {
@@ -15,41 +14,83 @@ interface AuthorizePickupStepProps {
   selectedChildren: Array<{ name: string; lastName: string }>;
 }
 
-export function AuthorizePickupStep({
-  data,
-  onChange,
-  errors,
-  selectedChildren,
-}: AuthorizePickupStepProps) {
-  const [activeTab, setActiveTab] = useState<"face" | "fingerprint">("face");
-  const [isFaceScanning, setIsFaceScanning] = useState(false);
-  const [isFingerprintScanning, setIsFingerprintScanning] = useState(false);
+export interface AuthorizePickupStepRef {
+  stopCamera: () => void;
+}
 
-  // Determinar el paso actual (0 = facial, 1 = huella)
-  const currentStep = activeTab === "face" ? 0 : 1;
+export const AuthorizePickupStep = forwardRef<AuthorizePickupStepRef, AuthorizePickupStepProps>(
+  ({ data, onChange, errors, selectedChildren }, ref) => {
+    const [activeTab, setActiveTab] = useState<"face" | "fingerprint">("face");
+    const [isFaceScanning, setIsFaceScanning] = useState(false);
+    const [isFingerprintScanning, setIsFingerprintScanning] = useState(false);
+    const [isVerifyingFace, setIsVerifyingFace] = useState(false);
+    const [faceMessage, setFaceMessage] = useState("");
+    
+    // ✅ NUEVO: Estado para guardar la función de detener cámara
+    const [cameraStopFn, setCameraStopFn] = useState<(() => void) | null>(null);
 
-  const handleFaceVerification = () => {
-    setIsFaceScanning(true);
-    setTimeout(() => {
+    // Determinar el paso actual (0 = facial, 1 = huella)
+    const currentStep = activeTab === "face" ? 0 : 1;
+
+    // ✅ NUEVO: Conectar el ref con la función real
+    useImperativeHandle(ref, () => ({
+      stopCamera: () => {
+        console.log('🔴 stopCamera llamado desde ref');
+        if (cameraStopFn) {
+          console.log('🔴 Ejecutando stopCamera real');
+          cameraStopFn();
+        } else {
+          console.log('⚠️ cameraStopFn no está disponible aún');
+        }
+      }
+    }));
+
+    useEffect(() => {
+      console.log('📌 activeTab cambió a:', activeTab);
+    }, [activeTab]);
+
+    const handleFaceCapture = async (imageData: string) => {
+      setIsVerifyingFace(true);
+      setIsFaceScanning(true);
+      
+      setTimeout(() => {
+        onChange({ ...data, faceVerified: true });
+        setIsVerifyingFace(false);
+        setIsFaceScanning(false);
+        setActiveTab("fingerprint");
+      }, 2000);
+    };
+
+    const handleFingerprintVerification = () => {
+      setIsFingerprintScanning(true);
+      setTimeout(() => {
+        onChange({ ...data, fingerprintVerified: true });
+        setIsFingerprintScanning(false);
+      }, 2000);
+    };
+
+    const handleFaceVerificationSuccess = (nombre: string) => {
+      setIsVerifyingFace(false);
       onChange({ ...data, faceVerified: true });
-      setIsFaceScanning(false);
-      setActiveTab("fingerprint");
-    }, 2000);
-  };
+      setFaceMessage(`✅ Identidad verificada: ${nombre}`);
+      setTimeout(() => setActiveTab("fingerprint"), 1500);
+    };
 
-  const handleFingerprintVerification = () => {
-    setIsFingerprintScanning(true);
-    setTimeout(() => {
-      onChange({ ...data, fingerprintVerified: true });
-      setIsFingerprintScanning(false);
-    }, 2000);
-  };
+    const handleFaceVerificationError = (error: string) => {
+      setIsVerifyingFace(false);
+      setFaceMessage(`❌ ${error}`);
+    };
+
+    // ✅ NUEVO: Guardar la función de detener cámara
+    const handleCameraReady = (stopFn: () => void) => {
+      console.log('📷 Recibida función stopCamera desde FaceCapture');
+      setCameraStopFn(() => stopFn);
+    };
+
 
   return (
     <div className="authorize-container">
-      {/* Contenedor principal con dos columnas */}
       <div className="authorize-layout">
-        
         {/* Columna Izquierda: Panel de verificación */}
         <div className="authorize-left">
           <div className="auth-header">
@@ -70,46 +111,20 @@ export function AuthorizePickupStep({
             </div>
           </div>
           <div className="panel">
-            {activeTab === "face" && (
+            {activeTab === "face" ? (
+              <FaceCapture 
+                onCameraReady={handleCameraReady}
+                onVerificationSuccess={handleFaceVerificationSuccess}
+                onVerificationError={handleFaceVerificationError}
+                isActive={true}
+              />
+            ) : (
+              // Contenido para huella
               <>
                 <div className="panel-content">
-                  <div className="camera-box">
-                    <ScanFace size={200} color="#004B92" strokeWidth={1}/>
-                    <div className="frame" />
-                    {isFaceScanning && <div className="scan-line" />}
+                  <div className="fingerprint-container">
+                    <div className={`fingerprint ${isFingerprintScanning ? "active" : ""}`} />
                   </div>
-                  <p className="status">
-                    {!data.faceVerified
-                      ? "Coloca tu rostro dentro del marco"
-                      : "Verificación completada"}
-                  </p>
-                </div>
-
-                <div className="panel-footer">
-                  {!data.faceVerified ? (
-                    <button
-                      className="btn primary"
-                      onClick={handleFaceVerification}
-                      disabled={isFaceScanning}
-                    >
-                      {isFaceScanning ? <span className="spinner" /> : "Verificar"}
-                    </button>
-                  ) : (
-                    <div className="success">Identidad verificada</div>
-                  )}
-                </div>
-              </>
-            )}
-
-            {activeTab === "fingerprint" && (
-              <>
-                <div className="panel-content">
-                  <div
-                    className={`fingerprint ${
-                      isFingerprintScanning ? "active" : ""
-                    }`}>
-                    <FingerprintPattern size={200} color="#004B92" strokeWidth={1}/>
-                    </div>
                   <p className="status">
                     {!data.fingerprintVerified
                       ? "Coloca tu dedo en el lector"
@@ -124,15 +139,19 @@ export function AuthorizePickupStep({
                       onClick={handleFingerprintVerification}
                       disabled={isFingerprintScanning}
                     >
-                      {isFingerprintScanning ? <span className="spinner" /> : "Verificar"}
+                      {isFingerprintScanning ? <span className="spinner" /> : "Verificar huella"}
                     </button>
                   ) : (
-                    <div className="success">Huella verificada</div>
+                    <div className="success-message">
+                      <span className="success-icon">✓</span>
+                      <p>Huella verificada correctamente</p>
+                    </div>
                   )}
                 </div>
               </>
             )}
           </div>
+
           {errors.verification && <div className="error">{errors.verification}</div>}
         </div>
 
@@ -144,8 +163,7 @@ export function AuthorizePickupStep({
             fingerprintVerified={data.fingerprintVerified}
           />
         </div>
-
       </div>
     </div>
   );
-}
+});
