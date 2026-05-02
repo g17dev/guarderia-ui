@@ -7,19 +7,19 @@
 }
 
 .hero {
-    display: flex;
-    justify-content: center;  /* centra horizontal */
-    align-items: center;      /* centra vertical */
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
-    margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  text-align: center;
+  margin-bottom: 40px;
 }
 
 .cards {
   display: flex;
   gap: 30px;
-  width: 800;
+  width: 800px;
   height: 300px;
 }
 
@@ -27,31 +27,47 @@
 .btn {
   width: 520px;
   height: 280px;
-
-  border-radius: 18px;
-  background: #FFFFFF;
   border-radius: 24px;
+  background: #FFFFFF;
   border: 2px solid #D5E3FF;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   gap: 10px;
-
   text-align: center;
-
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease-in-out;
+}
 
-  /* box-shadow: 0 10px 25px rgba(0,0,0,0.15); */
+/* Efecto hover */
+.btn:hover {
+  transform: translateY(-8px);
+  border-color: #004B92;
+  background: #f8fcff;
+  box-shadow: 0 12px 28px rgba(0, 75, 146, 0.15);
 }
 
 .btn h2 {
-    color: #2A64AD;
+  color: #2A64AD;
+  transition: color 0.3s ease;
+}
+
+.btn:hover h2 {
+  color: #004B92;
 }
 
 .btn p {
-    color: #424751;
+  color: #424751;
+  transition: color 0.3s ease;
+}
+
+.btn:hover p {
+  color: #1a2a3a;
+}
+
+/* Efecto de click activo */
+.btn:active {
+  transform: translateY(-4px);
+  transition: transform 0.05s ease;
 }
