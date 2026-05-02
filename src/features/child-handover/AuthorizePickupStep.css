@@ -1,4 +1,3 @@
-/* AuthorizePickupStep.css */
 
 .authorize-container {
   width: 100%;
@@ -25,21 +24,6 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-
-/* Columna derecha (Stepper) */
-.authorize-right {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 120px;
-}
-
-/* Resto de estilos del stepper se mantienen igual */
-.verification-stepper-vertical {
-  display: flex;
 }
 
 /* Header */
@@ -88,179 +72,20 @@
   border: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  margin-bottom: 10px;
+  height: auto;
+  max-height: none;
+  overflow: hidden;
+  margin-bottom: 8px;
+  animation: slideDown 0.4s ease-out;
 }
 
-.panel-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  flex: 1;
-}
-
-@keyframes pulseBorderGreen {
-  0% {
-    border-color: rgba(16, 185, 129, 0.5);
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.1);
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
   }
-  50% {
-    border-color: #10b981;
-    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.3);
-  }
-  100% {
-    border-color: rgba(16, 185, 129, 0.5);
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.1);
-  }
-}
-
-.scan-line {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: #004B92;
-  animation: scan 2s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes scan {
-  0% { top: 0; }
-  100% { top: 100%; }
-}
-
-/* Botones */
-.camera-controls {
-  flex-shrink: 0;
-  margin-top: 8px;
-  display: flex;
-  justify-content: center;
-}
-
-.capture-btn {
-  min-width: 250px;
-  font-size: 14px;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 40px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: #004B92;
-  color: white;
-}
-
-.capture-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Panel footer y otros botones */
-.panel-footer {
-  margin-top: 24px;
-  flex-shrink: 0;
-}
-
-.btn {
-  width: 100%;
-  padding: 30px;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  height: 50px;
-  width: 450px;
-}
-
-.btn.primary {
-  background: #004B92;
-  font-size: 20px;
-  color: white;
-}
-
-.btn.primary:hover:not(:disabled) {
-  background: #003d7a;
-  transform: translateY(-1px);
-}
-
-.btn.primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-
-/* Spinner */
-.spinner {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 2px solid white;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Mensajes de éxito/error */
-.success-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px;
-  background: #e8f5e9;
-  border-radius: 12px;
-  color: #2e7d32;
-  font-weight: 500;
-}
-
-.success-icon {
-  width: 20px;
-  height: 20px;
-  background: #10b981;
-  color: white;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-}
-
-.error-message {
-  color: #dc3545;
-  font-size: 13px;
-  margin-top: 16px;
-  text-align: center;
-  padding: 10px;
-  background: #fee;
-  border-radius: 8px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .authorize-layout {
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  .authorize-right {
-    margin-top: 0;
-  }
-  
-  .camera-box {
-    max-width: 100%;
-    height: 220px;
-  }
-  
-  .capture-btn {
-    min-width: 200px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

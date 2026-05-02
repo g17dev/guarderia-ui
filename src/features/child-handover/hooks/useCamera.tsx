@@ -1,18 +1,144 @@
-// hooks/useCamera.ts
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+
+export interface VerificationMessage {
+  type: 'status' | 'face_detected' | 'verifying' | 'result' | 'error';
+  message: string;
+  confidence?: number;
+  face_detected?: boolean;
+  ready_for_verification?: boolean;
+  authorized?: boolean;
+  nombre?: string;
+}
 
 export const useCamera = () => {
-  const [isCameraActive, setIsCameraActive] = useState(false); // ✅ Cambiado a false
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [isFaceDetected, setIsFaceDetected] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [statusMessage, setStatusMessage] = useState<string>('Inicializando cámara...');
+  const [statusMessage, setStatusMessage] = useState<string>('Buscando cámara...');
+  const [wsStatus, setWsStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
+  const [lastMessage, setLastMessage] = useState<VerificationMessage | null>(null);
+  
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+  const frameIntervalRef = useRef<number | null>(null);
   const isStartingRef = useRef(false);
 
+  // Función para verificar si hay una cámara disponible
+  async function checkForCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+      console.error("Tu navegador no soporta la detección de dispositivos multimedia.");
+      return false;
+    }
+
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const hasCamera = devices.some(device => device.kind === 'videoinput');
+      return hasCamera;
+    } catch (error) {
+      console.error("Error al enumerar los dispositivos:", error);
+      return false;
+    }
+  }
+
+  // Función para detener el envío de frames
+  const stopSendingFrames = useCallback(() => {
+    if (frameIntervalRef.current) {
+      clearInterval(frameIntervalRef.current);
+      frameIntervalRef.current = null;
+    }
+  }, []);
+
+  // Función para iniciar el envío de frames
+  const startSendingFrames = useCallback(() => {
+    if (frameIntervalRef.current) stopSendingFrames();
+    
+    frameIntervalRef.current = setInterval(() => {
+      if (videoRef.current && wsRef.current?.readyState === WebSocket.OPEN) {
+        const canvas = document.createElement('canvas');
+        canvas.width = videoRef.current.videoWidth;
+        canvas.height = videoRef.current.videoHeight;
+        const ctx = canvas.getContext('2d');
+        
+        if (ctx) {
+          ctx.drawImage(videoRef.current, 0, 0);
+          const frameData = canvas.toDataURL('image/jpeg', 0.7);
+          wsRef.current.send(frameData);
+        }
+      }
+    }, 200); // 5 frames por segundo
+  }, [stopSendingFrames]);
+
+  // Función para conectar WebSocket
+  const connectWebSocket = useCallback(() => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      console.log('WebSocket ya está conectado');
+      return;
+    }
+
+    const wsUrl = `ws://localhost:8000/ws/face-verify`;
+    wsRef.current = new WebSocket(wsUrl);
+    setWsStatus('connecting');
+    
+    wsRef.current.onopen = () => {
+      console.log('✅ WebSocket conectado');
+      setWsStatus('connected');
+      startSendingFrames(); // Comenzar a enviar frames
+    };
+    
+    wsRef.current.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data) as VerificationMessage;
+        setLastMessage(data);
+        
+        // Actualizar estado de detección de rostro
+        if (data.type === 'face_detected' && data.face_detected) {
+          setIsFaceDetected(true);
+          setStatusMessage('✅ Rostro detectado');
+        } else if (data.type === 'status' && !data.face_detected) {
+          setIsFaceDetected(false);
+          setStatusMessage(data.message);
+        }
+        
+        if (data.type === 'result') {
+          console.log('Resultado de verificación:', data);
+        }
+      } catch (error) {
+        console.error('Error al parsear mensaje:', error);
+      }
+    };
+    
+    wsRef.current.onerror = (error) => {
+      console.error('❌ Error en WebSocket:', error);
+      setWsStatus('disconnected');
+    };
+    
+    wsRef.current.onclose = () => {
+      console.log('🔌 WebSocket desconectado');
+      setWsStatus('disconnected');
+      stopSendingFrames();
+    };
+  }, [startSendingFrames, stopSendingFrames]);
+
+  // Desconectar WebSocket
+  const disconnectWebSocket = useCallback(() => {
+    stopSendingFrames();
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+      setWsStatus('disconnected');
+    }
+  }, [stopSendingFrames]);
+
   const startCamera = async () => {
-    // ✅ Permitir reiniciar si no está activa (quitamos la condición que bloqueaba)
-    if (isStartingRef.current) {
-      console.log('Cámara ya iniciándose');
+    if (isStartingRef.current) return;
+
+    setStatusMessage('Buscando cámara...');
+    const hasCamera = await checkForCamera();
+
+    if (!hasCamera) {
+      setError('No se encontró ninguna cámara en este dispositivo.');
+      setStatusMessage('Cámara no encontrada');
       return;
     }
 
@@ -30,7 +156,7 @@ export const useCamera = () => {
       });
 
       streamRef.current = stream;
-      setStatusMessage('Conectando con la cámara...');
+      setStatusMessage('Iniciando cámara...');
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -43,7 +169,10 @@ export const useCamera = () => {
               .then(() => {
                 console.log('✅ Video reproduciéndose');
                 setIsCameraActive(true);
-                setStatusMessage('Cámara lista');
+                setStatusMessage('✅ Cámara lista');
+                
+                // ✅ Conectar WebSocket automáticamente al activar la cámara
+                connectWebSocket();
               })
               .catch((err) => {
                 console.error('Error al reproducir video:', err);
@@ -77,7 +206,6 @@ export const useCamera = () => {
         } else if (err.name === 'AbortError') {
           console.warn('El play() fue abortado');
           setStatusMessage('Reiniciando cámara...');
-          // Intentar reiniciar
           setTimeout(() => {
             if (!isCameraActive && !isStartingRef.current) {
               startCamera();
@@ -94,7 +222,9 @@ export const useCamera = () => {
   const stopCamera = () => {
     console.log('🔴 stopCamera llamado - cerrando cámara...');
     
-    // Método 1: Detener tracks del stream guardado
+    // Detener envío de frames y desconectar WebSocket
+    disconnectWebSocket();
+    
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => {
         console.log(`Deteniendo track: ${track.kind}`);
@@ -103,33 +233,15 @@ export const useCamera = () => {
       streamRef.current = null;
     }
     
-    // Método 2: Limpiar el video
     if (videoRef.current) {
       videoRef.current.srcObject = null;
       videoRef.current.load();
       videoRef.current.pause();
     }
     
-    // Método 3: Forzar cierre de todas las pistas del navegador
-    // @ts-ignore
-    if (navigator.mediaDevices && navigator.mediaDevices.getTracks) {
-      // @ts-ignore
-      navigator.mediaDevices.getTracks().forEach((track) => {
-        if (track.kind === 'video') {
-          console.log('Deteniendo track global encontrado');
-          track.stop();
-        }
-      });
-    }
-    
-    // Método 4: Cerrar también el stream guardado en window (si existe)
-    if ((window as any).activeStream) {
-      (window as any).activeStream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
-      (window as any).activeStream = null;
-    }
-    
     setIsCameraActive(false);
     isStartingRef.current = false;
+    setIsFaceDetected(false);
     setStatusMessage('Cámara detenida');
     
     console.log('✅ Cámara cerrada completamente');
@@ -150,11 +262,22 @@ export const useCamera = () => {
     return null;
   };
 
+  // Limpiar al desmontar
+  useEffect(() => {
+    return () => {
+      if (frameIntervalRef.current) clearInterval(frameIntervalRef.current);
+      if (wsRef.current) wsRef.current.close();
+    };
+  }, []);
+
   return {
     videoRef,
     isCameraActive,
+    isFaceDetected,
     error,
     statusMessage,
+    wsStatus,
+    lastMessage,
     startCamera,
     stopCamera,
     capturePhoto,

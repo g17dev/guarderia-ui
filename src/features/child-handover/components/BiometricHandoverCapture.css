@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 35px;
+  gap: 25px;
   width: 100%;
 }
 
@@ -20,10 +20,17 @@
   border-radius: 16px;
   overflow: hidden;
   border: 3px solid rgba(7, 53, 96, 0.5);
+  transition: all 0.3s ease;
 }
 
 .camera-box.active {
-  border: 4px solid rgba(7, 53, 96, 5);
+  border: 5px solid rgba(7, 53, 96, 5);
+  box-shadow: 0 0 0 10px rgba(2, 54, 242, 0.2);
+}
+
+.camera-box.active.face-unknown {
+  border: 4px solid rgb(127, 126, 125);
+  box-shadow: 0 0 0 10px rgb(229, 188, 116);
 }
 
 .scanface-overlay {
@@ -47,6 +54,15 @@
   font-weight: 700;
   color: #666;
   text-align: center;
+}
+
+.camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block !important;
+  transform: scaleX(-1); /* Efecto espejo para selfie */
+  display: block;
 }
 
 /* Indicador de deteccion de rostro */
@@ -234,6 +250,9 @@
   border-radius: 8px;
   font-size: 14px;
   font-weight: 700;
+}
+
+.fingerprint-button.active {
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
