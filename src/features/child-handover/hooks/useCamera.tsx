@@ -24,7 +24,6 @@ export const useCamera = () => {
   const frameIntervalRef = useRef<number | null>(null);
   const isStartingRef = useRef(false);
   const [isServerReady, setIsServerReady] = useState(false);
-  const [serverCheckStatus, setServerCheckStatus] = useState<'checking' | 'online' | 'offline'>('checking');
 
   // Función para verificar si el servidor está disponible
   const checkServerHealth = async (): Promise<boolean> => {
@@ -39,14 +38,12 @@ export const useCamera = () => {
         const data = await response.json();
         console.log('✅ Servidor disponible:', data);
         setIsServerReady(true);
-        setServerCheckStatus('online');
         return true;
       }
       throw new Error('Servidor no responde');
     } catch (error) {
       console.error('❌ Servidor no disponible:', error);
       setIsServerReady(false);
-      setServerCheckStatus('offline');
       setStatusMessage('Servidor no disponible. No se puede iniciar la cámara.');
       setError('No se pudo conectar con el servidor de verificación.');
       return false;
@@ -164,9 +161,9 @@ export const useCamera = () => {
     if (isStartingRef.current) return;
 
     // Validar que el servidor esté disponible
-    const isServerOnline = await checkServerHealth();
+    await checkServerHealth();
   
-    if (!isServerOnline) {
+    if (!isServerReady) {
       console.warn('⚠️ No se puede iniciar la cámara: servidor no disponible');
       return;
     }
