@@ -1,275 +1,278 @@
 /* Contenedor principal */
 .biometric-handover-capture {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 25px;
-  width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
 }
 
 /* Cámara */
 .camera-box {
-  flex-shrink: 0;
-  width: 100%;
-  max-width: 450px;
-  height: 260px;
-  margin: 0 auto;
-  position: relative;
-  background: #f5f5f5;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 3px solid rgba(7, 53, 96, 0.5);
-  transition: all 0.3s ease;
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 450px;
+    height: 260px;
+    margin: 0 auto;
+    position: relative;
+    background: #f5f5f5;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 3px solid rgba(7, 53, 96, 0.5);
+    transition: all 0.3s ease;
 }
 
 .camera-box.active {
-  border: 5px solid rgba(7, 53, 96, 5);
-  box-shadow: 0 0 0 10px rgba(2, 54, 242, 0.2);
+    border: 5px solid rgba(7, 53, 96, 5);
+    box-shadow: 0 0 0 10px rgba(2, 54, 242, 0.2);
 }
 
 .camera-box.active.face-unknown {
-  border: 4px solid rgb(127, 126, 125);
-  box-shadow: 0 0 0 10px rgb(229, 188, 116);
+    border: 4px solid rgb(127, 126, 125);
+    box-shadow: 0 0 0 10px rgb(229, 188, 116);
 }
 
 .scanface-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #f5f5f5;
-  z-index: 2;
-  pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    z-index: 2;
+    pointer-events: none;
 }
 
 .status {
-  font-size: 15px;
-  margin-bottom: 10px;
-  font-weight: 700;
-  color: #666;
-  text-align: center;
+    font-size: 15px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #666;
+    text-align: center;
 }
 
 .camera-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block !important;
-  transform: scaleX(-1); /* Efecto espejo para selfie */
-  display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block !important;
+    transform: scaleX(-1); /* Efecto espejo para selfie */
+    display: block;
 }
 
 /* Indicador de deteccion de rostro */
 .face-detected-indicator {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(7, 53, 96, 0.9);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-  z-index: 3;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(7, 53, 96, 0.9);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 3;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
 }
 
 /* Estado visible (rostro detectado) */
 .face-detected-indicator.visible {
-  opacity: 1;
-  visibility: visible;
-  animation: fadeInUp 0.3s ease forwards;
+    opacity: 1;
+    visibility: visible;
+    animation: fadeInUp 0.3s ease forwards;
 }
 
 /* Animación de entrada (solo aparece de abajo hacia arriba) */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 }
-
 
 /* Estado de advertencia (no detecta rostro) */
 .face-detected-indicator.warning {
-  opacity: 1;
-  visibility: visible;
-  background: rgb(157, 127, 75);
-  animation: warningPulse 1.5s ease infinite;
+    opacity: 1;
+    visibility: visible;
+    background: rgb(157, 127, 75);
+    animation: warningPulse 1.5s ease infinite;
 }
 
 /* Animaciones */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 }
 
 @keyframes pulse {
-  0%, 100% {
-    transform: translateX(-50%) scale(1);
-  }
-  50% {
-    transform: translateX(-50%) scale(1.05);
-  }
+    0%,
+    100% {
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        transform: translateX(-50%) scale(1.05);
+    }
 }
 
 @keyframes warningPulse {
-  0%, 100% {
-    transform: translateX(-50%) scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: translateX(-50%) scale(1.03);
-    opacity: 0.9;
-  }
+    0%,
+    100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(-50%) scale(1.03);
+        opacity: 0.9;
+    }
 }
 
 /* Sección de huella */
 .fingerprint-section {
-  width: 100%;
+    width: 100%;
 }
 
 .fingerprint-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  width: 100%;
-  max-width: 650px;
-  margin: 0 auto;
-  padding: 16px 20px;
-  background: #f8f9fa;
-  border-radius: 16px;
-  border: 2px solid #e0e0e0;
-  transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border-radius: 16px;
+    border: 2px solid #e0e0e0;
+    transition: all 0.2s ease;
 }
 
 /* Icono de huella */
 .fingerprint-icon-wrapper {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
-  background: #e8f0fe;
-  border-radius: 50%;
-  transition: all 0.3s ease;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background: #e8f0fe;
+    border-radius: 50%;
+    transition: all 0.3s ease;
 }
 
 .fingerprint-icon-wrapper.active {
-  animation: fingerprintScan 1.2s ease-in-out infinite;
+    animation: fingerprintScan 1.2s ease-in-out infinite;
 }
 
 @keyframes fingerprintScan {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(0, 75, 146, 0.3);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.08);
-    box-shadow: 0 0 0 8px rgba(0, 75, 146, 0);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(0, 75, 146, 0);
-    opacity: 1;
-  }
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0, 75, 146, 0.3);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.08);
+        box-shadow: 0 0 0 8px rgba(0, 75, 146, 0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0, 75, 146, 0);
+        opacity: 1;
+    }
 }
 
 .fingerprint-icon {
-  width: 45px;
-  height: 45px;
+    width: 45px;
+    height: 45px;
 }
 
 .fingerprint-icon.deactive {
-  color:#666;
+    color: #666;
 }
 
 .fingerprint-icon.active {
-  color:#003d7a;
+    color: #003d7a;
 }
 
 /* Información de texto */
 .fingerprint-info {
-  flex: 1;
-  min-height: 65px;
+    flex: 1;
+    min-height: 65px;
 }
 
 .fingerprint-title {
-  text-align: start;
-  font-size: 16px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 0 0 4px 0;
-  min-height: 24px;
+    text-align: start;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 4px 0;
+    min-height: 24px;
 }
 
 .fingerprint-description {
-  text-align: start;
-  font-size: 14px;
-  color: #666;
-  margin: 0;
-  line-height: 1.4;
-  font-weight: 500;
-  min-height: 40px;
-  overflow-y: auto;
-  max-height: 60px;
+    text-align: start;
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+    line-height: 1.4;
+    font-weight: 500;
+    min-height: 40px;
+    overflow-y: auto;
+    max-height: 60px;
 }
 /* Botón */
 .fingerprint-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: #004B92;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #004b92;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
 }
 
 .fingerprint-button.active {
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .fingerprint-button.deactive {
-  opacity: 0.5;
-  cursor:not-allowed;
-  pointer-events: none
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 .fingerprint-button.scanning {
-  cursor:not-allowed;
-  pointer-events: none
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 .fingerprint-button:hover {
-  background: #003d7a;
-  transform: translateY(-1px);
+    background: #003d7a;
+    transform: translateY(-1px);
 }
