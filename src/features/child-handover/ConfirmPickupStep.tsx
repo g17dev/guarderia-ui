@@ -25,6 +25,7 @@ export const ConfirmPickupStep = () => {
           se autoriza la salida del menor.
         </p>
         <div className="data">
+
           {/* Columna izquierda - Datos del niño */}
           <div className="kids-column">
             <div className="header-column">
@@ -32,6 +33,95 @@ export const ConfirmPickupStep = () => {
                 <Baby size={26} strokeWidth={2.50}/>
               </div>
               <p>Niños a retirarse</p>
+            </div>
+
+            {/* Datos niños a retirarse de prubea */}
+            <div className="list-kids-scroll">
+              <div className="list-kids">
+                <div className="kid-data-container">
+                  <div className="avatar-kid">SG</div>
+                  <div className="kid-details">
+                    <h3>Sofia Gonzalez</h3>
+                    <p>Grupo: Ositos(3 años)</p>
+                  </div>
+                </div>
+
+                <div className="kid-data-container">
+                  <div className="avatar-kid">SG</div>
+                  <div className="kid-details">
+                    <h3>Sofia Gonzalez</h3>
+                    <p>Grupo: Ositos(3 años)</p>
+                  </div>
+                </div>
+
+                <div className="kid-data-container">
+                  <div className="avatar-kid">SG</div>
+                  <div className="kid-details">
+                    <h3>Sofia Gonzalez</h3>
+                    <p>Grupo: Ositos(3 años)</p>
+                  </div>
+                </div>
+
+                <div className="kid-data-container">
+                  <div className="avatar-kid">SG</div>
+                  <div className="kid-details">
+                    <h3>Sofia Gonzalez</h3>
+                    <p>Grupo: Ositos(3 años)</p>
+                  </div>
+                </div>
+
+                <div className="kid-data-container">
+                  <div className="avatar-kid">SG</div>
+                  <div className="kid-details">
+                    <h3>Sofia Gonzalez</h3>
+                    <p>Grupo: Ositos(3 años)</p>
+                  </div>
+                </div>
+
+
+                <div className="kid-data-container">
+                  <div className="avatar-kid">SG</div>
+                  <div className="kid-details">
+                    <h3>Sofia Gonzalez</h3>
+                    <p>Grupo: Ositos(3 años)</p>
+                  </div>
+                </div>
+
+
+                <div className="kid-data-container">
+                  <div className="avatar-kid">SG</div>
+                  <div className="kid-details">
+                    <h3>Sofia Gonzalez</h3>
+                    <p>Grupo: Ositos(3 años)</p>
+                  </div>
+                </div>
+
+                <div className="kid-data-container">
+                  <div className="avatar-kid">SG</div>
+                  <div className="kid-details">
+                    <h3>Sofia Gonzalez</h3>
+                    <p>Grupo: Ositos(3 años)</p>
+                  </div>
+                </div>
+
+
+                <div className="kid-data-container">
+                  <div className="avatar-kid">SG</div>
+                  <div className="kid-details">
+                    <h3>Sofia Gonzalez</h3>
+                    <p>Grupo: Ositos(3 años)</p>
+                  </div>
+                </div>
+
+
+                <div className="kid-data-container">
+                  <div className="avatar-kid">SG</div>
+                  <div className="kid-details">
+                    <h3>Sofia Gonzalez</h3>
+                    <p>Grupo: Ositos(3 años)</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -63,6 +153,7 @@ export const ConfirmPickupStep = () => {
               <p className="authorized-text">Autorizado para recogida</p>
             </div>
           </div>
+          
         </div>
       </div>
     </div>
