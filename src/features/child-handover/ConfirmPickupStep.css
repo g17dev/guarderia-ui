@@ -329,3 +329,28 @@ p {
   font-weight: 700;
   text-align: center;
 }
+
+.banner-info {
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  font-size: 20px;
+  color: #2F5798;
+  padding: 30px 20px;
+  background-color: #E3EDF7;;
+  border: 2px solid rgba(71, 135, 200, 0.50);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+
+.banner-info p {
+  font-weight: 500;
+  color: #2F5798;
+}

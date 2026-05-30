@@ -1,9 +1,46 @@
 import "./ConfirmPickupStep.css";
+import { useEffect, useState } from "react";
 import {Baby, IdCard} from "lucide-react";
 import { FaLockOpen } from "react-icons/fa";
-import { FaCircleCheck } from "react-icons/fa6";
+import { FaCircleCheck, FaCircleInfo } from "react-icons/fa6";
+
 
 export const ConfirmPickupStep = () => {
+  const [currentTime, setCurrentTime] = useState("");
+
+  useEffect(() => {
+    let intervalId: number | undefined;
+    let timeoutId: number | undefined;
+
+    const updateTime = () => {
+      const now = new Date();
+
+      const hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+
+      const period = hours >= 12 ? "PM" : "AM";
+      const hour12 = hours % 12 || 12;
+
+      setCurrentTime(`${hour12}:${minutes} ${period}`);
+    };
+
+    updateTime();
+
+    const now = new Date();
+    const msUntilNextMinute =
+      (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+
+    timeoutId = window.setTimeout(() => {
+      updateTime();
+      intervalId = window.setInterval(updateTime, 60000);
+    }, msUntilNextMinute);
+
+    return () => {
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      if (intervalId !== undefined) clearInterval(intervalId);
+    };
+  }, []);
+
   const adult = {
     name: "Ricardo Mendoza",
     relation: "ABUELO",
@@ -53,74 +90,6 @@ export const ConfirmPickupStep = () => {
                     <p>Grupo: Ositos(3 años)</p>
                   </div>
                 </div>
-
-                <div className="kid-data-container">
-                  <div className="avatar-kid">SG</div>
-                  <div className="kid-details">
-                    <h3>Sofia Gonzalez</h3>
-                    <p>Grupo: Ositos(3 años)</p>
-                  </div>
-                </div>
-
-                <div className="kid-data-container">
-                  <div className="avatar-kid">SG</div>
-                  <div className="kid-details">
-                    <h3>Sofia Gonzalez</h3>
-                    <p>Grupo: Ositos(3 años)</p>
-                  </div>
-                </div>
-
-                <div className="kid-data-container">
-                  <div className="avatar-kid">SG</div>
-                  <div className="kid-details">
-                    <h3>Sofia Gonzalez</h3>
-                    <p>Grupo: Ositos(3 años)</p>
-                  </div>
-                </div>
-
-
-                <div className="kid-data-container">
-                  <div className="avatar-kid">SG</div>
-                  <div className="kid-details">
-                    <h3>Sofia Gonzalez</h3>
-                    <p>Grupo: Ositos(3 años)</p>
-                  </div>
-                </div>
-
-
-                <div className="kid-data-container">
-                  <div className="avatar-kid">SG</div>
-                  <div className="kid-details">
-                    <h3>Sofia Gonzalez</h3>
-                    <p>Grupo: Ositos(3 años)</p>
-                  </div>
-                </div>
-
-                <div className="kid-data-container">
-                  <div className="avatar-kid">SG</div>
-                  <div className="kid-details">
-                    <h3>Sofia Gonzalez</h3>
-                    <p>Grupo: Ositos(3 años)</p>
-                  </div>
-                </div>
-
-
-                <div className="kid-data-container">
-                  <div className="avatar-kid">SG</div>
-                  <div className="kid-details">
-                    <h3>Sofia Gonzalez</h3>
-                    <p>Grupo: Ositos(3 años)</p>
-                  </div>
-                </div>
-
-
-                <div className="kid-data-container">
-                  <div className="avatar-kid">SG</div>
-                  <div className="kid-details">
-                    <h3>Sofia Gonzalez</h3>
-                    <p>Grupo: Ositos(3 años)</p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -154,6 +123,11 @@ export const ConfirmPickupStep = () => {
             </div>
           </div>
           
+        </div>
+
+        <div className="banner-info">
+          <FaCircleInfo />
+          <p>Al confirmar la salida, se registrará la hora exacta ({currentTime}).</p>
         </div>
       </div>
     </div>
