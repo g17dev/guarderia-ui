@@ -6,9 +6,10 @@ import { AuthorizePickupStep } from "../features/child-handover/AuthorizePickupS
 import { ConfirmPickupStep } from "../features/child-handover/ConfirmPickupStep";
 import { useState, useEffect } from "react";
 import type { Child } from "../types/child";
-
+import { useNavigate } from "react-router-dom";
 
 export default function ChildHandover() {
+  const navigate = useNavigate();
   const [stepData, setStepData] = useState({
     seleccionar: {
       childIds: [] as string[],
@@ -131,9 +132,7 @@ export default function ChildHandover() {
       };
       setSteps(updatedSteps);
       setStepperKey((prev) => prev + 1);
-
-      console.log("Registro completado:", stepData);
-      alert("¡Registro de salida completado!");
+      navigate("/dashboard");
     }
   };
 
