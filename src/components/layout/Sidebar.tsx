@@ -4,6 +4,7 @@ import "./Sidebar.css";
 
 const NAV_ITEMS = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/children",    icon: DoorOpen,        label: "Gestion de niños" },
   { to: "/access",    icon: DoorOpen,        label: "Control de acceso" },
 ];
 

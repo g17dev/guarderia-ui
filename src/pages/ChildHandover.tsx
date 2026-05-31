@@ -7,9 +7,12 @@ import { ConfirmPickupStep } from "../features/child-handover/ConfirmPickupStep"
 import { useState, useEffect } from "react";
 import type { Child } from "../types/child";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
 
 export default function ChildHandover() {
   const navigate = useNavigate();
+  const { toast } = useToast();
+
   const [stepData, setStepData] = useState({
     seleccionar: {
       childIds: [] as string[],
@@ -132,6 +135,7 @@ export default function ChildHandover() {
       };
       setSteps(updatedSteps);
       setStepperKey((prev) => prev + 1);
+      toast("success", "Registro de Salida", "Se registró la salida del niño correctamente.");
       navigate("/dashboard");
     }
   };
