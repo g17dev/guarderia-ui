@@ -88,6 +88,7 @@
   transition: all 0.2s ease;
   position: relative;
   z-index: 1;
+  max-height: 210px;
 }
 
 
@@ -276,6 +277,10 @@
 
 .clear-all-btn {
   background: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
   border: 1px solid #dc3545;
   color: #dc3545;
   padding: 4px 12px;
@@ -283,6 +288,7 @@
   cursor: pointer;
   font-size: 12px;
   transition: all 0.2s ease;
+  font-weight: 600;
 }
 
 .clear-all-btn:hover {

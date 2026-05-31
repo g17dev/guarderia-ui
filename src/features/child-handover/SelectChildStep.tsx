@@ -3,6 +3,7 @@ import { InputSearch } from "../../components/InputSearch";
 import "./SelectChildStep.css";
 import type { Child } from "../../types/child";
 import { getInitials, getAvatarColor } from "../../utils/child";
+import { FaRegTrashCan } from "react-icons/fa6";
 
 interface SeleccionarStepProps {
   data: { childIds: string[]; childrenNames: string };
@@ -106,62 +107,23 @@ export function SelectChildStep({
         </div>
       )}
 
-      {/* Mostrar cards seleccionadas siempre */}
-      {selectedChildren.length > 0 && !searchTerm && (
-        <div className="cards-results">
-          <div className="results-header">
-            <span>{selectedChildren.length} niño(s) seleccionado(s)</span>
-          </div>
-          <div className="children-cards">
-            {selectedChildren.map((child) => {
-              const isSelected = selectedChildren.some(c => c.id === child.id);
-              return (
-                <div 
-                  key={child.id} 
-                  className={`child-card ${isSelected ? 'selected' : ''}`} 
-                  onClick={() => handleToggleChild(child)}
-                >
-                  <div
-                    className="card-avatar"
-                    style={{ background: getAvatarColor(child.name, child.lastName) }}
-                  >
-                    <span className="card-initials">
-                      {getInitials(child.name, child.lastName)}
-                    </span>
-                  </div>
-                  <div className="card-info">
-                    <div className="card-name">
-                      {child.name} {child.lastName}
-                    </div>
-                    <div className="card-details">
-                      <span className="card-classroom">{child.classroom || "Sin aula"}</span>
-                    </div>
-                  </div>
-                  <div className="card-select-icon">
-                    <span className="select-arrow">
-                      {isSelected ? '✓' : '+'}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+      {/* Un solo bloque que siempre muestra, filtra según búsqueda */}
+      <div className="cards-results">
+        <div className="results-header">
+          {searchTerm
+            ? <span>Resultados para "{searchTerm}": {filteredChildren.length} niño(s)</span>
+            : <span>{children.length} niño(s) registrados</span>
+          }
         </div>
-      )}
 
-      {/* Mostrar resultados de búsqueda (solo cuando se busca) */}
-      {searchTerm && filteredChildren.length > 0 && (
-        <div className="cards-results">
-          <div className="results-header">
-            <span>Resultados encontrados con "{searchTerm}": {filteredChildren.length} niño(s)</span>
-          </div>
+        {filteredChildren.length > 0 ? (
           <div className="children-cards">
             {filteredChildren.map((child) => {
               const isSelected = selectedChildren.some(c => c.id === child.id);
               return (
-                <div 
-                  key={child.id} 
-                  className={`child-card ${isSelected ? 'selected' : ''}`} 
+                <div
+                  key={child.id}
+                  className={`child-card ${isSelected ? "selected" : ""}`}
                   onClick={() => handleToggleChild(child)}
                 >
                   <div
@@ -173,9 +135,7 @@ export function SelectChildStep({
                     </span>
                   </div>
                   <div className="card-info">
-                    <div className="card-name">
-                      {child.name} {child.lastName}
-                    </div>
+                    <div className="card-name">{child.name} {child.lastName}</div>
                     <div className="card-details">
                       <span className="card-classroom">{child.classroom || "Sin aula"}</span>
                     </div>
@@ -195,18 +155,15 @@ export function SelectChildStep({
               );
             })}
           </div>
-        </div>
-      )}
-
-      {/* Mostrar mensaje cuando no hay resultados */}
-      {searchTerm && filteredChildren.length === 0 && (
-        <div className="no-results">
-          <p>No se encontraron niños con "{searchTerm}"</p>
-          <button className="clear-search-btn" onClick={handleClearSearch}>
-            Limpiar búsqueda
-          </button>
-        </div>
-      )}
+        ) : (
+          <div className="no-results">
+            <p>No se encontraron niños con "{searchTerm}"</p>
+            <button className="clear-search-btn" onClick={handleClearSearch}>
+              Limpiar búsqueda
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Mostrar resumen de niños seleccionados */}
       {selectedChildren.length > 0 && (
@@ -216,6 +173,7 @@ export function SelectChildStep({
               ✓ {selectedChildren.length} niño(s) seleccionado(s):
             </span>
             <button className="clear-all-btn" onClick={handleClearAllSelection}>
+              <FaRegTrashCan />
               Limpiar todos
             </button>
           </div>
