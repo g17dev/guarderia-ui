@@ -217,14 +217,13 @@ p {
 .avatar-kid {
   width: 70px;
   height: 70px;
-  background-color: #FFDDB5;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 28px;
-  color: black;
+  color: white;
 }
 
 .kid-details {

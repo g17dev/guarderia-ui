@@ -5,96 +5,34 @@ import { SelectChildStep } from "../features/child-handover/SelectChildStep";
 import { AuthorizePickupStep } from "../features/child-handover/AuthorizePickupStep";
 import { ConfirmPickupStep } from "../features/child-handover/ConfirmPickupStep";
 import { useState, useEffect } from "react";
-import { Import } from "lucide-react";
+import type { Child } from "../types/child";
 
-// Definir el tipo Child
-interface Child {
-  id: string;
-  name: string;
-  lastName: string;
-  classroom?: string;
-}
 
 export default function ChildHandover() {
-  // ============================================
-  // RESTAURAR DATOS GUARDADOS EN sessionStorage
-  // ============================================
-  const savedData = sessionStorage.getItem("stepData");
-  const savedStep = sessionStorage.getItem("currentStep");
-  const savedSteps = sessionStorage.getItem("steps");
-  const savedStepperKey = sessionStorage.getItem("stepperKey");
-
-  // Estado inicial con restauración
-  const [stepData, setStepData] = useState(() => {
-    if (savedData) {
-      console.log("🔄 Restaurando stepData guardado");
-      return JSON.parse(savedData);
-    }
-    return {
-      seleccionar: {
-        childIds: [] as string[],
-        childrenNames: "",
-        selectedChildrenData: [] as Child[],
-      },
-      autorizacion: {
-        faceVerified: false,
-        fingerprintVerified: false,
-        authorizationCode: "",
-      },
-    };
+  const [stepData, setStepData] = useState({
+    seleccionar: {
+      childIds: [] as string[],
+      childrenNames: "",
+      selectedChildrenData: [] as Child[],
+    },
+    autorizacion: {
+      faceVerified: false,
+      fingerprintVerified: false,
+      authorizationCode: "",
+    },
   });
 
-  const [currentStep, setCurrentStep] = useState(() => {
-    if (savedStep) {
-      console.log("🔄 Restaurando currentStep:", savedStep);
-      return parseInt(savedStep);
-    }
-    return 0;
-  });
+  const [currentStep, setCurrentStep] = useState(0);
 
-  const [steps, setSteps] = useState<Step[]>(() => {
-    if (savedSteps) {
-      console.log("🔄 Restaurando steps guardado");
-      return JSON.parse(savedSteps);
-    }
-    return [
-      { title: "Seleccionar", status: "current" as const },
-      { title: "Autorizar recogida", status: "pending" as const },
-      { title: "Confirmar", status: "pending" as const },
-    ];
-  });
+  const [steps, setSteps] = useState<Step[]>([
+    { title: "Seleccionar", status: "current" as const },
+    { title: "Autorizar recogida", status: "pending" as const },
+    { title: "Confirmar", status: "pending" as const },
+  ]);
 
-  // Key para forzar remontaje del Stepper
-  const [stepperKey, setStepperKey] = useState<number>(() => {
-    if (savedStepperKey) {
-      return parseInt(savedStepperKey);
-    }
-    return 0;
-  });
-
+  const [stepperKey, setStepperKey] = useState<number>(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [refreshKey, setRefreshKey] = useState<number>(0);
-  const [authorizeKey, setAuthorizeKey] = useState<number>(0);
-
-  // Limpiar sessionStorage después de restaurar
-  useEffect(() => {
-    if (savedData) sessionStorage.removeItem("stepData");
-    if (savedStep) sessionStorage.removeItem("currentStep");
-    if (savedSteps) sessionStorage.removeItem("steps");
-    if (savedStepperKey) sessionStorage.removeItem("stepperKey");
-  }, []);
-
-  // ============================================
-  // FUNCIÓN PARA GUARDAR DATOS ANTES DE RECARGAR
-  // ============================================
-  const saveAndReload = (targetStep: number) => {
-    console.log("💾 Guardando datos en sessionStorage antes de recargar");
-    sessionStorage.setItem("stepData", JSON.stringify(stepData));
-    sessionStorage.setItem("currentStep", targetStep.toString());
-    sessionStorage.setItem("steps", JSON.stringify(steps));
-    sessionStorage.setItem("stepperKey", (stepperKey + 1).toString());
-    window.location.reload();
-  };
 
   // ============================================
   // VALIDACIÓN DE PASOS
@@ -132,11 +70,6 @@ export default function ChildHandover() {
   const nextStep = () => {
     const isValid = validateStep(currentStep);
     if (isValid && currentStep < steps.length - 1) {
-      if (currentStep === 1) {
-        saveAndReload(currentStep + 1);
-        return;
-      }
-
       const updatedSteps = [...steps];
       updatedSteps[currentStep] = {
         ...updatedSteps[currentStep],
@@ -158,11 +91,6 @@ export default function ChildHandover() {
   // ============================================
   const prevStep = () => {
     if (currentStep > 0) {
-      if (currentStep === 1) {
-        saveAndReload(currentStep - 1);
-        return;
-      }
-
       const updatedSteps = [...steps];
       updatedSteps[currentStep] = {
         ...updatedSteps[currentStep],
@@ -206,12 +134,6 @@ export default function ChildHandover() {
 
       console.log("Registro completado:", stepData);
       alert("¡Registro de salida completado!");
-
-      // Limpiar sessionStorage al completar
-      sessionStorage.removeItem("stepData");
-      sessionStorage.removeItem("currentStep");
-      sessionStorage.removeItem("steps");
-      sessionStorage.removeItem("stepperKey");
     }
   };
 
@@ -256,7 +178,6 @@ export default function ChildHandover() {
 
         {currentStep === 1 && (
           <AuthorizePickupStep
-            key={authorizeKey}
             data={stepData.autorizacion}
             onChange={(newData: typeof stepData.autorizacion) =>
               setStepData((prev: typeof stepData) => ({
@@ -269,7 +190,7 @@ export default function ChildHandover() {
           />
         )}
 
-        {currentStep === 2 && <ConfirmPickupStep />}
+        {currentStep === 2 && <ConfirmPickupStep selectedChildren={stepData.seleccionar.selectedChildrenData}/>}
       </div>
 
       <div className="stepper-buttons">

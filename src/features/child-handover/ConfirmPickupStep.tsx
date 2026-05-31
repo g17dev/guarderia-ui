@@ -3,9 +3,14 @@ import { useEffect, useState } from "react";
 import {Baby, IdCard} from "lucide-react";
 import { FaLockOpen } from "react-icons/fa";
 import { FaCircleCheck, FaCircleInfo } from "react-icons/fa6";
+import type { Child } from "../../types/child";
+import { getInitials, getAge, getAvatarColor } from "../../utils/child"; 
 
+interface ConfirmPickupStepProps {
+  selectedChildren: Child[];
+}
 
-export const ConfirmPickupStep = () => {
+export const ConfirmPickupStep = ({selectedChildren}: ConfirmPickupStepProps ) => {
   const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
@@ -75,21 +80,17 @@ export const ConfirmPickupStep = () => {
             {/* Datos niños a retirarse de prubea */}
             <div className="list-kids-scroll">
               <div className="list-kids">
-                <div className="kid-data-container">
-                  <div className="avatar-kid">SG</div>
-                  <div className="kid-details">
-                    <h3>Sofia Gonzalez</h3>
-                    <p>Grupo: Ositos(3 años)</p>
+                {selectedChildren.map(child => (
+                  <div className="kid-data-container">
+                    <div className="avatar-kid"
+                         style={{ background: getAvatarColor(child.name, child.lastName) }}
+                    >{getInitials(child.name, child.lastName)}</div>
+                    <div className="kid-details">
+                      <h3>{child.name} {child.lastName}</h3>
+                      <p>Grupo: {child.classroom} ({getAge(child.datebirth)} años)</p>
+                    </div>
                   </div>
-                </div>
-
-                <div className="kid-data-container">
-                  <div className="avatar-kid">SG</div>
-                  <div className="kid-details">
-                    <h3>Sofia Gonzalez</h3>
-                    <p>Grupo: Ositos(3 años)</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
