@@ -1,14 +1,9 @@
 import { useState, useEffect } from "react";
 import { InputSearch } from "../../components/InputSearch";
 import "./SelectChildStep.css";
-
-// Tipos para el niño
-interface Child {
-  id: string;
-  name: string;
-  lastName: string;
-  classroom?: string;
-}
+import type { Child } from "../../types/child";
+import { getInitials, getAvatarColor } from "../../utils/child";
+import { FaRegTrashCan } from "react-icons/fa6";
 
 interface SeleccionarStepProps {
   data: { childIds: string[]; childrenNames: string };
@@ -19,12 +14,12 @@ interface SeleccionarStepProps {
 
 // DATOS DE PRUEBA (MOCK)
 const MOCK_CHILDREN: Child[] = [
-  { id: "1", name: "Mateo", lastName: "García", classroom: "Maternal" },
-  { id: "2", name: "Valentina", lastName: "Rodríguez", classroom: "Preescolar" },
-  { id: "3", name: "Santiago", lastName: "López", classroom: "Primaria" },
-  { id: "4", name: "Emma", lastName: "Martínez", classroom: "Maternal" },
-  { id: "5", name: "Lucas", lastName: "Fernández", classroom: "Preescolar" },
-  { id: "6", name: "Sofía", lastName: "González", classroom: "Primaria" }
+  { id: "1", name: "Mateo", lastName: "García", datebirth: "2020-01-01", classroom: "Maternal" },
+  { id: "2", name: "Valentina", lastName: "Rodríguez", datebirth: "2020-01-01", classroom: "Preescolar" },
+  { id: "3", name: "Santiago", lastName: "López", datebirth: "2024-01-01", classroom: "Primaria" },
+  { id: "4", name: "Emma", lastName: "Martínez", datebirth: "2022-01-01", classroom: "Maternal" },
+  { id: "5", name: "Lucas", lastName: "Fernández", datebirth: "2015-01-01", classroom: "Preescolar" },
+  { id: "6", name: "Sofía", lastName: "González", datebirth: "2019-01-01", classroom: "Primaria" }
 ];
 
 export function SelectChildStep({ 
@@ -112,91 +107,63 @@ export function SelectChildStep({
         </div>
       )}
 
-      {/* Mostrar cards seleccionadas siempre */}
-      {selectedChildren.length > 0 && !searchTerm && (
-        <div className="cards-results">
-          <div className="results-header">
-            <span>{selectedChildren.length} niño(s) seleccionado(s)</span>
-          </div>
-          <div className="children-cards">
-            {selectedChildren.map((child) => {
-              const isSelected = selectedChildren.some(c => c.id === child.id);
-              return (
-                <div 
-                  key={child.id} 
-                  className={`child-card ${isSelected ? 'selected' : ''}`} 
-                  onClick={() => handleToggleChild(child)}
-                >
-                  <div className="card-avatar">
-                    <span className="avatar-emoji">👶</span>
-                  </div>
-                  <div className="card-info">
-                    <div className="card-name">
-                      {child.name} {child.lastName}
-                    </div>
-                    <div className="card-details">
-                      <span className="card-classroom">{child.classroom || "Sin aula"}</span>
-                    </div>
-                  </div>
-                  <div className="card-select-icon">
-                    <span className="select-arrow">
-                      {isSelected ? '✓' : '+'}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+      {/* Un solo bloque que siempre muestra, filtra según búsqueda */}
+      <div className="cards-results">
+        <div className="results-header">
+          {searchTerm
+            ? <span>Resultados para "{searchTerm}": {filteredChildren.length} niño(s)</span>
+            : <span>{children.length} niño(s) registrados</span>
+          }
         </div>
-      )}
 
-      {/* Mostrar resultados de búsqueda (solo cuando se busca) */}
-      {searchTerm && filteredChildren.length > 0 && (
-        <div className="cards-results">
-          <div className="results-header">
-            <span>Resultados encontrados con "{searchTerm}": {filteredChildren.length} niño(s)</span>
-          </div>
+        {filteredChildren.length > 0 ? (
           <div className="children-cards">
             {filteredChildren.map((child) => {
               const isSelected = selectedChildren.some(c => c.id === child.id);
               return (
-                <div 
-                  key={child.id} 
-                  className={`child-card ${isSelected ? 'selected' : ''}`} 
+                <div
+                  key={child.id}
+                  className={`child-card ${isSelected ? "selected" : ""}`}
                   onClick={() => handleToggleChild(child)}
                 >
-                  <div className="card-avatar">
-                    <span className="avatar-emoji">👶</span>
+                  <div
+                    className="card-avatar"
+                    style={{ background: getAvatarColor(child.name, child.lastName) }}
+                  >
+                    <span className="card-initials">
+                      {getInitials(child.name, child.lastName)}
+                    </span>
                   </div>
                   <div className="card-info">
-                    <div className="card-name">
-                      {child.name} {child.lastName}
-                    </div>
+                    <div className="card-name">{child.name} {child.lastName}</div>
                     <div className="card-details">
                       <span className="card-classroom">{child.classroom || "Sin aula"}</span>
                     </div>
                   </div>
                   <div className="card-select-icon">
-                    <span className="select-arrow">
-                      {isSelected ? '✓' : '+'}
-                    </span>
+                    <div className="select-arrow">
+                      <svg className="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      <svg className="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                      </svg>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
-        </div>
-      )}
-
-      {/* Mostrar mensaje cuando no hay resultados */}
-      {searchTerm && filteredChildren.length === 0 && (
-        <div className="no-results">
-          <p>No se encontraron niños con "{searchTerm}"</p>
-          <button className="clear-search-btn" onClick={handleClearSearch}>
-            Limpiar búsqueda
-          </button>
-        </div>
-      )}
+        ) : (
+          <div className="no-results">
+            <p>No se encontraron niños con "{searchTerm}"</p>
+            <button className="clear-search-btn" onClick={handleClearSearch}>
+              Limpiar búsqueda
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Mostrar resumen de niños seleccionados */}
       {selectedChildren.length > 0 && (
@@ -206,6 +173,7 @@ export function SelectChildStep({
               ✓ {selectedChildren.length} niño(s) seleccionado(s):
             </span>
             <button className="clear-all-btn" onClick={handleClearAllSelection}>
+              <FaRegTrashCan />
               Limpiar todos
             </button>
           </div>

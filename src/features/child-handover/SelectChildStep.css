@@ -80,7 +80,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 20px 16px;
+  padding: 24px 16px;
   background: white;
   border: 2px solid #e0e0e0;
   border-radius: 16px;
@@ -88,8 +88,7 @@
   transition: all 0.2s ease;
   position: relative;
   z-index: 1;
-  max-height: 200px; /* Altura máxima fija */
-
+  max-height: 210px;
 }
 
 
@@ -114,7 +113,6 @@
 .card-avatar {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #e8f0fe 0%, #d4e4fc 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -122,8 +120,11 @@
   margin-bottom: 16px;
 }
 
-.avatar-emoji {
-  font-size: 42px;
+.card-initials {
+  font-size: 28px;
+  font-weight: 600;
+  color: white;
+  letter-spacing: 1px;
 }
 
 /* Información */
@@ -146,7 +147,7 @@
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* Icono de selección */
@@ -168,6 +169,58 @@
   font-size: 18px;
   font-weight: bold;
   transition: all 0.2s ease;
+}
+
+.select-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #e0e0e0;
+  color: #666;
+  border-radius: 50%;
+  transition: background 0.25s ease, color 0.25s ease;
+  position: relative;
+}
+
+.select-arrow svg {
+  width: 14px;
+  height: 14px;
+  position: absolute;
+  transition: opacity 0.2s ease, transform 0.25s ease;
+}
+
+/* Estado por defecto: muestra + */
+.icon-plus {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+.icon-check {
+  opacity: 0;
+  transform: rotate(-45deg);
+}
+
+/* Estado seleccionado: muestra ✓ */
+.child-card.selected .icon-plus {
+  opacity: 0;
+  transform: rotate(45deg);
+}
+
+.child-card.selected .icon-check {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+/* Color del círculo al seleccionar */
+.child-card.selected .select-arrow {
+  background: #004B92;
+  color: white;
+}
+
+.child-card:hover .select-arrow {
+  transform: scale(1.1);
 }
 
 .child-card.selected .select-arrow {
@@ -224,6 +277,10 @@
 
 .clear-all-btn {
   background: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
   border: 1px solid #dc3545;
   color: #dc3545;
   padding: 4px 12px;
@@ -231,6 +288,7 @@
   cursor: pointer;
   font-size: 12px;
   transition: all 0.2s ease;
+  font-weight: 600;
 }
 
 .clear-all-btn:hover {
