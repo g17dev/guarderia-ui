@@ -3,6 +3,7 @@ import { Plus, Filter, Download } from "lucide-react";
 import { InputSearch } from "../components/InputSearch";
 import { ChildrenTable } from "../features/children/components/ChildrenTable";
 import { Pagination } from "../features/children/components/Pagination";
+import { ChildDrawer } from "../features/children/components/ChildDrawer";
 import { MOCK_CHILDREN } from "../data/mockChildren";
 import type { Child } from "../types/child";
 import type { ChangeEvent } from "react";
@@ -83,7 +84,7 @@ export function ChildrenManagement() {
       {/* Tabla */}
       <ChildrenTable
         children={paginated}
-        onViewProfile={handleViewProfile}
+        onRowClick={handleViewProfile}
         onDelete={handleDelete}
       />
 
@@ -94,6 +95,12 @@ export function ChildrenManagement() {
         totalItems={filtered.length}
         pageSize={PAGE_SIZE}
         onPageChange={setCurrentPage}
+      />
+
+      <ChildDrawer
+        child={selectedChild}
+        onClose={() => setSelectedChild(null)}
+        onDelete={handleDelete}
       />
 
     </div>
