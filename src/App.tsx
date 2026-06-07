@@ -4,6 +4,7 @@ import ChildAccess from "./pages/ChildAccess";
 import ChildHandover from "./pages/ChildHandover";
 import { Dashboard } from "./pages/Dashboard";
 import {ChildrenManagement} from "./pages/ChildrenManagement"
+import { ChildNew } from "./pages/ChildNew";
 import { ToastProvider } from "./context/ToastContext";
 import { ToastContainer } from "./components/toasts/ToastContainer";
 
@@ -16,6 +17,7 @@ export default function App() {
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard/>} />
             <Route path="children" element={<ChildrenManagement />} />
+            <Route path="children/new" element={<ChildNew />} />
             <Route path="/access" element={<ChildAccess />} />
             <Route path="/handover" element={<ChildHandover/>}/>
           </Route>

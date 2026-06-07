@@ -7,11 +7,13 @@ import { ChildDrawer } from "../features/children/components/ChildDrawer";
 import { MOCK_CHILDREN } from "../data/mockChildren";
 import type { Child } from "../types/child";
 import type { ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ChildrenManagement.css";
 
 const PAGE_SIZE = 10;
 
 export function ChildrenManagement() {
+  const navigate = useNavigate();
   const [children, setChildren] = useState<Child[]>(MOCK_CHILDREN);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,7 +56,7 @@ export function ChildrenManagement() {
           <h2>Gestion de niños</h2>
           <p>Consulta y administra la información de los menores inscritos.</p>
         </div>
-        <button className="btn-primary">
+        <button className="btn-primary" onClick={() => navigate("/children/new")}>
           <Plus size={16} />
           Agregar niño
         </button>
@@ -100,7 +102,7 @@ export function ChildrenManagement() {
       <ChildDrawer
         child={selectedChild}
         onClose={() => setSelectedChild(null)}
-        onDelete={handleDelete}
+        // onDelete={handleDelete}
       />
 
     </div>
