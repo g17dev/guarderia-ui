@@ -4,8 +4,24 @@
   overflow: hidden;
 }
 
+.app-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  /* ← listo para notificaciones */
+  padding: 12px 32px;
+  border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
 .app-content {
   flex: 1;
   overflow-y: auto;
   background: #f5f6fa;
-}
+} 

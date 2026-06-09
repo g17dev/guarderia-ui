@@ -42,6 +42,9 @@
   margin-top: 10px;
 }
 
+.stepper-horizontal .circle {
+  margin: 0 auto;
+}
 /* ===== VERTICAL ===== */
 .stepper-vertical {
   display: flex;
@@ -56,6 +59,7 @@
   gap: 16px;
   z-index: 2;
   padding: 0 0 32px 0;
+  min-width: 0;
 }
 
 .stepper-vertical .step:last-child {
@@ -64,6 +68,7 @@
 
 .stepper-vertical .content {
   padding-top: 8px;
+  min-width: 0;
 }
 
 /* ===== CÍRCULO ===== */
@@ -103,6 +108,7 @@
   margin: 0 0 4px 0;
   font-size: 0.9rem;
   color: #1a1a1a;
+  word-break: break-word;
 }
 
 .badge {
