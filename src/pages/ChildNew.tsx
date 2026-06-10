@@ -4,6 +4,9 @@ import Stepper from "../components/Stepper";
 import type { Step } from "../types/stepper";
 import { BasicInfoStep } from "../features/children/steps/BasicInfoStep";
 import { TutorStep } from "../features/children/steps/TutorStep";
+import type { HealthData } from "../features/children/steps/HealthStep";
+import { HealthStep } from "../features/children/steps/HealthStep";
+import { ConfirmStep } from "../features/children/steps/ConfirmStep";
 
 import "./ChildNew.css";
 
@@ -75,10 +78,14 @@ export function ChildNew() {
       zipCode: "",
     },
     health: {
-      allergies: [] as string[],
-      conditions: "",
       bloodType: "",
-    },
+      allergies: [],
+      conditions: "",
+      conditionSeverity: "" as HealthData["conditionSeverity"],
+      medications: [],
+      doctorName: "",
+      doctorPhone: "",
+    } as HealthData,
   });
 
   const goNext = () => {
@@ -106,6 +113,20 @@ export function ChildNew() {
     setSteps(updated);
     setCurrentStep(currentStep - 1);
   };
+
+  // Nueva función
+  const goToStep = (step: number) => {
+    const updated = steps.map((s, i) => ({
+      ...s,
+      status:
+        i < step ? "completed" as const
+        : i === step ? "current" as const
+        : "pending" as const,
+    }));
+    setSteps(updated);
+    setCurrentStep(step);
+  };
+
 
   return (
     <div className="child-new-page">
@@ -145,6 +166,21 @@ export function ChildNew() {
                     setFormData(prev => ({ ...prev, tutor: newData }))
                   }
                   errors={errors}
+                />
+              )}
+              {currentStep === 2 && (
+                <HealthStep
+                  data={formData.health}
+                  onChange={(newData) =>
+                    setFormData(prev => ({ ...prev, health: newData }))
+                  }
+                  errors={errors}
+                />
+              )}
+              {currentStep === 3 && (
+                <ConfirmStep
+                  formData={formData}
+                  onEdit={goToStep}
                 />
               )}
             </div>
