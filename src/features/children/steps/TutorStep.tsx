@@ -1,10 +1,10 @@
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import { FiUpload, FiX, FiPlus, FiTrash2 } from "react-icons/fi";
-import { FingerprintPattern } from "lucide-react"
+import { FingerprintPattern } from "lucide-react";
 import "./TutorStep.css";
 
+// ===== TIPOS =====
 type PhoneType = "personal" | "work" | "home" | "other";
-
 type PhoneRegion = "MX" | "US";
 
 interface Phone {
@@ -15,22 +15,8 @@ interface Phone {
   note: string;
 }
 
-const PHONE_REGIONS = [
-  {
-    value: "MX",
-    flag: "🇲🇽",
-    code: "+52",
-    label: "México",
-  },
-  {
-    value: "US",
-    flag: "🇺🇸",
-    code: "+1",
-    label: "Estados Unidos",
-  },
-] as const;
-
-interface TutorData {
+export interface TutorData {
+  id: string;
   photoFile: File | null;
   photoPreview: string;
   name: string;
@@ -48,15 +34,44 @@ interface TutorData {
 }
 
 interface TutorStepProps {
-  data: TutorData;
-  onChange: (newData: TutorData) => void;
+  tutors: TutorData[];
+  onChange: (newTutors: TutorData[]) => void;
   errors: { [key: string]: string };
 }
 
+// ===== FACTORY =====
+export const newTutorData = (): TutorData => ({
+  id: crypto.randomUUID(),
+  photoFile: null,
+  photoPreview: "",
+  name: "",
+  lastNamePaternal: "",
+  lastNameMaternal: "",
+  relationship: "",
+  curp: "",
+  ine: "",
+  phones: [{ id: crypto.randomUUID(), region: "MX", type: "personal", number: "", note: "" }],
+  street: "",
+  neighborhood: "",
+  city: "",
+  state: "",
+  zipCode: "",
+});
+
+// ===== CONSTANTES =====
+const RELATIONSHIP_LABELS: Record<string, string> = {
+  father: "Padre", mother: "Madre", grandfather: "Abuelo",
+  grandmother: "Abuela", uncle: "Tío", aunt: "Tía",
+  legal: "Tutor legal", other: "Otro",
+};
+
+const PHONE_TYPE_LABELS: Record<PhoneType, string> = {
+  personal: "Personal", work: "Trabajo", home: "Casa", other: "Otro",
+};
+
 const RELATIONSHIPS = [
   {
-    id: "father",
-    label: "Padre",
+    id: "father", label: "Padre",
     icon: (
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="32" cy="18" r="11" stroke="currentColor" strokeWidth="2.5"/>
@@ -69,8 +84,7 @@ const RELATIONSHIPS = [
     ),
   },
   {
-    id: "mother",
-    label: "Madre",
+    id: "mother", label: "Madre",
     icon: (
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="32" cy="18" r="11" stroke="currentColor" strokeWidth="2.5"/>
@@ -83,8 +97,7 @@ const RELATIONSHIPS = [
     ),
   },
   {
-    id: "grandfather",
-    label: "Abuelo",
+    id: "grandfather", label: "Abuelo",
     icon: (
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="32" cy="18" r="11" stroke="currentColor" strokeWidth="2.5"/>
@@ -98,8 +111,7 @@ const RELATIONSHIPS = [
     ),
   },
   {
-    id: "grandmother",
-    label: "Abuela",
+    id: "grandmother", label: "Abuela",
     icon: (
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="32" cy="18" r="11" stroke="currentColor" strokeWidth="2.5"/>
@@ -113,8 +125,7 @@ const RELATIONSHIPS = [
     ),
   },
   {
-    id: "legal",
-    label: "Tutor legal",
+    id: "legal", label: "Tutor legal",
     icon: (
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="32" cy="18" r="11" stroke="currentColor" strokeWidth="2.5"/>
@@ -128,8 +139,7 @@ const RELATIONSHIPS = [
     ),
   },
   {
-    id: "other",
-    label: "Otro",
+    id: "other", label: "Otro",
     icon: (
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="32" cy="18" r="11" stroke="currentColor" strokeWidth="2.5"/>
@@ -143,13 +153,6 @@ const RELATIONSHIPS = [
   },
 ];
 
-const PHONE_TYPE_LABELS: Record<PhoneType, string> = {
-  personal: "Personal",
-  work:     "Trabajo",
-  home:     "Casa",
-  other:    "Otro",
-};
-
 const TutorPlaceholderSVG = () => (
   <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="avatar-placeholder-svg">
     <circle cx="60" cy="60" r="60" fill="#F0F4F8"/>
@@ -162,55 +165,54 @@ const TutorPlaceholderSVG = () => (
   </svg>
 );
 
-export function TutorStep({ data, onChange, errors }: TutorStepProps) {
+// ===== SUBCOMPONENTE: FORMULARIO DE UN TUTOR =====
+function TutorForm({
+  data,
+  errors,
+  onChange,
+}: {
+  data: TutorData;
+  errors: { [key: string]: string };
+  onChange: (field: Partial<TutorData>) => void;
+}) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const update = (field: Partial<TutorData>) => {
-    onChange({ ...data, ...field });
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const preview = URL.createObjectURL(file);
-    update({ photoFile: file, photoPreview: preview });
+    onChange({ photoFile: file, photoPreview: preview });
   };
 
   const handleRemovePhoto = () => {
-    update({ photoFile: null, photoPreview: "" });
+    onChange({ photoFile: null, photoPreview: "" });
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const addPhone = () => {
-    update({
+    onChange({
       phones: [
         ...data.phones,
-        {
-          id: crypto.randomUUID(),
-          region: "MX",
-          type: "personal",
-          number: "",
-          note: ""
-        },
+        { id: crypto.randomUUID(), region: "MX", type: "personal", number: "", note: "" },
       ],
     });
   };
 
   const removePhone = (id: string) => {
     if (data.phones.length <= 1) return;
-    update({ phones: data.phones.filter(p => p.id !== id) });
+    onChange({ phones: data.phones.filter(p => p.id !== id) });
   };
 
   const updatePhone = (id: string, field: Partial<Phone>) => {
-    update({
+    onChange({
       phones: data.phones.map(p => p.id === id ? { ...p, ...field } : p),
     });
   };
 
   return (
-    <div className="tutor-step">
+    <div className="tutor-form">
 
-      {/* ===== SECCIÓN SUPERIOR: foto + datos personales ===== */}
+      {/* ===== TOP: foto + datos personales ===== */}
       <div className="tutor-top">
 
         {/* Foto */}
@@ -239,51 +241,50 @@ export function TutorStep({ data, onChange, errors }: TutorStepProps) {
           </div>
         </div>
 
-        {/* NOMBRE COMPLETO */}
+        {/* Nombre + Relación */}
         <div className="form-right">
           <div className="form-section">
-            <h4 className="form-section-title">Nombre Completo</h4>
+            <h4 className="form-section-title">Nombre completo</h4>
             <div className="form-row three-cols">
               <div className="form-field">
                 <label>Nombre <span className="required">*</span></label>
                 <input type="text" placeholder="Ej. Carlos" value={data.name}
-                  onChange={e => update({ name: e.target.value })}
+                  onChange={e => onChange({ name: e.target.value })}
                   className={errors.name ? "input-error" : ""} />
                 {errors.name && <span className="field-error">{errors.name}</span>}
               </div>
               <div className="form-field">
                 <label>Apellido paterno <span className="required">*</span></label>
                 <input type="text" placeholder="Ej. García" value={data.lastNamePaternal}
-                  onChange={e => update({ lastNamePaternal: e.target.value })}
+                  onChange={e => onChange({ lastNamePaternal: e.target.value })}
                   className={errors.lastNamePaternal ? "input-error" : ""} />
                 {errors.lastNamePaternal && <span className="field-error">{errors.lastNamePaternal}</span>}
               </div>
               <div className="form-field">
                 <label>Apellido materno</label>
                 <input type="text" placeholder="Ej. López" value={data.lastNameMaternal}
-                  onChange={e => update({ lastNameMaternal: e.target.value })} />
+                  onChange={e => onChange({ lastNameMaternal: e.target.value })} />
               </div>
             </div>
           </div>
 
-          {/* ===== RELACIÓN ===== */}
-            <div className="form-section">
-                <h4 className="form-section-title">Relación con el niño <span className="required">*</span></h4>
-                <div className="option-cards">
-                {RELATIONSHIPS.map(rel => (
-                    <button key={rel.id} type="button"
-                    className={`option-card ${data.relationship === rel.id ? "selected" : ""}`}
-                    onClick={() => update({ relationship: rel.id as TutorData["relationship"] })}
-                    >
-                    <div className="option-card-icon relation-icon">{rel.icon}</div>
-                    <span className="option-card-label">{rel.label}</span>
-                    </button>
-                ))}
-                </div>
-                {errors.relationship && <span className="field-error">{errors.relationship}</span>}
+          {/* Relación */}
+          <div className="form-section">
+            <h4 className="form-section-title">Relación con el niño <span className="required">*</span></h4>
+            <div className="option-cards">
+              {RELATIONSHIPS.map(rel => (
+                <button key={rel.id} type="button"
+                  className={`option-card ${data.relationship === rel.id ? "selected" : ""}`}
+                  onClick={() => onChange({ relationship: rel.id as TutorData["relationship"] })}
+                >
+                  <div className="option-card-icon relation-icon">{rel.icon}</div>
+                  <span className="option-card-label">{rel.label}</span>
+                </button>
+              ))}
             </div>
+            {errors.relationship && <span className="field-error">{errors.relationship}</span>}
+          </div>
         </div>
-
       </div>
 
       <div className="form-divider" />
@@ -296,19 +297,17 @@ export function TutorStep({ data, onChange, errors }: TutorStepProps) {
             <label>CURP <span className="required">*</span></label>
             <input type="text" placeholder="Ej. GACL850101HDFRZR09"
               value={data.curp}
-              onChange={e => update({ curp: e.target.value.toUpperCase() })}
+              onChange={e => onChange({ curp: e.target.value.toUpperCase() })}
               className={errors.curp ? "input-error" : ""}
-              maxLength={18}
-            />
+              maxLength={18} />
             {errors.curp && <span className="field-error">{errors.curp}</span>}
           </div>
           <div className="form-field">
             <label>Número de INE</label>
             <input type="text" placeholder="Ej. IDMEX1234567890123"
               value={data.ine}
-              onChange={e => update({ ine: e.target.value.toUpperCase() })}
-              maxLength={20}
-            />
+              onChange={e => onChange({ ine: e.target.value.toUpperCase() })}
+              maxLength={20} />
           </div>
         </div>
       </div>
@@ -326,89 +325,37 @@ export function TutorStep({ data, onChange, errors }: TutorStepProps) {
         </div>
         <div className="phones-list">
           {data.phones.map((phone, index) => (
-           <div key={phone.id} className="phone-card">
-
-            <div className="phone-card-header">
-              <span className="phone-card-title">
-                Teléfono {index + 1}
-              </span>
-
-              <button
-                type="button"
-                className="phone-remove-btn"
-                onClick={() => removePhone(phone.id)}
-                disabled={data.phones.length <= 1}
-                title="Eliminar teléfono"
-              >
-                <FiTrash2 size={15} />
-              </button>
+            <div key={phone.id} className="phone-card">
+              <div className="phone-card-header">
+                <span className="phone-card-title">Teléfono {index + 1}</span>
+                <button type="button" className="phone-remove-btn"
+                  onClick={() => removePhone(phone.id)}
+                  disabled={data.phones.length <= 1}>
+                  <FiTrash2 size={15} />
+                </button>
+              </div>
+              <div className="phone-card-content">
+                <select className="phone-type-select" value={phone.type}
+                  onChange={e => updatePhone(phone.id, { type: e.target.value as PhoneType })}>
+                  {Object.entries(PHONE_TYPE_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+                <select className="phone-region-select" value={phone.region}
+                  onChange={e => updatePhone(phone.id, { region: e.target.value as PhoneRegion })}>
+                  <option value="MX">🇲🇽 +52</option>
+                  <option value="US">🇺🇸 +1</option>
+                </select>
+                <input type="tel" className="phone-number-input"
+                  placeholder={phone.region === "US" ? "(201) 555-1234" : "686 123 4567"}
+                  value={phone.number}
+                  onChange={e => updatePhone(phone.id, { number: e.target.value })} />
+              </div>
+              <textarea className="phone-note-input" rows={2}
+                placeholder="Ej. Llamar aquí durante horario laboral (7:00am - 5:00pm)"
+                value={phone.note}
+                onChange={e => updatePhone(phone.id, { note: e.target.value })} />
             </div>
-
-            <div className="phone-card-content">
-
-              {/* Tipo */}
-              <select
-                className="phone-type-select"
-                value={phone.type}
-                onChange={(e) =>
-                  updatePhone(phone.id, {
-                    type: e.target.value as PhoneType,
-                  })
-                }
-              >
-                {Object.entries(PHONE_TYPE_LABELS).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-
-              {/* Región */}
-              <select
-                className="phone-region-select"
-                value={phone.region}
-                onChange={(e) =>
-                  updatePhone(phone.id, {
-                    region: e.target.value as "MX" | "US",
-                  })
-                }
-              >
-                <option value="MX">🇲🇽 +52</option>
-                <option value="US">🇺🇸 +1</option>
-              </select>
-
-              {/* Número */}
-              <input
-                type="tel"
-                className="phone-number-input"
-                placeholder={
-                  phone.region === "US"
-                    ? "(201) 555-1234"
-                    : "686 123 4567"
-                }
-                value={phone.number}
-                onChange={(e) =>
-                  updatePhone(phone.id, {
-                    number: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            {/* Nota */}
-            <textarea
-              className="phone-note-input"
-              rows={2}
-              placeholder="Ej. Llamar aquí durante horario laboral (7:00am - 5:00pm)"
-              value={phone.note}
-              onChange={(e) =>
-                updatePhone(phone.id, {
-                  note: e.target.value,
-                })
-              }
-            />
-
-          </div>
           ))}
         </div>
         {errors.phones && <span className="field-error">{errors.phones}</span>}
@@ -424,18 +371,16 @@ export function TutorStep({ data, onChange, errors }: TutorStepProps) {
             <label>Calle y número <span className="required">*</span></label>
             <input type="text" placeholder="Ej. Av. Reforma 123"
               value={data.street}
-              onChange={e => update({ street: e.target.value })}
-              className={errors.street ? "input-error" : ""}
-            />
+              onChange={e => onChange({ street: e.target.value })}
+              className={errors.street ? "input-error" : ""} />
             {errors.street && <span className="field-error">{errors.street}</span>}
           </div>
           <div className="form-field">
             <label>Colonia <span className="required">*</span></label>
             <input type="text" placeholder="Ej. Centro"
               value={data.neighborhood}
-              onChange={e => update({ neighborhood: e.target.value })}
-              className={errors.neighborhood ? "input-error" : ""}
-            />
+              onChange={e => onChange({ neighborhood: e.target.value })}
+              className={errors.neighborhood ? "input-error" : ""} />
             {errors.neighborhood && <span className="field-error">{errors.neighborhood}</span>}
           </div>
         </div>
@@ -444,49 +389,42 @@ export function TutorStep({ data, onChange, errors }: TutorStepProps) {
             <label>Ciudad <span className="required">*</span></label>
             <input type="text" placeholder="Ej. Mexicali"
               value={data.city}
-              onChange={e => update({ city: e.target.value })}
-              className={errors.city ? "input-error" : ""}
-            />
+              onChange={e => onChange({ city: e.target.value })}
+              className={errors.city ? "input-error" : ""} />
             {errors.city && <span className="field-error">{errors.city}</span>}
           </div>
           <div className="form-field">
             <label>Estado <span className="required">*</span></label>
             <input type="text" placeholder="Ej. Baja California"
               value={data.state}
-              onChange={e => update({ state: e.target.value })}
-              className={errors.state ? "input-error" : ""}
-            />
+              onChange={e => onChange({ state: e.target.value })}
+              className={errors.state ? "input-error" : ""} />
             {errors.state && <span className="field-error">{errors.state}</span>}
           </div>
           <div className="form-field">
             <label>Código postal</label>
             <input type="text" placeholder="Ej. 21000"
               value={data.zipCode}
-              onChange={e => update({ zipCode: e.target.value })}
-              maxLength={5}
-            />
+              onChange={e => onChange({ zipCode: e.target.value })}
+              maxLength={5} />
           </div>
         </div>
       </div>
 
-      {/* ===== HUELLAS DIGITALES ===== */}
       <div className="form-divider" />
 
+      {/* ===== HUELLAS DIGITALES ===== */}
       <div className="form-section">
         <div className="section-header-row">
           <div>
             <h4 className="form-section-title">Huellas digitales <span className="required">*</span></h4>
-            <p className="section-subtitle">
-              Requeridas para autorizar la entrega del menor
-            </p>
+            <p className="section-subtitle">Requeridas para autorizar la entrega del menor</p>
           </div>
           <button type="button" className="btn-add">
             <FiPlus size={14} />
             Agregar huella
           </button>
         </div>
-
-        {/* Estado vacío */}
         <div className="fingerprints-empty">
           <div className="fingerprints-empty-icon">
             <FingerprintPattern size={48} strokeWidth={1.2} />
@@ -497,7 +435,90 @@ export function TutorStep({ data, onChange, errors }: TutorStepProps) {
           </p>
         </div>
       </div>
-      
+
+    </div>
+  );
+}
+
+// ===== COMPONENTE PRINCIPAL =====
+export function TutorStep({ tutors, onChange, errors }: TutorStepProps) {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const addTutor = () => {
+    const newTutors = [...tutors, newTutorData()];
+    onChange(newTutors);
+    setActiveTab(newTutors.length - 1);
+  };
+
+  const removeTutor = (index: number) => {
+    if (tutors.length <= 1) return;
+    const updated = tutors.filter((_, i) => i !== index);
+    onChange(updated);
+    setActiveTab(Math.min(activeTab, updated.length - 1));
+  };
+
+  const updateTutor = (index: number, field: Partial<TutorData>) => {
+    onChange(tutors.map((t, i) => i === index ? { ...t, ...field } : t));
+  };
+
+  const currentTutor = tutors[activeTab];
+
+  const tutorErrors = Object.fromEntries(
+    Object.entries(errors)
+      .filter(([k]) => k.startsWith(`tutor_${activeTab}_`))
+      .map(([k, v]) => [k.replace(`tutor_${activeTab}_`, ""), v])
+  );
+
+  return (
+    <div className="tutor-step">
+
+      {/* ===== TABS ===== */}
+      <div className={`tutor-tabs ${tutors.length <= 1 ? "single-tutor" : ""}`}>
+        {tutors.length > 1 && (
+          <div className="tutor-tabs-list">
+            {tutors.map((t, i) => (
+              <div key={t.id} className={`tutor-tab ${activeTab === i ? "active" : ""}`}>
+                <div className="tutor-tab-btn" onClick={() => setActiveTab(i)}>
+                  <div className={`tutor-tab-avatar ${activeTab === i ? "active" : ""}`}>
+                    {t.photoPreview
+                      ? <img src={t.photoPreview} alt="" />
+                      : t.name?.[0]?.toUpperCase() || (i + 1)
+                    }
+                  </div>
+                  <span className="tutor-tab-label">
+                    {t.relationship ? RELATIONSHIP_LABELS[t.relationship] : `Adulto responsable`}
+                  </span>
+                  {Object.keys(errors).some(k => k.startsWith(`tutor_${i}_`)) && (
+                    <span className="tutor-tab-error-dot" />
+                  )}
+                  {tutors.length > 1 && (
+                    <button type="button" className="tutor-tab-remove"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Evita que se cambie de tab activo al eliminar
+                        removeTutor(i);
+                      }} title="Eliminar tutor">
+                      <FiTrash2 size={12} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        <button type="button" className="btn-add tutor-add-btn" onClick={addTutor}>
+          <FiPlus size={14} />
+          Agregar tutor
+        </button>
+      </div>
+
+      {/* ===== FORMULARIO DEL TUTOR ACTIVO ===== */}
+      <TutorForm
+        key={currentTutor.id}
+        data={currentTutor}
+        errors={tutorErrors}
+        onChange={(field) => updateTutor(activeTab, field)}
+      />
+
     </div>
   );
 }

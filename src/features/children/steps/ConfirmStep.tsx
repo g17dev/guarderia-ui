@@ -33,7 +33,7 @@ interface TutorInfo {
 interface ConfirmStepProps {
   formData: {
     basicInfo: BasicInfo;
-    tutor: TutorInfo;
+    tutors: TutorInfo[];
     health: HealthData;
   };
   onEdit: (step: number) => void;
@@ -74,7 +74,8 @@ function ConfirmRow({ label, value }: { label: string; value?: string | null }) 
 }
 
 export function ConfirmStep({ formData, onEdit }: ConfirmStepProps) {
-  const { basicInfo, tutor, health } = formData;
+  const { basicInfo, tutors, health } = formData;
+  const tutor = tutors[0];
 
   const childFullName = [basicInfo.name, basicInfo.lastNamePaternal, basicInfo.lastNameMaternal]
     .filter(Boolean).join(" ") || "Sin nombre";

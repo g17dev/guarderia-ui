@@ -4,6 +4,158 @@
   gap: 0;
 }
 
+/* ===== TABS ===== */
+.tutor-tabs {
+  position: sticky;
+  top: -28px; /* Cancela el padding-top de 28px del contenedor padre .step-panel-body */
+  margin-top: -28px; /* Eleva las pestañas para cubrir el espacio del padding superior */
+  padding-top: 28px; /* Restaura el espaciado interno superior para que se vea bien alineado */
+  padding-bottom: 16px; /* Espaciado inferior de las pestañas */
+  background-color: var(--bg, #f5f6fa); /* Usa la variable global de fondo de la aplicación para mezclarse perfectamente */
+  z-index: 10; /* Asegura que las pestañas queden siempre por encima de los inputs y otros elementos */
+  border-bottom: 1px solid #e0e0e0; /* Agrega una sutil línea divisoria que separa las pestañas del formulario al hacer scroll */
+  margin-bottom: 24px; /* Espacio inferior respecto al formulario */
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tutor-tabs.single-tutor {
+  position: static; /* No es sticky cuando hay un solo tutor */
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-color: transparent;
+  border-bottom: none;
+  margin-bottom: 20px;
+  justify-content: flex-end; /* Alinea el botón "Agregar tutor" a la derecha */
+}
+
+@keyframes fadeInSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tutor-tabs-list {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+  animation: fadeInSlideDown 0.25s ease-out forwards;
+}
+
+.tutor-tab {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tutor-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  background: white;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tutor-tab-btn:hover {
+  border-color: #004B92;
+  color: #004B92;
+}
+
+.tutor-tab.active .tutor-tab-btn {
+  border-color: #004B92;
+  background: #EEF3FB;
+  color: #004B92;
+}
+
+.tutor-tab-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  color: #666;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.tutor-tab-avatar.active {
+  background: #004B92;
+  color: white;
+}
+
+.tutor-tab-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tutor-tab-label {
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.tutor-tab-error-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #dc2626;
+  flex-shrink: 0;
+}
+
+.tutor-tab-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #999;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 4px;
+}
+
+.tutor-tab-remove:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.tutor-add-btn {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ===== FORMULARIO ===== */
+.tutor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
 /* ===== TOP: foto + datos ===== */
 .tutor-top {
   display: grid;
@@ -230,9 +382,6 @@
 }
 
 /* ===== TELÉFONOS ===== */
-
-/* ===== TELÉFONOS ===== */
-
 .phones-list {
   display: flex;
   flex-direction: column;
@@ -306,23 +455,15 @@
 
 .phone-note-input {
   width: 100%;
-
   min-height: 72px;
-
   padding: 10px 12px;
-
   border: 1.5px solid #e0e0e0;
   border-radius: 8px;
-
   background: white;
-
   font-size: 13px;
   font-family: inherit;
-
   resize: vertical;
-
   outline: none;
-
   transition: all 0.2s ease;
 }
 
@@ -335,18 +476,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
   width: 34px;
   height: 34px;
-
   border: none;
   border-radius: 8px;
-
   background: #fee2e2;
   color: #dc2626;
-
   cursor: pointer;
-
   transition: all 0.2s ease;
 }
 
@@ -386,7 +522,6 @@
   margin: 2px 0 0 0;
 }
 
-/* Estado vacío */
 .fingerprints-empty {
   display: flex;
   flex-direction: column;
@@ -425,7 +560,6 @@
   line-height: 1.5;
 }
 
-/* Lista de huellas */
 .fingerprints-list {
   display: flex;
   flex-direction: column;
@@ -443,9 +577,7 @@
   transition: border-color 0.2s ease;
 }
 
-.fingerprint-item:hover {
-  border-color: #004B92;
-}
+.fingerprint-item:hover { border-color: #004B92; }
 
 .fingerprint-item-icon {
   width: 44px;

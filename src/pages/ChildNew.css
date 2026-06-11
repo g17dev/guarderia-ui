@@ -39,6 +39,35 @@
   text-align: left;
 }
 
+.progress-bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.progress-bar-track {
+  flex: 1;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 99px;
+  overflow: hidden;
+  max-width: 300px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #004B92;
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.progress-bar-label {
+  font-size: 12px;
+  color: #999;
+  white-space: nowrap;
+}
+
 /* ===== BODY ===== */
 .child-new-body {
   display: grid;
