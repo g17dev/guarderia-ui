@@ -10,6 +10,7 @@ export interface Child {
   enrollmentDate: string;
   status: "active" | "inactive";
   attendances?: Attendance[];
+  slug: string;
 }
 export interface Tutor {
   name: string;

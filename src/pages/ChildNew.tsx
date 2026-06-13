@@ -139,7 +139,6 @@ export function ChildNew() {
         : i === currentStep + 1 ? "current" as const
         : "pending" as const,
     }));
-    setSteps(updated);
     setCurrentStep(currentStep + 1);
   };
 

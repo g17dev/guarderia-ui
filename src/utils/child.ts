@@ -34,3 +34,12 @@ export function getAge(birthDate: string): number {
     (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate());
   return notHadBirthdayYet ? age - 1 : age;
 }
+
+export function generateSlug(name: string, lastName: string): string {
+  return `${name}-${lastName}`
+    .toLowerCase()
+    .normalize("NFD")                        // descompone acentos
+    .replace(/[\u0300-\u036f]/g, "")         // elimina los acentos
+    .replace(/[^a-z0-9]+/g, "-")            // reemplaza caracteres especiales
+    .replace(/^-|-$/g, "");                  // quita guiones al inicio/fin
+}

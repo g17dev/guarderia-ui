@@ -5,24 +5,28 @@ import { Breadcrumbs } from "../BreadCrumbs";
 import "./AppLayout.css";
 
 const ROUTE_LABELS: Record<string, string> = {
-  dashboard:  "Dashboard",
-  children:   "Niños",
-  new:        "Nuevo niño",
-  access:     "Control de acceso",
+  dashboard: "Dashboard",
+  children:  "Niños",
+  new:       "Nuevo niño",
+  access:    "Control de acceso",
+  handover:  "Registro de salida",
 };
 
 function useBreadcrumbs() {
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const segments = pathname.split("/").filter(Boolean);
 
-  // Solo mostrar si hay más de un segmento
   if (segments.length <= 1) return null;
 
   return segments.map((segment, index) => {
     const to = "/" + segments.slice(0, index + 1).join("/");
     const isLast = index === segments.length - 1;
+
+    // Si está en el mapa lo usa, si no busca en el state.name
+    const label = ROUTE_LABELS[segment] ?? (state?.name as string) ?? segment;
+
     return {
-      label: ROUTE_LABELS[segment] ?? segment,
+      label,
       to: isLast ? undefined : to,
     };
   });

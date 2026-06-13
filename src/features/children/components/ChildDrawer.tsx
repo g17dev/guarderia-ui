@@ -1,7 +1,7 @@
 import { X, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ChildAvatar } from "./ChildAvatar";
-import { getAge } from "../../../utils/child";
+import { getAge, generateSlug } from "../../../utils/child";
 import type { Child } from "../../../types/child";
 import "./ChildDrawer.css";
 
@@ -107,11 +107,13 @@ export function ChildDrawer({ child, onClose }: ChildDrawerProps) {
               </div>
             </div>
 
-            {/* Footer fuera de drawer-content */}
             <div className="drawer-footer">
               <button
                 className="drawer-btn-primary"
-                onClick={() => navigate(`/children/${child.id}`)}
+                onClick={() => navigate(
+                  `/children/${generateSlug(child.name, child.lastName)}`,
+                  { state: { id: child.id, name: `${child.name} ${child.lastName}` } }
+                )}
               >
                 <ExternalLink size={15} />
                 Ver perfil completo
