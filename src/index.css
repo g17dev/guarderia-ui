@@ -1,57 +1,172 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
+
 :root {
-  --bg: #f5f6fa;
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    --bg: #f5f6fa;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+    --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+    --heading: system-ui, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, Consolas, monospace;
+
+    font: 18px/145% var(--sans);
+    letter-spacing: 0.18px;
+    background: var(--bg);
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+
+    --destructive: oklch(0.577 0.245 27.325);
+
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+
+    --radius: 0.625rem;
+
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@media (max-width: 1024px) {
+    :root {
+        font-size: 16px;
+    }
 }
 
-html, body, #root {
-  height: 100%;
-  width: 100%;
+/* TU RESET ORIGINAL */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body,
+#root {
+    width: 100%;
+    height: 100%;
 }
 
 body {
-  font-family: var(--sans);
-  color: #1a1a1a;
-  background: var(--bg);
+    font-family: var(--sans);
+    color: #1a1a1a;
+    background: var(--bg);
 }
 
 button {
-  font-family: inherit;
-  cursor: pointer;
+    font-family: inherit;
+    cursor: pointer;
 }
 
 a {
-  text-decoration: none;
-  color: inherit;
+    color: inherit;
+    text-decoration: none;
 }
 
-ul, ol {
-  list-style: none;
+ul,
+ol {
+    list-style: none;
 }
 
 img {
-  max-width: 100%;
-  display: block;
+    display: block;
+    max-width: 100%;
 }
 
 table {
-  border-collapse: collapse;
+    border-collapse: collapse;
+}
+
+/* MAPEO PARA SHADCN */
+
+@theme inline {
+    --font-heading: var(--heading);
+
+    /* IMPORTANTE:
+       usa TU fuente, no Geist por defecto */
+    --font-sans: var(--sans);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+}
+
+/* SOLO LO NECESARIO PARA SHADCN */
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+}
+
+/* DARK MODE */
+
+.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
 }

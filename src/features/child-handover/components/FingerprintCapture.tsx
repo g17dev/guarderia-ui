@@ -12,9 +12,36 @@ type FingerprintCaptureProps = {
 
 type FlowState = 'checking_sensor' | 'sensor_ready' | 'ready_to_verify' | 'scanning' | 'success';
 
-export const FingerprintCapture = ({ 
-  onVerificationSuccess, 
-  onVerificationError, 
+export const FingerprintCapture = ({
+  onVerificationSuccess,
+  Based on the given diagnostic errors, it seems like `onVerificationError` is not being used or read anywhere in the component. If you want to handle an error state in this component, a good idea would be to use try/catch blocks for handling any potential runtime errors. Here's how we can modify the code:
+
+  ```jsx
+    const handleVerify = () => {
+      if (flowState !== 'ready_to_verify') return;
+
+      console.log("🔍 Iniciando escaneo...");
+      setFlowState('scanning');
+
+      try {
+        setTimeout(() => {
+          // Assuming successful verification pathway...
+          console.log("✅ Verificación exitosa");
+          setFlowState('success');
+          setVerificationSuccess(true);
+          onVerificationSuccess();
+        }, 2000);
+      } catch (error) {
+        // Handle error here...
+        if (typeof onVerificationError === 'function') {
+          onVerificationError(String(error));
+        } else {
+          console.log("onVerificationError is not a function");
+        }
+      }
+    };
+  ```
+  In this code, we have wrapped the timeout function inside a try/catch block to catch any runtime errors during verification. If an error occurs, it will be caught and passed to `onVerificationError` if it's a function. Otherwise, a console log statement is used to inform that `onVerificationError` is not a function.
   isActive,
   isVerified = false
 }: FingerprintCaptureProps) => {
@@ -31,16 +58,16 @@ export const FingerprintCapture = ({
   // Simular el flujo completo del sensor
   useEffect(() => {
     if (!isActive || isVerified) return;
-    
+
     clearAllTimeouts();
 
     const timeout2 = setTimeout(() => {
         console.log("👆 Sensor listo - Presiona Verificar");
         setFlowState('ready_to_verify');
       }, 2000);
-    
+
     timeoutsRef.current.push(timeout2);
-    
+
     return () => {
       clearAllTimeouts();
     };
@@ -56,23 +83,23 @@ export const FingerprintCapture = ({
 
   const handleVerify = () => {
     if (flowState !== 'ready_to_verify') return;
-    
+
     console.log("🔍 Iniciando escaneo...");
     setFlowState('scanning');
-    
+
     const timeout = setTimeout(() => {
       console.log("✅ Verificación exitosa");
       setFlowState('success');
       setVerificationSuccess(true);
       onVerificationSuccess();
     }, 2000);
-    
+
     timeoutsRef.current.push(timeout);
   };
 
   const getDisplayMessage = () => {
     if (isVerified || verificationSuccess) return "✅ Huella verificada correctamente";
-    
+
     switch (flowState) {
       case 'checking_sensor':
         return "Verificando sensor de huella...";
@@ -111,13 +138,13 @@ export const FingerprintCapture = ({
     <div className="fingerprint-capture">
       <div className="fingerprint-container">
         <div className={`fingerprint-animation ${getAnimationState()}`}>
-          <FingerprintPattern 
-            size={140} 
+          <FingerprintPattern
+            size={140}
             color={getIconColor()}
             strokeWidth={1.5}
             className={`fingerprint-icon ${flowState === 'scanning' ? 'pulse' : ''} ${flowState === 'ready_to_verify' ? 'glow' : ''}`}
           />
-          
+
           {flowState === 'scanning' && <div className="fingerprint-scan-line" />}
           {flowState === 'scanning' && <div className="fingerprint-ripple" />}
         </div>
