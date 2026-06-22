@@ -1,25 +1,16 @@
 :root {
   --circle-size: 40px;
-  --radius: calc(var(--circle-size) / 2);
   --primary-color: #004B92;
   --completed-color: #209e27;
   --pending-border: #ddd;
   --transition-speed: 0.5s;
 }
 
-/* STEPPER */
+/* ===== BASE ===== */
 .stepper {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
   position: relative;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  min-height: 100px;
 }
 
-/* SVG para las líneas de conexión */
 .stepper-svg {
   position: absolute;
   top: 0;
@@ -30,34 +21,60 @@
   z-index: 0;
 }
 
-/* Línea base (gris) */
-.line-base {
-  stroke: #ddd;
-  stroke-width: 2;
-  stroke-linecap: round;
+/* ===== HORIZONTAL ===== */
+.stepper-horizontal {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100px;
 }
 
-/* Línea de progreso animada */
-.line-progress {
-  stroke: var(--primary-color);
-  stroke-width: 4;
-  stroke-linecap: round;
-  transition: stroke-dashoffset var(--transition-speed) ease-in-out;
-}
-
-/* STEP */
-.step {
+.stepper-horizontal .step {
   text-align: center;
   z-index: 2;
   flex: 1;
-  position: relative;
 }
 
-/* CÍRCULO */
+.stepper-horizontal .content {
+  margin-top: 10px;
+}
+
+.stepper-horizontal .circle {
+  margin: 0 auto;
+}
+/* ===== VERTICAL ===== */
+.stepper-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+.stepper-vertical .step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  z-index: 2;
+  padding: 0 0 32px 0;
+  min-width: 0;
+}
+
+.stepper-vertical .step:last-child {
+  padding-bottom: 0;
+}
+
+.stepper-vertical .content {
+  padding-top: 8px;
+  min-width: 0;
+}
+
+/* ===== CÍRCULO ===== */
 .circle {
   width: 40px;
   height: 40px;
-  margin: 0 auto;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -65,6 +82,7 @@
   background: white;
   transition: all 0.3s ease;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
 .circle.completed {
@@ -85,22 +103,20 @@
   background: white;
 }
 
-.content {
-  margin-top: 10px;
-}
-
-h3 {
-  margin: 5px 0;
+/* ===== CONTENIDO ===== */
+.content h3 {
+  margin: 0 0 4px 0;
   font-size: 0.9rem;
+  color: #1a1a1a;
+  word-break: break-word;
 }
 
 .badge {
   border-radius: 10px;
   font-size: 12px;
-  transition: all 0.3s ease;
   display: inline-block;
-  padding: 0 10px;
-  font-weight: bold;
+  padding: 2px 10px;
+  font-weight: 600;
 }
 
 .badge.completed {
@@ -116,4 +132,18 @@ h3 {
 .badge.pending {
   background: #eee;
   color: #636262;
+}
+
+/* ===== LÍNEAS ===== */
+.line-base {
+  stroke: #ddd;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.line-progress {
+  stroke: var(--primary-color);
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--transition-speed) ease-in-out;
 }

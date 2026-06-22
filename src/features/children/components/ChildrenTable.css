@@ -1,0 +1,227 @@
+/* ===== PÁGINA ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.children-page {
+  padding: 28px 32px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.children-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.children-page-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.children-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e8f0fe;
+  color: #004B92;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+  margin-left: 10px;
+}
+
+/* ===== TABLA ===== */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  background: white;
+}
+
+.children-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* Encabezados */
+.children-table thead tr {
+  border-bottom: 1px solid #e0e0e0;
+  background: #fafafa;
+}
+
+.children-table th {
+  padding: 12px;
+  padding-left: 15px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.children-table th:last-child {
+  border-right: none;
+}
+
+/* Filas */
+.children-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s ease;
+}
+
+.children-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.children-table tbody tr:hover {
+  background: #f8faff;
+}
+
+.children-table td {
+  padding: 2px;
+  padding-left: 15px;
+  color: #333;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.children-table td:last-child {
+  border-right: none;
+}
+
+/* Celda niño */
+.td-child {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  min-width: 220px;
+}
+
+/* Celda tutor */
+.td-tutor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+}
+
+.tutor-name {
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.tutor-phone {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-classroom {
+  background: #e8f0fe;
+  color: #004B92;
+}
+
+.badge-active {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.badge-inactive {
+  background: #f3f4f6;
+  color: #999;
+}
+
+/* Acciones */
+.td-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  min-width: 90px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn-view {
+  background: #e8f0fe;
+  color: #004B92;
+}
+
+.action-btn-view:hover {
+  background: #004B92;
+  color: white;
+}
+
+.action-btn-delete {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.action-btn-delete:hover {
+  background: #dc2626;
+  color: white;
+}
+
+/* Empty state */
+.table-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #999;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+}
+
+.td-child-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  max-width: 100px;
+}
+
+.td-tutor-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.td-actions-inner {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  min-width: 90px;
+}

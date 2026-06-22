@@ -1,0 +1,257 @@
+.basic-info-step {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* ===== FOTO ===== */
+.photo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.photo-preview {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #EEF3FB;
+  border: 3px dashed #B3CAEA;
+  transition: border-color 0.2s ease;
+}
+
+.photo-preview:hover {
+  border-color: #004B92;
+}
+
+.avatar-placeholder-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.photo-remove:hover {
+  background: #dc2626;
+}
+
+.photo-upload-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.photo-upload-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.photo-upload-hint {
+  font-size: 11px;
+  color: #999;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.photo-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1.5px solid #004B92;
+  border-radius: 8px;
+  background: white;
+  color: #004B92;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.photo-upload-btn:hover {
+  background: #004B92;
+  color: white;
+}
+
+.photo-input-hidden {
+  display: none;
+}
+
+/* ===== FORMULARIO DERECHA ===== */
+.form-right {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* ===== SECCIONES ===== */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+/* ===== CAMPOS ===== */
+.form-row {
+  display: grid;
+  gap: 12px;
+}
+
+.three-cols { grid-template-columns: 1fr 1fr 1fr; }
+.one-col    { grid-template-columns: 200px; }
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-field input {
+  height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #1a1a1a;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-field input:focus {
+  border-color: #004B92;
+  box-shadow: 0 0 0 3px rgba(0,75,146,0.08);
+}
+
+.form-field input.input-error {
+  border-color: #dc2626;
+}
+
+.required {
+  color: #dc2626;
+}
+
+.field-error {
+  font-size: 11px;
+  color: #dc2626;
+}
+
+/* ===== OPTION CARDS ===== */
+.option-cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  min-width: 90px;
+}
+
+.option-card:hover {
+  border-color: #004B92;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,75,146,0.08);
+}
+
+.option-card.selected {
+  border-color: #004B92;
+  background: #EEF3FB;
+}
+
+.option-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.gender-male  { background: #DBEAFE; color: #1D4ED8; }
+.gender-female { background: #FCE7F3; color: #BE185D; }
+.classroom-icon { background: #EEF3FB; color: #004B92; }
+
+.option-card.selected .classroom-icon { background: #004B92; color: white; }
+.option-card.selected .gender-male    { background: #1D4ED8; color: white; }
+.option-card.selected .gender-female  { background: #BE185D; color: white; }
+
+.option-card-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.option-card-sublabel {
+  font-size: 11px;
+  color: #999;
+  margin-top: -4px;
+}
+
+.option-card-classroom { 
+    min-width: 110px; 
+}
+
+.form-row-horizontal {
+  display: flex;
+  gap: 42px;
+  align-items: flex-start;
+}
