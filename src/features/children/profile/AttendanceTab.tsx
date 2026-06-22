@@ -17,63 +17,60 @@ type AttendanceRecord = {
   location: string;
 };
 
-const MOCK_ATTENDANCE: AttendanceRecord[] = [
-  {
-    date: "2024-03-15",
-    entry: "07:45",
-    exit: "14:30",
-    status: "present",
-    location: "3890 Poplar Dr, Mexicali, BC, 21000",
-  },
-  {
-    date: "2024-03-14",
-    entry: "08:00",
-    exit: "14:15",
-    status: "present",
-    location: "3890 Poplar Dr, Mexicali, BC, 21000",
-  },
-  {
-    date: "2024-03-13",
-    entry: "-",
-    exit: "-",
-    status: "absent",
-    location: "3890 Poplar Dr, Mexicali, BC, 21000",
-  },
-  {
-    date: "2024-03-12",
-    entry: "07:50",
-    exit: "14:30",
-    status: "present",
-    location: "Av. Reforma 345, Mexicali, BC, 21000",
-  },
-  {
-    date: "2024-03-11",
-    entry: "08:10",
-    exit: "13:00",
-    status: "early",
-    location: "Av. Reforma 345, Mexicali, BC, 21000",
-  },
+const LOCATIONS = [
+  "3890 Poplar Dr, Mexicali, BC, 21000",
+  "Av. Reforma 345, Mexicali, BC, 21000",
 ];
 
-const ATTENDANCE_STATUS_CONFIG = {
-  present: {
-    label: "Presente",
-    bg: "#dcfce7",
-    text: "#16a34a",
-  },
+const STATUS_POOL: AttendanceStatus[] = [
+  "present",
+  "present",
+  "present",
+  "present",
+  "absent",
+  "early",
+];
 
-  absent: {
-    label: "Ausente",
-    bg: "#fee2e2",
-    text: "#dc2626",
-  },
+function generateMockAttendance(
+  startStr: string,
+  endStr: string,
+): AttendanceRecord[] {
+  const records: AttendanceRecord[] = [];
+  const [sy, sm, sd] = startStr.split("-").map(Number);
+  const [ey, em, ed] = endStr.split("-").map(Number);
+  const current = new Date(sy, sm - 1, sd);
+  const endDate = new Date(ey, em - 1, ed);
 
-  early: {
-    label: "Salida temprana",
-    bg: "#fef3c7",
-    text: "#d97706",
-  },
-};
+  while (current <= endDate) {
+    const dayOfWeek = current.getDay();
+    // Saltar fines de semana (sábado y domingo)
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      const dateStr = format(current, "yyyy-MM-dd");
+      const day = current.getDate();
+      const status = STATUS_POOL[day % STATUS_POOL.length];
+      const location = LOCATIONS[day % LOCATIONS.length];
+
+      let entry = "-";
+      let exit = "-";
+      if (status !== "absent") {
+        const entryHour = 7 + (day % 4 === 0 ? 1 : 0);
+        const entryMin = (day * 7) % 60;
+        entry = `${String(entryHour).padStart(2, "0")}:${String(entryMin).padStart(2, "0")}`;
+
+        const exitHour = 13 + (day % 5 === 0 ? 1 : 0);
+        const exitMin = (day * 13) % 60;
+        exit = `${String(exitHour).padStart(2, "0")}:${String(exitMin).padStart(2, "0")}`;
+      }
+
+      records.push({ date: dateStr, entry, exit, status, location });
+    }
+    current.setDate(current.getDate() + 1);
+  }
+
+  return records;
+}
+
+const MOCK_ATTENDANCE = generateMockAttendance("2026-06-15", "2026-06-21");
 
 interface EventCardProps {
   selectedDate: Date;
@@ -197,9 +194,7 @@ function EventCard({
 }
 
 export function AttendanceTab({ childId }: { childId: string }) {
-  const [selectedDate, setSelectedDate] = useState<Date>(
-    new Date("2024-03-15"),
-  );
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [showTopFade, setShowTopFade] = useState(false);
@@ -268,7 +263,6 @@ export function AttendanceTab({ childId }: { childId: string }) {
     const isEntryValid = selectedRecord.entry !== "-";
     const isExitValid = selectedRecord.exit !== "-";
 
-    const statusConfig = ATTENDANCE_STATUS_CONFIG[selectedRecord.status];
     return [
       {
         id: "entry",
@@ -307,8 +301,8 @@ export function AttendanceTab({ childId }: { childId: string }) {
             }}
             captionLayout="dropdown"
             showOutsideDays
-            startMonth={new Date(2020, 0)}
-            endMonth={new Date()}
+            startMonth={new Date(2026, 5)}
+            endMonth={new Date(2026, 5)}
             modifiers={modifiers}
             modifiersClassNames={{
               present: "attendance-present",
@@ -352,7 +346,7 @@ export function AttendanceTab({ childId }: { childId: string }) {
               <p className="no-record-title">Sin registros</p>
 
               <p className="no-record-desc">
-                No se encontró asistencia para el día{" "}
+                No se encontraron registros para el día{" "}
                 {format(selectedDate, "PPP", { locale: es })}
               </p>
             </div>
