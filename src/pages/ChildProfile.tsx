@@ -57,10 +57,7 @@ export function ChildProfile() {
   return (
     <div className="child-profile-page">
       <div className="button-section">
-        <button
-          className="profile-action-btn edit"
-          onClick={() => navigate(`/children/${child.id}/editar`)}
-        >
+        <button className="profile-action-btn edit">
           <FiEdit2 size={15} />
           Editar Perfil
         </button>

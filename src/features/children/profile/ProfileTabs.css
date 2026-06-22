@@ -51,7 +51,7 @@
 }
 
 .attendance-right h3 {
-    margin-bottom: auto;
+    margin-bottom: 20px;
     font-weight: 600;
     margin-left: 10px;
 }
@@ -59,8 +59,34 @@
 .record-details {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     margin-left: 10px;
+    margin-right: 10px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 6px;
+    transition:
+        mask-image 0.2s ease,
+        -webkit-mask-image 0.2s ease;
+}
+
+/* Scrollbar sutil y moderno para record-details */
+.record-details::-webkit-scrollbar {
+    width: 6px;
+}
+
+.record-details::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.record-details::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+
+.record-details::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
 }
 
 /* Empty State */
@@ -124,4 +150,54 @@
     width: 100%;
     font-size: 1.05rem;
     font-weight: 600;
+}
+
+/* ===== EVENT CARDS ===== */
+.event-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background-color: #f8fafc;
+    border: 1px solid #cdced4;
+    border-radius: 14px;
+    transition: all 0.2s ease;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.event-card:hover {
+    transform: translate(-2px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    border-color: #cbd5e1;
+}
+
+.event-card-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.event-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.event-card-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.event-card-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b;
 }
