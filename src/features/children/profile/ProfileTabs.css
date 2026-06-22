@@ -22,8 +22,8 @@
     content: "";
     position: absolute;
     left: 50%;
-    top: 0;
-    bottom: 0;
+    top: -12px;
+    bottom: -12px;
     width: 1px;
     transform: translateX(-50%);
     background-color: #cbd5e1;
@@ -42,7 +42,6 @@
     min-width: 0;
     background: white;
     border-radius: 12px;
-    padding: 24px;
 }
 
 .attendance-right {
@@ -51,170 +50,17 @@
     justify-content: flex-start;
 }
 
-.calendar-container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.calendar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 4px;
-}
-
-.calendar-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1e293b;
-}
-
-.calendar-nav-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    background: white;
-    cursor: pointer;
-    color: #64748b;
-    transition: all 0.2s ease;
-}
-
-.calendar-nav-btn:hover {
-    border-color: #004b92;
-    color: #004b92;
-    background: #f0f7ff;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-}
-
-.calendar-weekday {
-    text-align: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: #94a3b8;
-    text-transform: uppercase;
-    padding: 4px 0;
-}
-
-.calendar-day-cell {
-    position: relative;
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-size: 13px;
+.attendance-right h3 {
+    margin-bottom: auto;
     font-weight: 600;
-    color: #334155;
-    cursor: pointer;
-    user-select: none;
-    transition: all 0.2s ease;
-}
-
-.calendar-day-cell:hover:not(.empty-cell):not(.selected) {
-    background: #004b92;
-    color: #004b92;
-}
-
-.calendar-day-cell.selected {
-    background: #004b92;
-    color: white;
-}
-
-.calendar-day-cell.empty-cell {
-    cursor: default;
-}
-
-.calendar-day-dot {
-    position: absolute;
-    bottom: 4px;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
+    margin-left: 10px;
 }
 
 .record-details {
     display: flex;
     flex-direction: column;
     gap: 20px;
-}
-
-.record-header {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    border-bottom: 1px solid #f1f5f9;
-    padding-bottom: 14px;
-}
-
-.record-date {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1e293b;
-    text-transform: capitalize;
-}
-
-.record-badge-row {
-    display: flex;
-    align-items: center;
-}
-
-.record-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
-
-.record-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    border: 1px solid #f1f5f9;
-    border-radius: 10px;
-    background: #f8fafc;
-}
-
-.record-card-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background: #eff6ff;
-    color: #004b92;
-    font-size: 18px;
-    flex-shrink: 0;
-}
-
-.record-card-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.record-card-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: #64748b;
-    text-transform: uppercase;
-}
-
-.record-card-value {
-    font-size: 14px;
-    font-weight: 700;
-    color: #1e293b;
+    margin-left: 10px;
 }
 
 /* Empty State */
@@ -264,7 +110,6 @@
     }
 }
 /* ===== OVERRIDES PARA EL CALENDARIO DENTRO DE ASISTENCIAS ===== */
-/* Evita que las celdas usen aspect-square y se desborden */
 .attendance-left [data-slot="calendar"] [class*="day"] {
     aspect-ratio: auto !important;
     height: 38px;

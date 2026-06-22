@@ -129,35 +129,9 @@ export function AttendanceTab({ childId }: { childId: string }) {
         {/* DETALLES */}
 
         <div className="attendance-right">
+          <h3>Registros</h3>
           {selectedRecord ? (
-            <div className="record-details">
-              <h3>{format(selectedDate, "PPP", { locale: es })}</h3>
-
-              <div
-                className="attendance-badge"
-                style={{
-                  background: STATUS[selectedRecord.status].bg,
-
-                  color: STATUS[selectedRecord.status].text,
-                }}
-              >
-                {STATUS[selectedRecord.status].label}
-              </div>
-
-              <div className="attendance-fields">
-                <div>
-                  <strong>Entrada</strong>
-
-                  <p>{selectedRecord.entry}</p>
-                </div>
-
-                <div>
-                  <strong>Salida</strong>
-
-                  <p>{selectedRecord.exit}</p>
-                </div>
-              </div>
-            </div>
+            <div className="record-details"></div>
           ) : (
             <div className="attendance-no-record">
               <div className="no-record-icon">📅</div>
