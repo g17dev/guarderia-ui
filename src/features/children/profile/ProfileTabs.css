@@ -158,7 +158,7 @@
     align-items: center;
     gap: 16px;
     padding: 16px;
-    background-color: #f8fafc;
+    background-color: #fcfdfe;
     border: 1px solid #cdced4;
     border-radius: 14px;
     transition: all 0.2s ease;
@@ -174,22 +174,39 @@
 
 .event-card-icon-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+    width: 56px;
+    height: 56px;
     flex-shrink: 0;
+    line-height: 1.2;
+    gap: 8px;
+}
+
+.event-card-day-number {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.event-card-day-name {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #64748b;
 }
 
 .event-card-info {
     display: flex;
     flex-direction: column;
+    border-left: 1.9px solid #cdced4;
+    padding-left: 20px;
     gap: 4px;
 }
 
 .event-card-label {
-    font-size: 11px;
+    font-size: 15px;
     font-weight: 600;
     color: #64748b;
     text-transform: uppercase;
@@ -200,4 +217,55 @@
     font-size: 15px;
     font-weight: 600;
     color: #1e293b;
+}
+
+/* ===== BADGES DENTRO DE EVENT CARDS ===== */
+.event-card-badges {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.event-card-badges .badge {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    line-height: 1.3;
+}
+
+.event-card-badges .badge svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+}
+
+.event-card-badges .badge-type-entry {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.event-card-badges .badge-type-exit {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+.event-card-badges .badge-datetime {
+    background-color: #f1f5f9;
+    color: #64748b;
+}
+
+.event-card-badges .badge-location {
+    background-color: #f1f5f9;
+    color: #64748b;
+    max-width: 155px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

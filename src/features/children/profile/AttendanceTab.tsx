@@ -1,13 +1,7 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import {
-  LogIn,
-  LogOut,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-} from "lucide-react";
+import { LogIn, LogOut, Calendar as CalendarIcon, MapPin } from "lucide-react";
 
 import "./ProfileTabs.css";
 
@@ -20,6 +14,7 @@ type AttendanceRecord = {
   entry: string;
   exit: string;
   status: AttendanceStatus;
+  location: string;
 };
 
 const MOCK_ATTENDANCE: AttendanceRecord[] = [
@@ -28,30 +23,35 @@ const MOCK_ATTENDANCE: AttendanceRecord[] = [
     entry: "07:45",
     exit: "14:30",
     status: "present",
+    location: "3890 Poplar Dr, Mexicali, BC, 21000",
   },
   {
     date: "2024-03-14",
     entry: "08:00",
     exit: "14:15",
     status: "present",
+    location: "3890 Poplar Dr, Mexicali, BC, 21000",
   },
   {
     date: "2024-03-13",
     entry: "-",
     exit: "-",
     status: "absent",
+    location: "3890 Poplar Dr, Mexicali, BC, 21000",
   },
   {
     date: "2024-03-12",
     entry: "07:50",
     exit: "14:30",
     status: "present",
+    location: "Av. Reforma 345, Mexicali, BC, 21000",
   },
   {
     date: "2024-03-11",
     entry: "08:10",
     exit: "13:00",
     status: "early",
+    location: "Av. Reforma 345, Mexicali, BC, 21000",
   },
 ];
 
@@ -76,31 +76,121 @@ const ATTENDANCE_STATUS_CONFIG = {
 };
 
 interface EventCardProps {
-  icon: React.ReactNode;
+  selectedDate: Date;
   label: string;
-  value: string;
+  type: "entry" | "exit" | "status";
+  datetime: string;
+  location: string;
   iconBgColor: string;
   iconColor: string;
 }
 
 function EventCard({
-  icon,
+  selectedDate,
   label,
-  value,
-  iconBgColor,
-  iconColor,
+  type,
+  datetime,
+  location,
 }: EventCardProps) {
+  const MONTHS_SHORT = [
+    "Ene",
+    "Feb",
+    "Mar",
+    "Abr",
+    "May",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dic",
+  ];
+
+  const formatDateTime = (dateStr: string) => {
+    if (!dateStr) return "";
+    const [hours, minutes] = dateStr.split(":").map(Number);
+    const hour12 = hours % 12 || 12;
+    const ampm = hours >= 12 ? "pm" : "am";
+    const monthName = MONTHS_SHORT[selectedDate.getMonth()];
+    const monthCap = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    return `${monthCap} ${selectedDate.getDate()} a las ${hour12}:${String(minutes).padStart(2, "0")}${ampm}`;
+  };
+
+  const truncateLocation = (loc: string, maxChars = 22) => {
+    if (!loc) return "";
+
+    const parts = loc.split(",").map((p) => p.trim());
+    let result = parts[0];
+
+    // Si el primer segmento (calle) ya excede el límite, lo truncamos con "…"
+    if (result.length > maxChars) {
+      return result.slice(0, maxChars).trimEnd() + "…";
+    }
+
+    // Si hay un segundo segmento (ciudad), intentamos agregarlo
+    if (parts[1]) {
+      const withCity = `${result}, ${parts[1]}`;
+      if (withCity.length <= maxChars) {
+        result = withCity;
+      } else {
+        // No cabe completo, agregamos "…" para indicar que hay más info
+        result = result + "…";
+      }
+    } else {
+      // No hay segundo segmento, pero si quedó espacio igual indicamos truncado
+      result = result + "…";
+    }
+
+    return result;
+  };
+
   return (
     <div className="event-card">
-      <div
-        className="event-card-icon-container"
-        style={{ backgroundColor: iconBgColor, color: iconColor }}
-      >
-        {icon}
+      <div className="event-card-icon-container">
+        <span className="event-card-day-number">
+          {format(selectedDate, "d")}
+        </span>
+        <span className="event-card-day-name">
+          {format(selectedDate, "EEEE", { locale: es })}
+        </span>
       </div>
       <div className="event-card-info">
         <span className="event-card-label">{label}</span>
-        <span className="event-card-value">{value}</span>
+        <div className="event-card-details">
+          <div className="event-card-badges">
+            {type === "entry" && (
+              <span className="badge badge-type badge-type-entry">
+                <LogIn size={12} />
+                <span>Entrada</span>
+              </span>
+            )}
+            {type === "exit" && (
+              <span className="badge badge-type badge-type-exit">
+                <LogOut size={12} />
+                <span>Salida</span>
+              </span>
+            )}
+            {type === "status" && (
+              <span className="badge badge-type badge-type-status">
+                <LogIn size={12} />
+                <span>{label}</span>
+              </span>
+            )}
+            {datetime && (
+              <span className="badge badge-datetime">
+                <CalendarIcon size={12} />
+                <span>{formatDateTime(datetime)}</span>
+              </span>
+            )}
+            {location && (
+              <span className="badge badge-location" title={location}>
+                <MapPin size={12} />
+                <span>{truncateLocation(location)}</span>
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -179,36 +269,24 @@ export function AttendanceTab({ childId }: { childId: string }) {
     const isExitValid = selectedRecord.exit !== "-";
 
     const statusConfig = ATTENDANCE_STATUS_CONFIG[selectedRecord.status];
-    const statusIcon = {
-      present: <CheckCircle size={20} />,
-      absent: <XCircle size={20} />,
-      early: <AlertTriangle size={20} />,
-    }[selectedRecord.status];
-
     return [
       {
         id: "entry",
-        icon: <LogIn size={20} />,
+        type: "entry" as const,
         label: "Hora de Entrada",
-        value: isEntryValid ? selectedRecord.entry : "Sin registro",
+        datetime: isEntryValid ? selectedRecord.entry : "",
+        location: selectedRecord.location,
         iconBgColor: isEntryValid ? "#dcfce7" : "#f1f5f9",
         iconColor: isEntryValid ? "#15803d" : "#94a3b8",
       },
       {
         id: "exit",
-        icon: <LogOut size={20} />,
+        type: "exit" as const,
         label: "Hora de Salida",
-        value: isExitValid ? selectedRecord.exit : "Sin registro",
+        datetime: isExitValid ? selectedRecord.exit : "",
+        location: selectedRecord.location,
         iconBgColor: isExitValid ? "#e0f2fe" : "#f1f5f9",
         iconColor: isExitValid ? "#0369a1" : "#94a3b8",
-      },
-      {
-        id: "status",
-        icon: statusIcon,
-        label: "Estado de Asistencia",
-        value: statusConfig.label,
-        iconBgColor: statusConfig.bg,
-        iconColor: statusConfig.text,
       },
     ];
   }, [selectedRecord]);
@@ -257,9 +335,11 @@ export function AttendanceTab({ childId }: { childId: string }) {
               {cardsData.map((card) => (
                 <EventCard
                   key={card.id}
-                  icon={card.icon}
+                  selectedDate={selectedDate}
                   label={card.label}
-                  value={card.value}
+                  type={card.type}
+                  datetime={card.datetime}
+                  location={card.location}
                   iconBgColor={card.iconBgColor}
                   iconColor={card.iconColor}
                 />
