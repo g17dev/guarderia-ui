@@ -201,6 +201,11 @@
     overflow-y: hidden;
 }
 
+.profile-tabs-content.tab-content-full {
+    padding: 20px 24px 24px;
+    overflow: hidden;
+}
+
 .profile-not-found {
     display: flex;
     flex-direction: column;

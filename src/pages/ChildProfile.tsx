@@ -149,7 +149,7 @@ export function ChildProfile() {
           ))}
         </div>
 
-        <div className="profile-tabs-content">
+        <div className={`profile-tabs-content ${activeTab === "payments" ? "tab-content-full" : ""}`}>
           {activeTab === "attendance" && <AttendanceTab childId={child.id} />}
           {activeTab === "payments" && <PaymentsTab childId={child.id} />}
           {activeTab === "incidents" && <IncidentsTab childId={child.id} />}
