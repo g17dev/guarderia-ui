@@ -1,6 +1,18 @@
 import { useState } from "react";
-import { Banknote } from "lucide-react";
+import {
+  Banknote,
+  Clock3,
+  Tag,
+  Calendar,
+  CircleCheck,
+  CreditCard,
+  Check,
+  ChevronRight,
+} from "lucide-react";
 import { InputSearch } from "../../../components/InputSearch";
+import { ListFilterPlus } from "lucide-react";
+import { Pagination } from "../components/Pagination";
+
 import type {
   Payment,
   PaymentStatus,
@@ -40,6 +52,44 @@ const ALL_STATUSES: PaymentStatus[] = [
   "cancelled",
 ];
 const ALL_METHODS: PaymentMethod[] = ["cash", "transfer", "check"];
+const ALL_CONCEPTS: PaymentConcept[] = [
+  "mensualidad",
+  "inscripcion",
+  "materiales",
+  "uniforme",
+  "evento",
+  "otro",
+];
+
+// Preset inteligente: estados que representan dinero que aún se le debe a la escuela
+const PENDING_PAYMENT_STATUSES: PaymentStatus[] = [
+  "pending",
+  "overdue",
+  "partial",
+];
+
+type FilterCategoryId = "estado" | "metodo" | "concepto" | "rapido";
+
+const FILTER_CATEGORIES: {
+  id: FilterCategoryId;
+  label: string;
+  icon: typeof Calendar;
+}[] = [
+  { id: "estado", label: "Estado", icon: CircleCheck },
+  { id: "metodo", label: "Método", icon: CreditCard },
+  { id: "concepto", label: "Concepto", icon: Tag },
+  { id: "rapido", label: "Fecha", icon: Calendar },
+];
+
+function toggleInSet<T>(set: Set<T>, value: T): Set<T> {
+  const next = new Set(set);
+  if (next.has(value)) {
+    next.delete(value);
+  } else {
+    next.add(value);
+  }
+  return next;
+}
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("es-MX", {
@@ -200,12 +250,22 @@ const MOCK_PAYMENTS: Payment[] = [
 
 export function PaymentsTab({ childId }: { childId: string }) {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<PaymentStatus | "all">(
-    "all",
+  const [statusFilters, setStatusFilters] = useState<Set<PaymentStatus>>(
+    new Set(),
   );
-  const [methodFilter, setMethodFilter] = useState<PaymentMethod | "all">(
-    "all",
+  const [methodFilters, setMethodFilters] = useState<Set<PaymentMethod>>(
+    new Set(),
   );
+  const [conceptFilters, setConceptFilters] = useState<Set<PaymentConcept>>(
+    new Set(),
+  );
+  const [discountOnly, setDiscountOnly] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<FilterCategoryId | null>(
+    null,
+  );
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const PAGE_SIZE = 10;
 
   const filtered = MOCK_PAYMENTS.filter((p) => {
     const q = search.toLowerCase();
@@ -216,15 +276,60 @@ export function PaymentsTab({ childId }: { childId: string }) {
       (p.reference && p.reference.toLowerCase().includes(q)) ||
       (p.notes && p.notes.toLowerCase().includes(q));
 
-    const matchesStatus = statusFilter === "all" || p.status === statusFilter;
+    const matchesStatus =
+      statusFilters.size === 0 || statusFilters.has(p.status);
     const matchesMethod =
-      methodFilter === "all" || p.paymentMethod === methodFilter;
+      methodFilters.size === 0 ||
+      (p.paymentMethod && methodFilters.has(p.paymentMethod));
+    const matchesConcept =
+      conceptFilters.size === 0 || conceptFilters.has(p.concept);
+    const matchesDiscount = !discountOnly || p.discount > 0;
 
-    return matchesSearch && matchesStatus && matchesMethod;
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchesMethod &&
+      matchesConcept &&
+      matchesDiscount
+    );
   });
 
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const safePage = Math.min(currentPage, Math.max(totalPages, 1));
+  const paginated = filtered.slice(
+    (safePage - 1) * PAGE_SIZE,
+    safePage * PAGE_SIZE,
+  );
+
+  const isPendingPresetActive =
+    PENDING_PAYMENT_STATUSES.every((s) => statusFilters.has(s)) &&
+    statusFilters.size === PENDING_PAYMENT_STATUSES.length;
+
+  const togglePendingPreset = () => {
+    setStatusFilters(
+      isPendingPresetActive ? new Set() : new Set(PENDING_PAYMENT_STATUSES),
+    );
+  };
+
+  const clearAllFilters = () => {
+    setStatusFilters(new Set());
+    setMethodFilters(new Set());
+    setConceptFilters(new Set());
+    setDiscountOnly(false);
+  };
+
   const activeFilters =
-    (statusFilter !== "all" ? 1 : 0) + (methodFilter !== "all" ? 1 : 0);
+    statusFilters.size +
+    methodFilters.size +
+    conceptFilters.size +
+    (discountOnly ? 1 : 0);
+
+  const categoryCounts: Record<FilterCategoryId, number> = {
+    estado: statusFilters.size,
+    metodo: methodFilters.size,
+    concepto: conceptFilters.size,
+    rapido: discountOnly ? 1 : 0,
+  };
 
   return (
     <div className="tab-content payments-tab">
@@ -235,9 +340,54 @@ export function PaymentsTab({ childId }: { childId: string }) {
           onChange={(e) => setSearch(e.target.value)}
           className="payments-search"
         />
+
+        <button
+          className="btn-filter edit"
+          popoverTarget="payments-filter-popover"
+          style={{ anchorName: "--payments-btn-filter" } as any}
+        >
+          <ListFilterPlus size={16} strokeWidth={2.5} />
+          Filtrar
+          {activeFilters > 0 && (
+            <span className="btn-filter-count">{activeFilters}</span>
+          )}
+        </button>
       </div>
 
-      <div className="payments-filters"></div>
+      <div
+        id="payments-filter-popover"
+        popover="auto"
+        className="payments-filter-popover"
+      >
+        <div className="payments-filter-body">
+          <div className="payments-filter-nav">
+            {FILTER_CATEGORIES.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                type="button"
+                className={`payments-filter-nav-item ${
+                  activeCategory === id ? "active" : ""
+                }`}
+                onClick={() =>
+                  setActiveCategory(activeCategory === id ? null : id)
+                }
+              >
+                <Icon size={14} strokeWidth={2.2} />
+                <span className="payments-filter-nav-label">{label}</span>
+                {categoryCounts[id] > 0 && (
+                  <span className="payments-filter-nav-count">
+                    {categoryCounts[id]}
+                  </span>
+                )}
+                <ChevronRight
+                  size={14}
+                  className="payments-filter-nav-chevron"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <div className="tab-table-wrapper payments-table-wrapper">
         <table className="tab-table payments-table">
@@ -269,7 +419,7 @@ export function PaymentsTab({ childId }: { childId: string }) {
                 </td>
               </tr>
             ) : (
-              filtered.map((p) => (
+              paginated.map((p) => (
                 <tr key={p.id}>
                   <td className="cell-period">{p.period}</td>
                   <td className="cell-concept">
@@ -312,6 +462,15 @@ export function PaymentsTab({ childId }: { childId: string }) {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={safePage}
+        totalPages={totalPages}
+        totalItems={filtered.length}
+        pageSize={PAGE_SIZE}
+        onPageChange={setCurrentPage}
+        label="pagos"
+      />
     </div>
   );
 }

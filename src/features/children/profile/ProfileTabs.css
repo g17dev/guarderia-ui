@@ -274,9 +274,18 @@
 .payments-tab {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0;
     height: 100%;
     min-height: 0;
+    margin-top: -8px;
+}
+
+.payments-tab .payments-toolbar {
+    margin-bottom: 10px;
+}
+
+.payments-tab .pagination {
+    margin-top: 4px;
 }
 
 .payments-toolbar {
@@ -290,109 +299,361 @@
     max-width: 360px;
 }
 
-.payments-filters {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex-shrink: 0;
+.payments-search .input-search-field {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: 16px;
+    font-weight: 600;
 }
 
-.payments-filter-group {
+.btn-filter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: white;
+    color: #8793a1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    anchor-name: --payments-btn-filter;
+}
+
+.btn-filter-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: #004b92;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.btn-filter.edit:hover {
+    border-color: #004b92;
+    color: #004b92;
+}
+
+/* Convierte el botón en el ancla para CSS Anchor Positioning */
+.btn-filter[popovertarget="payments-filter-popover"] {
+    anchor-name: --payments-btn-filter;
+}
+
+/* Mantiene el estilo "activo" del botón mientras el popover está abierto */
+.payments-tab:has(#payments-filter-popover:popover-open) .btn-filter {
+    border-color: #004b92;
+    background-color: #e8f0fe;
+    color: #004b92;
+}
+
+.payments-filter-popover {
+    position: absolute;
+    position-anchor: --payments-btn-filter;
+    inset: auto;
+    top: anchor(bottom);
+    left: anchor(left);
+    margin: 0;
+    margin-top: 6px;
+    width: 160px;
+    max-width: calc(100vw - 32px);
+    padding: 0;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    /* Sin position-try-fallbacks: flip-block para evitar que se invierta
+       la posición vertical automáticamente. */
+
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+        opacity 0.16s ease,
+        transform 0.16s ease,
+        display 0.16s ease,
+        overlay 0.16s ease;
+    transition-behavior: allow-discrete;
+}
+
+/* Red de seguridad: si el navegador no soporta CSS Anchor Positioning,
+   no calcula anchor() y por defecto el popover usaría el viewport completo
+   como referencia, pudiendo quedar fuera de la pantalla y generar scroll
+   "fantasma" en toda la página. Aquí forzamos una posición fija y acotada. */
+@supports not (position-anchor: --a) {
+    .payments-filter-popover {
+        position: fixed;
+        top: 64px;
+        right: 24px;
+        left: auto;
+        bottom: auto;
+    }
+}
+
+.payments-filter-popover:popover-open {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@starting-style {
+    .payments-filter-popover:popover-open {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+}
+
+/* ===== Layout maestro-detalle (sin scroll) ===== */
+.payments-filter-body {
+    display: flex;
+}
+
+.payments-filter-nav {
+    width: 100%;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+}
+
+.payments-filter-nav-item {
     display: flex;
     align-items: center;
     gap: 6px;
-    flex-wrap: wrap;
-}
-
-.payments-filter-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-right: 4px;
-}
-
-.filter-chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    border: 1px solid #e2e8f0;
-    background: white;
-    color: #64748b;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: none;
+    background: none;
     cursor: pointer;
-    transition: all 0.15s ease;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-align: left;
     font-family: inherit;
-    line-height: 1.3;
+    transition: all 0.12s ease;
 }
 
-.filter-chip:hover {
-    border-color: #cbd5e1;
+.payments-filter-nav-item:hover {
     background: #f8fafc;
+    color: #004b92;
 }
 
-.filter-chip.active {
-    border-color: #004b92;
+.payments-filter-nav-item.active {
     background: #e8f0fe;
     color: #004b92;
 }
 
-/* Status chip colors when active */
-.filter-chip.chip-paid.active {
-    border-color: #16a34a;
-    background: #dcfce7;
-    color: #16a34a;
+.payments-filter-nav-label {
+    flex: 1;
 }
 
-.filter-chip.chip-pending.active {
-    border-color: #d97706;
-    background: #fef3c7;
-    color: #d97706;
+.payments-filter-nav-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #004b92;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
 }
 
-.filter-chip.chip-overdue.active {
-    border-color: #dc2626;
-    background: #fee2e2;
-    color: #dc2626;
+.payments-filter-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
 }
 
-.filter-chip.chip-partial.active {
-    border-color: #2563eb;
-    background: #dbeafe;
-    color: #2563eb;
+.payments-filter-nav-chevron {
+    color: #cbd5e1;
+    flex-shrink: 0;
 }
 
-.filter-chip.chip-cancelled.active {
-    border-color: #94a3b8;
-    background: #f1f5f9;
+.payments-filter-nav-item.active .payments-filter-nav-chevron {
+    color: #004b92;
+}
+
+.payments-filter-panel {
+    flex: 1;
+    min-width: 0;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.payments-filter-panel-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.payments-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+    text-align: left;
+    font-family: inherit;
+    transition: background 0.12s ease;
+}
+
+.payments-filter-row:hover {
+    background: #f8fafc;
+}
+
+.payments-filter-row-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid #cbd5e1;
+    color: transparent;
+    flex-shrink: 0;
+    transition: all 0.12s ease;
+}
+
+.payments-filter-row.active .payments-filter-row-check {
+    background: #004b92;
+    border-color: #004b92;
+    color: white;
+}
+
+.payments-filter-row-icon {
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+.payments-filter-row.active .payments-filter-row-icon {
+    color: #004b92;
+}
+
+.payments-filter-row-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+.dot-status-paid {
+    background: #16a34a;
+}
+.dot-status-pending {
+    background: #d97706;
+}
+.dot-status-overdue {
+    background: #dc2626;
+}
+.dot-status-partial {
+    background: #2563eb;
+}
+.dot-status-cancelled {
+    background: #94a3b8;
+}
+
+.dot-method-cash {
+    background: #059669;
+}
+.dot-method-transfer {
+    background: #7c3aed;
+}
+.dot-method-check {
+    background: #0891b2;
+}
+
+.payments-filter-row-label {
+    flex: 1;
+}
+
+/* ===== Footer fijo: resultados + acciones ===== */
+.payments-filter-footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 14px;
+    border-top: 1px solid #f1f5f9;
+    background: #fafafa;
+}
+
+.payments-filter-results {
+    font-size: 11.5px;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.payments-filter-results strong {
+    color: #475569;
+    font-weight: 700;
+}
+
+.payments-filter-footer-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.payments-filter-btn-clear {
+    border: 1px solid #e2e8f0;
+    background: white;
     color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
 }
 
-/* Method chip colors when active */
-.filter-chip.chip-cash.active {
-    border-color: #059669;
-    background: #d1fae5;
-    color: #059669;
+.payments-filter-btn-clear:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
 }
 
-.filter-chip.chip-transfer.active {
-    border-color: #7c3aed;
-    background: #ede9fe;
-    color: #7c3aed;
+.payments-filter-btn-apply {
+    border: none;
+    background: #004b92;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
 }
 
-.filter-chip.chip-check.active {
-    border-color: #0891b2;
-    background: #cffafe;
-    color: #0891b2;
+.payments-filter-btn-apply:hover {
+    background: #003a73;
 }
 
 .payments-table-wrapper {
     flex: 1;
-    min-height: 0;
+    min-height: 210px;
     overflow: auto;
     border-radius: 10px;
     border: 1px solid #e2e8f0;
@@ -413,7 +674,7 @@
     position: sticky;
     top: 0;
     z-index: 1;
-    padding: 10px 12px;
+    padding: 7px 10px;
     text-align: left;
     font-size: 10px;
     font-weight: 700;
@@ -449,7 +710,7 @@
 }
 
 .payments-table td {
-    padding: 10px 12px;
+    padding: 8px 12px;
     color: #334155;
     vertical-align: middle;
     white-space: nowrap;
