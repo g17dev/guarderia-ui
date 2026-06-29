@@ -413,9 +413,139 @@
     }
 }
 
+/* Popover para mostrar la categoria de filtro seleccionada*/
+.filter-details-panel {
+    position: absolute;
+    position-anchor: initial; /* se sobreescribe por JS, no hace falta fijarlo aquí */
+    inset: auto;
+    top: anchor(top); /* alineado verticalmente con el botón */
+    left: anchor(right); /* a la derecha del botón, no debajo */
+    margin: 0;
+    margin-left: 12px; /* mismo "aire" que el margin-top del popover padre */
+    position-try-fallbacks: flip-inline;
+    width: 220px;
+    max-width: calc(100vw - 32px);
+    padding: 0;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    /* Sin position-try-fallbacks: flip-block para evitar que se invierta
+       la posición vertical automáticamente. */
+
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+        opacity 0.16s ease,
+        transform 0.16s ease,
+        display 0.16s ease,
+        overlay 0.16s ease;
+    transition-behavior: allow-discrete;
+}
+
+.filter-details-panel--fecha {
+    margin-top: -110px; /* ajusta este valor a ojo según cuánto necesites subirlo */
+}
+
+/* Cuando se muestra el calendario, el panel necesita ser más ancho (2 meses)
+   y un offset vertical distinto, porque el contenido es mucho más alto que
+   la lista de presets. Va después de --fecha para ganar por orden en la
+   cascada (misma especificidad). */
+.filter-details-panel--calendar {
+    width: 480px;
+    margin-top: -200px; /* ajusta a ojo según la altura real del calendario en tu pantalla */
+}
+
+.filter-details-panel:popover-open {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+@starting-style {
+    .filter-details-panel:popover-open {
+        opacity: 0;
+        transform: translateX(-4px);
+    }
+}
+
+/* ===== Vista de calendario dentro de filter-details-panel ===== */
+.payments-filter-calendar-view {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 4px;
+}
+
+.payments-filter-calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 2px 4px 6px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.payments-filter-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: none;
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.12s ease;
+}
+
+.payments-filter-back-btn:hover {
+    background: #f8fafc;
+    color: #004b92;
+}
+
+.payments-filter-range-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.payments-filter-calendar-apply {
+    width: 100%;
+    margin-top: 4px;
+}
+
+.payments-filter-calendar-apply:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+}
+
+/* Pista del rango ya elegido, visible en la lista de presets sin entrar al calendario */
+.payments-filter-row-range-hint {
+    font-size: 11px;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.payments-filter-row-custom {
+    border-top: 1px dashed #e2e8f0;
+    margin-top: 2px;
+    padding-top: 10px;
+}
+
 /* ===== Layout maestro-detalle (sin scroll) ===== */
 .payments-filter-body {
     display: flex;
+    flex-direction: column;
 }
 
 .payments-filter-nav {
@@ -807,16 +937,104 @@
     color: #0891b2;
 }
 
+/* Excluir la fila vacía del hover */
+.payments-table tbody tr.payments-empty-row:hover {
+    background: transparent !important;
+    cursor: default;
+}
+
+.payments-table tbody tr.payments-empty-row {
+    cursor: default;
+}
+
+/* O si prefieres mantener el estilo pero sin efecto hover */
+.payments-table tbody tr.payments-empty-row {
+    background: transparent;
+}
+
+.payments-table tbody tr.payments-empty-row:hover {
+    background: transparent;
+}
+
 .payments-empty {
     text-align: center;
     padding: 32px 16px !important;
     color: #94a3b8;
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .payments-empty-icon {
     display: flex;
     justify-content: center;
     margin-bottom: 8px;
-    color: #cbd5e1;
+    color: #94a3b8;
+}
+
+/* Agrega esto al final de ProfileTabs.css */
+
+/* Asegurar que el panel de detalles solo funcione cuando el popover principal está abierto */
+#payments-filter-popover:not(:popover-open) .filter-details-panel {
+    display: none !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+}
+
+/* Prevenir interacciones con el panel de detalles cuando el popover principal está cerrado */
+#payments-filter-popover:not(:popover-open) .payments-filter-nav-item {
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Restaurar interacciones cuando el popover principal está abierto */
+#payments-filter-popover:popover-open .payments-filter-nav-item {
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+/* Mejorar la transición para evitar parpadeos */
+.filter-details-panel {
+    /* ... mantén las propiedades existentes ... */
+    pointer-events: none; /* Deshabilitado por defecto */
+}
+
+#payments-filter-popover:popover-open .filter-details-panel {
+    pointer-events: auto; /* Habilitado solo cuando el popover principal está abierto */
+}
+
+.payments-filter-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 5px;
+}
+
+.payments-filter-clear-btn {
+    width: 100%;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #d32f2f;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.18s ease;
+}
+
+.payments-filter-clear-btn:hover {
+    background: rgba(211, 47, 47, 0.08);
+}
+
+.payments-filter-clear-btn svg {
+    flex-shrink: 0;
 }

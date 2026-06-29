@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Banknote,
   Clock3,
   Tag,
-  Calendar,
+  CalendarDays,
   CircleCheck,
   CreditCard,
   Check,
   ChevronRight,
+  ChevronLeft,
+  FilterX,
 } from "lucide-react";
 import { InputSearch } from "../../../components/InputSearch";
 import { ListFilterPlus } from "lucide-react";
 import { Pagination } from "../components/Pagination";
+import { type DateRange } from "react-day-picker";
+import { Calendar } from "../../../components/ui/calendar";
 
 import type {
   Payment,
@@ -24,7 +28,6 @@ import "./ProfileTabs.css";
 const STATUS_LABELS: Record<PaymentStatus, string> = {
   paid: "Pagado",
   pending: "Pendiente",
-  overdue: "Vencido",
   partial: "Parcial",
   cancelled: "Cancelado",
 };
@@ -47,7 +50,6 @@ const CONCEPT_LABELS: Record<PaymentConcept, string> = {
 const ALL_STATUSES: PaymentStatus[] = [
   "paid",
   "pending",
-  "overdue",
   "partial",
   "cancelled",
 ];
@@ -62,23 +64,19 @@ const ALL_CONCEPTS: PaymentConcept[] = [
 ];
 
 // Preset inteligente: estados que representan dinero que aún se le debe a la escuela
-const PENDING_PAYMENT_STATUSES: PaymentStatus[] = [
-  "pending",
-  "overdue",
-  "partial",
-];
+const PENDING_PAYMENT_STATUSES: PaymentStatus[] = ["pending", "partial"];
 
-type FilterCategoryId = "estado" | "metodo" | "concepto" | "rapido";
+type FilterCategoryId = "estado" | "metodo" | "concepto" | "fecha";
 
 const FILTER_CATEGORIES: {
   id: FilterCategoryId;
   label: string;
-  icon: typeof Calendar;
+  icon: typeof CalendarDays;
 }[] = [
   { id: "estado", label: "Estado", icon: CircleCheck },
   { id: "metodo", label: "Método", icon: CreditCard },
-  { id: "concepto", label: "Concepto", icon: Tag },
-  { id: "rapido", label: "Fecha", icon: Calendar },
+  // { id: "concepto", label: "Concepto", icon: Tag },
+  { id: "fecha", label: "Fecha", icon: CalendarDays },
 ];
 
 function toggleInSet<T>(set: Set<T>, value: T): Set<T> {
@@ -106,6 +104,100 @@ function formatDate(dateStr: string | undefined): string {
     year: "numeric",
   });
 }
+
+// Modifica la función FilterOptionRow para verificar el estado del popover
+function FilterOptionRow({
+  active,
+  onClick,
+  icon: Icon,
+  dotClassName,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon?: typeof CalendarDays;
+  dotClassName?: string;
+  children: React.ReactNode;
+}) {
+  const [isMainPopoverOpen, setIsMainPopoverOpen] = useState(false);
+
+  useEffect(() => {
+    const mainPopover = document.getElementById("payments-filter-popover");
+    if (!mainPopover) return;
+
+    const checkPopoverState = () => {
+      setIsMainPopoverOpen(mainPopover.matches(":popover-open"));
+    };
+
+    // Verificar estado inicial
+    checkPopoverState();
+
+    // Escuchar cambios en el popover
+    mainPopover.addEventListener("toggle", checkPopoverState);
+
+    return () => {
+      mainPopover.removeEventListener("toggle", checkPopoverState);
+    };
+  }, []);
+
+  const handleClick = () => {
+    // Solo ejecutar onClick si el popover principal está abierto
+    if (isMainPopoverOpen) {
+      onClick();
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      className={`payments-filter-row ${active ? "active" : ""}`}
+      onClick={handleClick}
+      style={{
+        pointerEvents: isMainPopoverOpen ? "auto" : "none",
+        opacity: isMainPopoverOpen ? 1 : 0.7,
+      }}
+    >
+      <span className="payments-filter-row-check">
+        <Check size={11} strokeWidth={3} />
+      </span>
+      {dotClassName && (
+        <span className={`payments-filter-row-dot ${dotClassName}`} />
+      )}
+      {Icon && <Icon size={14} className="payments-filter-row-icon" />}
+      <span className="payments-filter-row-label">{children}</span>
+    </button>
+  );
+}
+
+function isDateWithinRange(value: string | undefined, from?: Date, to?: Date) {
+  if (!value) return false;
+
+  const date = new Date(value);
+
+  if (from && date < from) return false;
+
+  if (to && date > to) return false;
+
+  return true;
+}
+
+type DatePreset = "today" | "yesterday" | "last7" | "last14" | "last30";
+
+const DATE_PRESET_LABELS: Record<DatePreset, string> = {
+  today: "Hoy",
+  yesterday: "Ayer",
+  last7: "Últimos 7 días",
+  last14: "Últimos 14 días",
+  last30: "Últimos 30 días",
+};
+
+const ALL_DATE_PRESETS: DatePreset[] = [
+  "today",
+  "yesterday",
+  "last7",
+  "last14",
+  "last30",
+];
 
 const MOCK_PAYMENTS: Payment[] = [
   {
@@ -263,9 +355,74 @@ export function PaymentsTab({ childId }: { childId: string }) {
   const [activeCategory, setActiveCategory] = useState<FilterCategoryId | null>(
     null,
   );
+  const [datePreset, setDatePreset] = useState<DatePreset | null>(null);
+  const [showCustomCalendar, setShowCustomCalendar] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [isCustomDateActive, setIsCustomDateActive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const PAGE_SIZE = 10;
+
+  let filterFrom: Date | undefined;
+  let filterTo: Date | undefined;
+
+  const today = new Date();
+
+  if (datePreset) {
+    const end = new Date(today);
+    end.setHours(23, 59, 59, 999);
+
+    switch (datePreset) {
+      case "today": {
+        filterFrom = new Date(today);
+        filterFrom.setHours(0, 0, 0, 0);
+        filterTo = end;
+        break;
+      }
+
+      case "yesterday": {
+        filterFrom = new Date(today);
+        filterFrom.setDate(filterFrom.getDate() - 1);
+        filterFrom.setHours(0, 0, 0, 0);
+
+        filterTo = new Date(filterFrom);
+        filterTo.setHours(23, 59, 59, 999);
+        break;
+      }
+
+      case "last7": {
+        filterFrom = new Date(today);
+        filterFrom.setDate(filterFrom.getDate() - 6);
+        filterFrom.setHours(0, 0, 0, 0);
+        filterTo = end;
+        break;
+      }
+
+      case "last14": {
+        filterFrom = new Date(today);
+        filterFrom.setDate(filterFrom.getDate() - 13);
+        filterFrom.setHours(0, 0, 0, 0);
+        filterTo = end;
+        break;
+      }
+
+      case "last30": {
+        filterFrom = new Date(today);
+        filterFrom.setDate(filterFrom.getDate() - 29);
+        filterFrom.setHours(0, 0, 0, 0);
+        filterTo = end;
+        break;
+      }
+    }
+  }
+
+  if (isCustomDateActive) {
+    filterFrom = dateRange?.from;
+
+    filterTo = dateRange?.to
+      ? new Date(dateRange.to.setHours(23, 59, 59, 999))
+      : undefined;
+  }
 
   const filtered = MOCK_PAYMENTS.filter((p) => {
     const q = search.toLowerCase();
@@ -285,12 +442,17 @@ export function PaymentsTab({ childId }: { childId: string }) {
       conceptFilters.size === 0 || conceptFilters.has(p.concept);
     const matchesDiscount = !discountOnly || p.discount > 0;
 
+    const matchesDate =
+      (!filterFrom && !filterTo) ||
+      isDateWithinRange(p.paymentDate ?? p.createdAt, filterFrom, filterTo);
+
     return (
       matchesSearch &&
       matchesStatus &&
       matchesMethod &&
       matchesConcept &&
-      matchesDiscount
+      matchesDiscount &&
+      matchesDate
     );
   });
 
@@ -315,21 +477,110 @@ export function PaymentsTab({ childId }: { childId: string }) {
     setStatusFilters(new Set());
     setMethodFilters(new Set());
     setConceptFilters(new Set());
+
     setDiscountOnly(false);
+
+    setDatePreset(null);
+
+    setDateRange(undefined);
+
+    setIsCustomDateActive(false);
   };
 
   const activeFilters =
     statusFilters.size +
     methodFilters.size +
     conceptFilters.size +
-    (discountOnly ? 1 : 0);
+    (datePreset !== null || isCustomDateActive ? 1 : 0);
+
+  const hasFilters =
+    activeFilters > 0 || datePreset !== null || isCustomDateActive;
 
   const categoryCounts: Record<FilterCategoryId, number> = {
     estado: statusFilters.size,
     metodo: methodFilters.size,
     concepto: conceptFilters.size,
-    rapido: discountOnly ? 1 : 0,
+    fecha: datePreset !== null || isCustomDateActive ? 1 : 0,
   };
+
+  const detailsPanelRef = useRef<HTMLDivElement>(null);
+
+  const handleCategoryClick = (id: FilterCategoryId) => {
+    const panel = detailsPanelRef.current;
+    const mainPopover = document.getElementById("payments-filter-popover");
+
+    // Verificar si el popover principal está abierto
+    const isMainPopoverOpen = mainPopover?.matches(":popover-open");
+
+    // Si el popover principal no está abierto, no hacer nada
+    if (!isMainPopoverOpen) {
+      return;
+    }
+
+    if (!panel) return;
+
+    if (activeCategory === id) {
+      setActiveCategory(null);
+      panel.togglePopover(false);
+      return;
+    }
+
+    (panel.style as any).positionAnchor = `--nav-anchor-${id}`;
+    setActiveCategory(id);
+    panel.togglePopover(true);
+  };
+  useEffect(() => {
+    const panel = detailsPanelRef.current;
+    if (!panel) return;
+
+    const handleNativeToggle = (e: Event) => {
+      const evt = e as ToggleEvent; // tiene .newState: "open" | "closed"
+      if (evt.newState === "closed") {
+        setActiveCategory(null); // sincroniza React con lo que el navegador ya hizo
+        setShowCustomCalendar(false); // si se cierra todo, regresa a la vista de lista
+      }
+    };
+
+    panel.addEventListener("toggle", handleNativeToggle);
+    return () => panel.removeEventListener("toggle", handleNativeToggle);
+  }, []);
+
+  const dateRangeLabel =
+    dateRange?.from && dateRange?.to
+      ? `${formatDate(dateRange.from.toISOString())} – ${formatDate(dateRange.to.toISOString())}`
+      : dateRange?.from
+        ? formatDate(dateRange.from.toISOString())
+        : "Selecciona un rango";
+
+  // Agrega este useEffect al componente principal PaymentsTab
+  useEffect(() => {
+    const mainPopover = document.getElementById("payments-filter-popover");
+    if (!mainPopover) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      // Si el popover está abierto y el click es fuera de él y fuera del botón que lo abre
+      if (mainPopover.matches(":popover-open")) {
+        const target = e.target as HTMLElement;
+        const filterButton = document.querySelector(
+          '.btn-filter[popovertarget="payments-filter-popover"]',
+        );
+
+        if (!mainPopover.contains(target) && !filterButton?.contains(target)) {
+          // Cerrar el popover principal
+          mainPopover.togglePopover(false);
+          // También cerrar el panel de detalles
+          if (detailsPanelRef.current) {
+            detailsPanelRef.current.togglePopover(false);
+            setActiveCategory(null);
+            setShowCustomCalendar(false);
+          }
+        }
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   return (
     <div className="tab-content payments-tab">
@@ -342,7 +593,7 @@ export function PaymentsTab({ childId }: { childId: string }) {
         />
 
         <button
-          className="btn-filter edit"
+          className={`btn-filter edit ${hasFilters ? "active" : ""}`}
           popoverTarget="payments-filter-popover"
           style={{ anchorName: "--payments-btn-filter" } as any}
         >
@@ -365,12 +616,9 @@ export function PaymentsTab({ childId }: { childId: string }) {
               <button
                 key={id}
                 type="button"
-                className={`payments-filter-nav-item ${
-                  activeCategory === id ? "active" : ""
-                }`}
-                onClick={() =>
-                  setActiveCategory(activeCategory === id ? null : id)
-                }
+                style={{ anchorName: `--nav-anchor-${id}` } as any}
+                className={`payments-filter-nav-item ${activeCategory === id ? "active" : ""}`}
+                onClick={() => handleCategoryClick(id)}
               >
                 <Icon size={14} strokeWidth={2.2} />
                 <span className="payments-filter-nav-label">{label}</span>
@@ -386,6 +634,160 @@ export function PaymentsTab({ childId }: { childId: string }) {
               </button>
             ))}
           </div>
+          <div
+            ref={detailsPanelRef}
+            id="filter-details-panel"
+            popover="auto"
+            className={`filter-details-panel ${
+              activeCategory === "fecha" ? "filter-details-panel--fecha" : ""
+            } ${showCustomCalendar ? "filter-details-panel--calendar" : ""}`}
+          >
+            <div className="payments-filter-panel">
+              {activeCategory === "estado" && (
+                <div className="payments-filter-panel-section">
+                  {ALL_STATUSES.map((status) => (
+                    <FilterOptionRow
+                      key={status}
+                      active={statusFilters.has(status)}
+                      onClick={() =>
+                        setStatusFilters((prev) => toggleInSet(prev, status))
+                      }
+                    >
+                      <span className={`payment-badge status-${status}`}>
+                        {STATUS_LABELS[status]}
+                      </span>
+                    </FilterOptionRow>
+                  ))}
+                </div>
+              )}
+
+              {activeCategory === "metodo" && (
+                <div className="payments-filter-panel-section">
+                  {ALL_METHODS.map((method) => (
+                    <FilterOptionRow
+                      key={method}
+                      active={methodFilters.has(method)}
+                      onClick={() =>
+                        setMethodFilters((prev) => toggleInSet(prev, method))
+                      }
+                    >
+                      <span className={`payment-badge method-${method}`}>
+                        {METHOD_LABELS[method]}
+                      </span>
+                    </FilterOptionRow>
+                  ))}
+                </div>
+              )}
+
+              {/*{activeCategory === "concepto" && (
+                <div className="payments-filter-panel-section">
+                  {ALL_CONCEPTS.map((concept) => (
+                    <FilterOptionRow
+                      key={concept}
+                      active={conceptFilters.has(concept)}
+                      onClick={() =>
+                        setConceptFilters((prev) => toggleInSet(prev, concept))
+                      }
+                      label={CONCEPT_LABELS[concept]}
+                      icon={Tag}
+                    />
+                  ))}
+                </div>
+              )}*/}
+
+              {activeCategory === "fecha" && (
+                <div className="payments-filter-panel-section">
+                  {showCustomCalendar ? (
+                    <div className="payments-filter-calendar-view">
+                      <div className="payments-filter-calendar-header">
+                        <button
+                          type="button"
+                          className="payments-filter-back-btn"
+                          onClick={() => setShowCustomCalendar(false)}
+                        >
+                          <ChevronLeft size={14} strokeWidth={2.5} />
+                          Volver
+                        </button>
+                        <span className="payments-filter-range-label">
+                          {dateRangeLabel}
+                        </span>
+                      </div>
+
+                      <Calendar
+                        mode="range"
+                        defaultMonth={dateRange?.from}
+                        selected={dateRange}
+                        onSelect={setDateRange}
+                        numberOfMonths={2}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                      />
+
+                      <button
+                        type="button"
+                        className="payments-filter-btn-apply payments-filter-calendar-apply"
+                        disabled={!dateRange?.from}
+                        onClick={() => {
+                          setDatePreset(null);
+                          setIsCustomDateActive(true);
+                          setShowCustomCalendar(false);
+                        }}
+                      >
+                        Aceptar
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      {ALL_DATE_PRESETS.map((preset) => (
+                        <FilterOptionRow
+                          key={preset}
+                          active={datePreset === preset}
+                          onClick={() => {
+                            setDatePreset((prev) =>
+                              prev === preset ? null : preset,
+                            );
+
+                            setIsCustomDateActive(false);
+
+                            setDateRange(undefined);
+                          }}
+                        >
+                          {DATE_PRESET_LABELS[preset]}
+                        </FilterOptionRow>
+                      ))}
+
+                      <button
+                        type="button"
+                        className={`payments-filter-row payments-filter-row-custom ${isCustomDateActive ? "active" : ""}`}
+                        onClick={() => setShowCustomCalendar(true)}
+                      >
+                        <span className="payments-filter-row-check">
+                          <Check size={11} strokeWidth={3} />
+                        </span>
+
+                        <span className="payments-filter-row-label">
+                          Personalizar fecha
+                        </span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+          {activeFilters > 0 && (
+            <div className="payments-filter-footer">
+              <button
+                type="button"
+                className="payments-filter-clear-btn"
+                onClick={clearAllFilters}
+              >
+                <FilterX size={15} strokeWidth={2.3} />
+                Limpiar filtros
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -407,10 +809,10 @@ export function PaymentsTab({ childId }: { childId: string }) {
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr>
+              <tr className="payments-empty-row">
                 <td colSpan={10} className="payments-empty">
                   <div className="payments-empty-icon">
-                    <Banknote size={32} />
+                    <Banknote size={62} />
                   </div>
                   <span>
                     No se encontraron pagos
