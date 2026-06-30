@@ -521,13 +521,26 @@ export function PaymentsTab({ childId }: { childId: string }) {
 
     if (activeCategory === id) {
       setActiveCategory(null);
-      panel.togglePopover(false);
+      // Cerrar SÍ lo seguimos haciendo con JS — el light-dismiss solo
+      // interfiere al ABRIR un popover anidado desde un clic externo a él,
+      // no al cerrarlo.
+      panel.hidePopover();
       return;
     }
 
+    // Fijamos el anchor ANTES de que el navegador muestre el panel.
+    // Nuestro onClick (listener de React) corre antes de la "activation
+    // behavior" nativa del botón (la que dispara popoverTargetAction),
+    // así que este estilo ya está aplicado cuando el panel se vuelve visible.
     (panel.style as any).positionAnchor = `--nav-anchor-${id}`;
     setActiveCategory(id);
-    panel.togglePopover(true);
+
+    // OJO: ya NO llamamos panel.togglePopover(true) aquí. Ese era el origen
+    // del parpadeo: abrir un popover anidado vía JS, desde un clic cuyo
+    // target no es descendiente de ese popover, hace que el light-dismiss
+    // nativo lo cierre en el mismo tick. El botón ahora abre el panel por sí
+    // mismo a través de popoverTarget + popoverTargetAction="show", que es
+    // el único mecanismo que la spec exime de ese auto-cierre.
   };
   useEffect(() => {
     const panel = detailsPanelRef.current;
@@ -560,12 +573,23 @@ export function PaymentsTab({ childId }: { childId: string }) {
     const handleClickOutside = (e: MouseEvent) => {
       // Si el popover está abierto y el click es fuera de él y fuera del botón que lo abre
       if (mainPopover.matches(":popover-open")) {
-        const target = e.target as HTMLElement;
+        // Usamos composedPath() en vez de e.target: composedPath() captura
+        // el recorrido completo del evento EN EL MOMENTO DEL CLIC, como una
+        // fotografía fija. e.target, en cambio, es una referencia "viva" al
+        // nodo — si React desmonta ese nodo durante el mismo evento (p. ej.
+        // un onClick que cambia de rama un ternario), target.contains()
+        // deja de funcionar porque el nodo ya no está conectado al DOM.
+        const path = e.composedPath();
         const filterButton = document.querySelector(
           '.btn-filter[popovertarget="payments-filter-popover"]',
         );
 
-        if (!mainPopover.contains(target) && !filterButton?.contains(target)) {
+        const clickedInsideMain = path.includes(mainPopover);
+        const clickedFilterButton = filterButton
+          ? path.includes(filterButton)
+          : false;
+
+        if (!clickedInsideMain && !clickedFilterButton) {
           // Cerrar el popover principal
           mainPopover.togglePopover(false);
           // También cerrar el panel de detalles
@@ -616,6 +640,8 @@ export function PaymentsTab({ childId }: { childId: string }) {
               <button
                 key={id}
                 type="button"
+                popoverTarget="filter-details-panel"
+                popoverTargetAction="show"
                 style={{ anchorName: `--nav-anchor-${id}` } as any}
                 className={`payments-filter-nav-item ${activeCategory === id ? "active" : ""}`}
                 onClick={() => handleCategoryClick(id)}
@@ -760,7 +786,10 @@ export function PaymentsTab({ childId }: { childId: string }) {
                       <button
                         type="button"
                         className={`payments-filter-row payments-filter-row-custom ${isCustomDateActive ? "active" : ""}`}
-                        onClick={() => setShowCustomCalendar(true)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowCustomCalendar(true);
+                        }}
                       >
                         <span className="payments-filter-row-check">
                           <Check size={11} strokeWidth={3} />
