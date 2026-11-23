@@ -37,7 +37,7 @@ export function ChildNew() {
   interface Phone {
     id: string;
     region: PhoneRegion;  // ← agrega esto
-    type: "personal" | "work" | "home" | "other";
+    type: PhoneType;
     number: string;
     note: string;
   }
@@ -139,6 +139,7 @@ export function ChildNew() {
         : i === currentStep + 1 ? "current" as const
         : "pending" as const,
     }));
+    setSteps(updated);
     setCurrentStep(currentStep + 1);
   };
 

@@ -1,0 +1,61 @@
+@import "./appearance.css";
+
+/* Shared light palette for custom CSS and shadcn components. */
+:root, .dark {
+  color-scheme: light;
+  --background: var(--app-background);
+  --bg: var(--background);
+  --foreground: var(--app-text);
+  --text-secondary: var(--app-text-secondary);
+  --muted-foreground: var(--app-text-muted);
+  --card: var(--app-surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --surface-subtle: var(--app-surface-subtle);
+  --muted: var(--app-muted-surface);
+  /* Botones, enlaces y estados de interacción. */
+  --primary: #3564c5;
+  --primary-hover: #284fa3;
+  --primary-foreground: #ffffff;
+  --primary-soft: #eaf0ff;
+  --primary-rgb: 53, 100, 197;
+  --secondary: var(--primary-soft);
+  --secondary-foreground: #284fa3;
+  --accent: var(--primary-soft);
+  --accent-foreground: var(--secondary-foreground);
+  --border: var(--app-border);
+  --border-strong: var(--app-border-strong);
+  --input: var(--border-strong);
+  --ring: var(--primary);
+  --success: #24734f;
+  --success-hover: #195b3c;
+  --success-soft: #e8f7ee;
+  --warning: #93600e;
+  --warning-hover: #774b08;
+  --warning-soft: #fff4db;
+  --destructive: #b33f55;
+  --destructive-hover: #942e42;
+  --destructive-soft: #ffedf0;
+  --info: #2f67b2;
+  --info-soft: #eaf3ff;
+  --violet: #7952ad;
+  --violet-soft: #f3edff;
+  --rose: #a34779;
+  --rose-soft: #ffedf6;
+  --teal: #17787c;
+  --teal-soft: #e6f7f7;
+  --illustration-fill: #c6d9fa;
+  --avatar-peach: #ffdcbd;
+  --avatar-lilac: #e7dcff;
+  --avatar-blue: #d3e6ff;
+  --avatar-sage: #d6efdf;
+  --avatar-sand: #ffedc2;
+  --avatar-teal: #cef0eb;
+  --radius: 0.625rem;
+}
+
+::selection { background: var(--primary-soft); color: var(--foreground); }
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+input, textarea, select { accent-color: var(--primary); }
+input::placeholder, textarea::placeholder { color: var(--muted-foreground); opacity: 1; }

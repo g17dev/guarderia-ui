@@ -8,7 +8,7 @@ import { ChildNew } from "./pages/ChildNew";
 import { ChildProfile } from "./pages/ChildProfile";
 import { ToastProvider } from "./context/ToastContext";
 import { ToastContainer } from "./components/toasts/ToastContainer";
-import { BreadcrumbProvider } from "./context/BreadCrumbContext";
+import { BreadcrumbProvider } from "./context/BreadcrumbContext";
 
 export default function App() {
   return (

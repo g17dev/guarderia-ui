@@ -5,7 +5,7 @@
 
   transform: translate(-50%, -50%);
 
-  background: #ffffff;
+  background: var(--card);
   padding: 30px;
   border-radius: 20px;
 
@@ -13,11 +13,11 @@
   text-align: center;
 
   backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 30px rgba(51, 68, 82, 0.12);
 }
 
 .title {
-  color: white;
+  color: var(--foreground);
   font-size: 20px;
   margin-bottom: 20px;
 }
@@ -41,21 +41,21 @@
 }
 
 .entregar {
-  background: #00c853;
-  color: white;
+  background: var(--success);
+  color: var(--primary-foreground);
 }
 
 .entregar:hover {
-  background: #00e676;
+  background: var(--success-hover);
   transform: scale(1.05);
 }
 
 .recoger {
-  background: #2962ff;
-  color: white;
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .recoger:hover {
-  background: #448aff;
+  background: var(--primary);
   transform: scale(1.05);
 }

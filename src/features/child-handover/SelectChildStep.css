@@ -15,7 +15,7 @@
 }
 
 .step-header h2 {
-  color: #333;
+  color: var(--foreground);
   font-size: 1.5rem;
   margin: 0;
   padding: 0;
@@ -23,7 +23,7 @@
 }
 
 .step-header p {
-  color: #666;
+  color: var(--muted-foreground);
   font-size: 0.9rem;
   padding-bottom: 10px;
   margin: 0;
@@ -36,7 +36,7 @@
 }
 
 .error-message {
-  color: #dc3545;
+  color: var(--destructive);
   font-size: 12px;
   margin-top: 4px;
 }
@@ -56,8 +56,8 @@
   top: 0;
   padding: 12px 0;
   font-size: 14px;
-  color: #666;
-  border-bottom: 1px solid #e0e0e0;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
   margin-bottom: 1px;
   z-index: 5; /* ← Aumentar un poco */
 }
@@ -81,8 +81,8 @@
   align-items: center;
   text-align: center;
   padding: 24px 16px;
-  background: white;
-  border: 2px solid #e0e0e0;
+  background: var(--card);
+  border: 2px solid var(--border);
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -94,19 +94,19 @@
 
 .child-card:hover {
   z-index: 10;
-  border-color: #004B92;
+  border-color: var(--primary);
   transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 75, 146, 0.1);
+  box-shadow: 0 6px 16px rgba(var(--primary-rgb), 0.1);
 }
 
 /* Card seleccionada */
 .child-card.selected {
-  border-color: #004B92;
-  background: #fdfdfd;
+  border-color: var(--primary);
+  background: var(--card);
 }
 
 .child-card.selected:hover {
-  border-color: #004B92;
+  border-color: var(--primary);
 }
 
 /* Avatar */
@@ -123,7 +123,7 @@
 .card-initials {
   font-size: 28px;
   font-weight: 600;
-  color: white;
+  color: var(--primary-foreground);
   letter-spacing: 1px;
 }
 
@@ -136,14 +136,14 @@
 .card-name {
   font-size: 16px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--foreground);
   margin-bottom: 8px;
 }
 
 .card-classroom {
   display: inline-block;
-  background: #e8f0fe;
-  color: #004B92;
+  background: var(--primary-soft);
+  color: var(--primary);
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 11px;
@@ -163,8 +163,8 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  background: #e0e0e0;
-  color: #666;
+  background: var(--border);
+  color: var(--muted-foreground);
   border-radius: 50%;
   font-size: 18px;
   font-weight: bold;
@@ -177,8 +177,8 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  background: #e0e0e0;
-  color: #666;
+  background: var(--border);
+  color: var(--muted-foreground);
   border-radius: 50%;
   transition: background 0.25s ease, color 0.25s ease;
   position: relative;
@@ -215,8 +215,8 @@
 
 /* Color del círculo al seleccionar */
 .child-card.selected .select-arrow {
-  background: #004B92;
-  color: white;
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .child-card:hover .select-arrow {
@@ -224,8 +224,8 @@
 }
 
 .child-card.selected .select-arrow {
-  background: #004B92;
-  color: white;
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .child-card:hover .select-arrow {
@@ -238,23 +238,23 @@
 }
 
 .children-cards::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--surface-subtle);
   border-radius: 4px;
 }
 
 .children-cards::-webkit-scrollbar-thumb {
-  background: #004B92;
+  background: var(--primary);
   border-radius: 4px;
 }
 
 .children-cards::-webkit-scrollbar-thumb:hover {
-  background: #003d7a;
+  background: var(--primary-hover);
 }
 
 /* ========== RESUMEN DE SELECCIONADOS ========== */
 .selected-summary {
   margin-bottom: 10px;
-  background: #e8f5e9;
+  background: var(--success-soft);
   border-radius: 12px;
   padding: 16px;
   animation: slideIn 0.3s ease;
@@ -270,7 +270,7 @@
 }
 
 .selected-summary-label {
-  color: #2e7d32;
+  color: var(--success);
   font-weight: 600;
   font-size: 14px;
 }
@@ -281,8 +281,8 @@
   flex-direction: row;
   align-items: center;
   gap: 5px;
-  border: 1px solid #dc3545;
-  color: #dc3545;
+  border: 1px solid var(--destructive);
+  color: var(--destructive);
   padding: 4px 12px;
   border-radius: 6px;
   cursor: pointer;
@@ -292,8 +292,8 @@
 }
 
 .clear-all-btn:hover {
-  background: #dc3545;
-  color: white;
+  background: var(--destructive);
+  color: var(--primary-foreground);
 }
 
 .selected-summary-list {
@@ -306,47 +306,47 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: white;
-  border: 1px solid #4caf50;
+  background: var(--card);
+  border: 1px solid var(--success);
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 13px;
-  color: #333;
+  color: var(--foreground);
 }
 
 .remove-badge-btn {
   background: none;
   border: none;
   cursor: pointer;
-  color: #999;
+  color: var(--muted-foreground);
   font-size: 14px;
   padding: 0 4px;
   transition: color 0.2s ease;
 }
 
 .remove-badge-btn:hover {
-  color: #dc3545;
+  color: var(--destructive);
 }
 
 /* No resultados */
 .no-results {
   text-align: center;
   padding: 40px 20px;
-  background: #fafafa;
+  background: var(--surface-subtle);
   border-radius: 8px;
-  border: 1px dashed #ccc;
+  border: 1px dashed var(--border-strong);
   margin-top: 20px;
 }
 
 .no-results p {
   margin: 0 0 12px 0;
-  color: #666;
+  color: var(--muted-foreground);
 }
 
 .clear-search-btn {
   background: none;
-  border: 1px solid #004B92;
-  color: #004B92;
+  border: 1px solid var(--primary);
+  color: var(--primary);
   padding: 6px 16px;
   border-radius: 6px;
   cursor: pointer;
@@ -355,23 +355,23 @@
 }
 
 .clear-search-btn:hover {
-  background: #004B92;
-  color: white;
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 /* Sin niños registrados */
 .no-children-message {
   text-align: center;
   padding: 40px 20px;
-  background: #fff3e0;
-  border: 1px solid #ffb74d;
+  background: var(--warning-soft);
+  border: 1px solid var(--warning);
   border-radius: 8px;
   margin-top: 20px;
 }
 
 .no-children-message p {
   margin: 5px 0;
-  color: #e65100;
+  color: var(--destructive);
 }
 
 /* Animaciones */
@@ -403,8 +403,8 @@
 
 .selected-summary {
   flex-shrink: 0;
-  background: #e8f5e9;
-  border: 2px solid #4caf50;
+  background: var(--success-soft);
+  border: 2px solid var(--success);
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

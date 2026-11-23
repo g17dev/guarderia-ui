@@ -155,13 +155,13 @@ const RELATIONSHIPS = [
 
 const TutorPlaceholderSVG = () => (
   <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="avatar-placeholder-svg">
-    <circle cx="60" cy="60" r="60" fill="#F0F4F8"/>
-    <circle cx="60" cy="42" r="22" fill="#B0C4D8"/>
-    <ellipse cx="60" cy="98" rx="32" ry="22" fill="#B0C4D8"/>
-    <circle cx="52" cy="40" r="2.5" fill="#2D5F8A"/>
-    <circle cx="68" cy="40" r="2.5" fill="#2D5F8A"/>
-    <path d="M52 50c3 3 13 3 16 0" stroke="#2D5F8A" strokeWidth="2" strokeLinecap="round"/>
-    <path d="M42 28c3-6 10-10 18-10s15 4 18 10" stroke="#8AAFC8" strokeWidth="2.5" strokeLinecap="round"/>
+    <circle cx="60" cy="60" r="60" fill="var(--surface-subtle)"/>
+    <circle cx="60" cy="42" r="22" fill="var(--border-strong)"/>
+    <ellipse cx="60" cy="98" rx="32" ry="22" fill="var(--border-strong)"/>
+    <circle cx="52" cy="40" r="2.5" fill="var(--primary)"/>
+    <circle cx="68" cy="40" r="2.5" fill="var(--primary)"/>
+    <path d="M52 50c3 3 13 3 16 0" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round"/>
+    <path d="M42 28c3-6 10-10 18-10s15 4 18 10" stroke="var(--illustration-fill)" strokeWidth="2.5" strokeLinecap="round"/>
   </svg>
 );
 

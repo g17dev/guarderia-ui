@@ -94,7 +94,7 @@ export function ConfirmStep({ formData, onEdit }: ConfirmStepProps) {
               className="confirm-check-circle"
               cx="40" cy="40" r="36"
               fill="none"
-              stroke="#004B92"
+              stroke="var(--primary)"
               strokeWidth="3"
               strokeLinecap="round"
             />
@@ -102,7 +102,7 @@ export function ConfirmStep({ formData, onEdit }: ConfirmStepProps) {
               className="confirm-check-mark"
               points="24,42 35,53 56,28"
               fill="none"
-              stroke="#004B92"
+              stroke="var(--primary)"
               strokeWidth="3.5"
               strokeLinecap="round"
               strokeLinejoin="round"

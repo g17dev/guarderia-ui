@@ -5,8 +5,8 @@
 
 /* ===== CARD ÚNICA ===== */
 .confirm-card {
-  background: white;
-  border: 1px solid #e0e0e0;
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
 }
@@ -48,20 +48,20 @@
 .confirm-check-label {
   font-size: 15px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--foreground);
   margin: 4px 0 0 0;
 }
 
 .confirm-check-hint {
   font-size: 12px;
-  color: #999;
+  color: var(--muted-foreground);
   margin: 0;
 }
 
 /* ===== DIVIDER ===== */
 .confirm-divider {
   height: 1px;
-  background: #f0f0f0;
+  background: var(--border);
 }
 
 /* ===== AVATARES ===== */
@@ -70,7 +70,7 @@
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
-  background: #fafafa;
+  background: var(--surface-subtle);
 }
 
 .confirm-avatar-group {
@@ -83,9 +83,10 @@
 .confirm-avatar {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+  border-radius: var(--app-avatar-radius);
   object-fit: cover;
   flex-shrink: 0;
+  border: 1px solid var(--app-avatar-border);
 }
 
 .confirm-avatar-placeholder {
@@ -93,12 +94,12 @@
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  font-weight: 700;
-  color: white;
+  font-weight: 600;
+  color: var(--app-avatar-text);
 }
 
-.child-color  { background: #004B92; }
-.tutor-color  { background: #5B9E8F; }
+.child-color  { background: var(--app-avatar-background); }
+.tutor-color  { background: var(--app-avatar-background); }
 
 .confirm-avatar-info {
   display: flex;
@@ -110,7 +111,7 @@
 .confirm-avatar-name {
   font-size: 13px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--foreground);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -118,7 +119,7 @@
 
 .confirm-avatar-sub {
   font-size: 11px;
-  color: #999;
+  color: var(--muted-foreground);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -126,14 +127,14 @@
 
 .confirm-avatar-separator {
   font-size: 16px;
-  color: #ccc;
+  color: var(--border-strong);
   flex-shrink: 0;
 }
 
 .blood-badge {
   display: inline-block;
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--destructive-soft);
+  color: var(--destructive);
   font-size: 10px;
   font-weight: 700;
   padding: 1px 6px;
@@ -150,8 +151,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  background: #fafafa;
-  border-bottom: 1px solid #f0f0f0;
+  background: var(--surface-subtle);
+  border-bottom: 1px solid var(--border);
 }
 
 .confirm-section-title {
@@ -160,7 +161,7 @@
   gap: 7px;
   font-size: 11px;
   font-weight: 600;
-  color: #888;
+  color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -172,8 +173,8 @@
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  background: #EEF3FB;
-  color: #004B92;
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .confirm-edit-btn {
@@ -181,10 +182,10 @@
   align-items: center;
   gap: 5px;
   padding: 4px 10px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
   border-radius: 6px;
-  background: white;
-  color: #666;
+  background: var(--card);
+  color: var(--muted-foreground);
   font-size: 11px;
   font-weight: 500;
   font-family: inherit;
@@ -193,8 +194,8 @@
 }
 
 .confirm-edit-btn:hover {
-  border-color: #004B92;
-  color: #004B92;
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 /* ===== FILAS ===== */
@@ -203,7 +204,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 9px 20px;
-  border-bottom: 1px solid #f9f9f9;
+  border-bottom: 1px solid var(--surface-subtle);
   gap: 16px;
 }
 
@@ -217,20 +218,20 @@
 
 .confirm-label {
   font-size: 12px;
-  color: #999;
+  color: var(--muted-foreground);
   flex-shrink: 0;
 }
 
 .confirm-value {
   font-size: 13px;
-  color: #1a1a1a;
+  color: var(--foreground);
   font-weight: 500;
   text-align: right;
 }
 
 .confirm-empty {
   font-size: 13px;
-  color: #ccc;
+  color: var(--border-strong);
   font-style: italic;
 }
 
@@ -252,8 +253,8 @@
 .phone-type-badge {
   display: inline-block;
   padding: 2px 8px;
-  background: #EEF3FB;
-  color: #004B92;
+  background: var(--primary-soft);
+  color: var(--primary);
   border-radius: 20px;
   font-size: 11px;
   font-weight: 600;
@@ -262,7 +263,7 @@
 
 .phone-note-text {
   font-size: 11px;
-  color: #999;
+  color: var(--muted-foreground);
   font-style: italic;
 }
 
@@ -283,10 +284,10 @@
   font-weight: 500;
 }
 
-.tag-food          { background: #fef3c7; color: #92400e; }
-.tag-medication    { background: #ede9fe; color: #5b21b6; }
-.tag-environmental { background: #dcfce7; color: #166534; }
-.tag-other         { background: #f3f4f6; color: #374151; }
+.tag-food          { background: var(--warning-soft); color: var(--warning); }
+.tag-medication    { background: var(--violet-soft); color: var(--violet); }
+.tag-environmental { background: var(--success-soft); color: var(--success); }
+.tag-other         { background: var(--surface-subtle); color: var(--foreground); }
 
 /* ===== CONDICIÓN ===== */
 .confirm-condition {
@@ -303,9 +304,9 @@
   font-weight: 600;
 }
 
-.severity-mild     { background: #dcfce7; color: #16a34a; }
-.severity-moderate { background: #fef3c7; color: #d97706; }
-.severity-severe   { background: #fee2e2; color: #dc2626; }
+.severity-mild     { background: var(--success-soft); color: var(--success); }
+.severity-moderate { background: var(--warning-soft); color: var(--warning); }
+.severity-severe   { background: var(--destructive-soft); color: var(--destructive); }
 
 /* ===== MEDICAMENTOS ===== */
 .confirm-medications {
@@ -325,13 +326,13 @@
 .med-name {
   font-size: 13px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--foreground);
 }
 
 .med-detail {
   font-size: 11px;
-  color: #999;
-  background: #f3f4f6;
+  color: var(--muted-foreground);
+  background: var(--surface-subtle);
   padding: 2px 8px;
   border-radius: 6px;
 }   

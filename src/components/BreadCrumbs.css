@@ -15,20 +15,20 @@
 
 .breadcrumb-link {
   font-size: 14px;
-  color: #999;
+  color: var(--muted-foreground);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .breadcrumb-link:hover {
-  color: #004B92;
+  color: var(--primary);
 }
 
 .breadcrumb-current {
-  color: #1a1a1a;
+  color: var(--foreground);
 }
 
 .breadcrumb-separator {
-  color: #ccc;
+  color: var(--border-strong);
   flex-shrink: 0;
 }

@@ -1,136 +1,26 @@
-import "./ConfirmPickupStep.css";
-import { useEffect, useState } from "react";
-import {Baby, IdCard} from "lucide-react";
-import { FaLockOpen } from "react-icons/fa";
-import { FaCircleCheck, FaCircleInfo } from "react-icons/fa6";
-import type { Child } from "../../types/child";
-import { getInitials, getAge, getAvatarColor } from "../../utils/child"; 
+import { CircleCheck } from "lucide-react";
+import type { MovementReceipt, ReceptionChild } from "./reception";
 
 interface ConfirmPickupStepProps {
-  selectedChildren: Child[];
+  receipt: MovementReceipt;
+  selectedChildren: ReceptionChild[];
+  adultName: string;
+  simulation?: boolean;
+  reentry?: boolean;
+  onFinish: () => void;
 }
 
-export const ConfirmPickupStep = ({selectedChildren}: ConfirmPickupStepProps ) => {
-  const [currentTime, setCurrentTime] = useState("");
-
-  useEffect(() => {
-    let intervalId: number | undefined;
-    let timeoutId: number | undefined;
-
-    const updateTime = () => {
-      const now = new Date();
-
-      const hours = now.getHours();
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-
-      const period = hours >= 12 ? "PM" : "AM";
-      const hour12 = hours % 12 || 12;
-
-      setCurrentTime(`${hour12}:${minutes} ${period}`);
-    };
-
-    updateTime();
-
-    const now = new Date();
-    const msUntilNextMinute =
-      (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
-
-    timeoutId = window.setTimeout(() => {
-      updateTime();
-      intervalId = window.setInterval(updateTime, 60000);
-    }, msUntilNextMinute);
-
-    return () => {
-      if (timeoutId !== undefined) clearTimeout(timeoutId);
-      if (intervalId !== undefined) clearInterval(intervalId);
-    };
-  }, []);
-
-  const adult = {
-    name: "Ricardo Mendoza",
-    relation: "ABUELO",
-    verified: true,
-    initials: "RM",
-    icon: IdCard
-  };
-
-
+export function ConfirmPickupStep({ receipt, selectedChildren, adultName, simulation, reentry, onFinish }: ConfirmPickupStepProps) {
+  const movement = receipt.action === "entry" ? reentry ? "Reingreso" : "Entrada" : "Recogida";
+  const ending = reentry && receipt.action === "entry" ? simulation ? "simulado" : "registrado" : simulation ? "simulada" : "registrada";
   return (
-    <div className="confirm-layout">
-      <div className="card">
-        <div className="confirmation-circle">
-          <FaCircleCheck color="#2f9053" size={50}/>
-        </div>
-        <h2>¡Autorización Registrada con Éxito!</h2>
-        <p>
-          Los datos biométricos han sido comprobados de forma segura y con exito,
-          se autoriza la salida del menor.
-        </p>
-        <div className="data">
-
-          {/* Columna izquierda - Datos del niño */}
-          <div className="kids-column">
-            <div className="header-column">
-              <div className="icon-wrapper">
-                <Baby size={26} strokeWidth={2.50}/>
-              </div>
-              <p>Niños a retirarse</p>
-            </div>
-
-            {/* Datos niños a retirarse de prubea */}
-            <div className="list-kids-scroll">
-              <div className="list-kids">
-                {selectedChildren.map(child => (
-                  <div className="kid-data-container">
-                    <div className="avatar-kid"
-                         style={{ background: getAvatarColor(child.name, child.lastName) }}
-                    >{getInitials(child.name, child.lastName)}</div>
-                    <div className="kid-details">
-                      <h3>{child.name} {child.lastName}</h3>
-                      <p>Grupo: {child.classroom} ({getAge(child.datebirth)} años)</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Columna derecha - Datos del niño */}
-          <div className="responsible-adult-column">
-            <div className="header-column">
-              <div className="icon-wrapper">
-                <IdCard size={30} strokeWidth={2}/>
-              </div>
-              <p>Adulto responsable</p>
-            </div>
-            <div className="adult-info">
-              <div className="avatar">{adult.initials}</div>
-              <div className="adult-details">
-                <h3>{adult.name}</h3>
-                <div className="relation-details">
-                  <p className="relation">{adult.relation}</p>
-                  <div className="verification">
-                    <FaCircleCheck color="#10b981"/>
-                    <p>Verificado</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Banner de confirmacion */}
-            <div className="confirmation-banner">
-              <FaLockOpen color="#10b981" size={18}/>
-              <p className="authorized-text">Autorizado para recogida</p>
-            </div>
-          </div>
-          
-        </div>
-
-        <div className="banner-info">
-          <FaCircleInfo />
-          <p>Al confirmar la salida, se registrará la hora exacta ({currentTime}).</p>
-        </div>
-      </div>
+    <div className="reception-confirmation" role="status">
+      <div className="reception-symbol success"><CircleCheck aria-hidden="true" /></div>
+      <h2>{movement} {ending}</h2>
+      <p className="reception-confirmation-names" title={selectedChildren.map(child => `${child.name} ${child.lastName}`).join(", ")}>{selectedChildren.map(child => `${child.name} ${child.lastName}`).join(", ")}</p>
+      <p className="reception-note">Con {adultName} · {new Date(receipt.savedAt).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}</p>
+      {simulation && <p className="reception-note">Registro de prueba, solo en esta sesión.</p>}
+      <button className="reception-button primary full" onClick={onFinish} autoFocus>Siguiente familia</button>
     </div>
   );
-};
+}

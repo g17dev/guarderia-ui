@@ -1,0 +1,42 @@
+/*
+ * APARIENCIA GENERAL — edita los colores aquí.
+ * Acepta HEX (#f1f5ff), RGB o HSL. Vite actualiza la vista al guardar.
+ * Los colores de botones y estados están separados en theme.css.
+ */
+:root, .dark {
+  /* Fondos de las páginas, incluido recepción. */
+  --app-background: #faf9f6;
+  --app-surface: #fffefc;           /* Tarjetas, paneles, formularios y ventanas. */
+  --app-surface-subtle: #f3f5fb;    /* Cabeceras de tabla y secciones secundarias. */
+  --app-muted-surface: #edf1fa;     /* Superficies neutras de apoyo. */
+
+  /* Barra superior de navegación (visible también en móvil). */
+  --app-header-background: #fffefc;
+  --app-header-text: #263653;
+
+  /* Texto general y separadores. */
+  --app-text: #263653;
+  --app-text-secondary: #4c5e7a;
+  --app-text-muted: #626e83;
+  --app-border: #e0e5ef;
+  --app-border-strong: #bcc9df;
+
+  /* Avatares: mismo acabado neutro en listas, perfiles y formularios. */
+  --app-avatar-background: var(--app-background);
+  --app-avatar-text: var(--app-text-muted);
+  --app-avatar-border: var(--app-border);
+  --app-avatar-radius: 30%;
+
+  /* Sidebar: independiente de los colores de botones. */
+  --sidebar: #f1f5ff;              /* Fondo del menú lateral. */
+  --sidebar-foreground: #4c5e7a;   /* Texto e iconos. */
+  --sidebar-logo: #263653;         /* Nombre de la guardería. */
+  --sidebar-hover: #edf1fa;
+  --sidebar-hover-foreground: #263653;
+  --sidebar-accent: #dfe9ff;       /* Fondo de la opción activa. */
+  --sidebar-accent-foreground: #2855ac;
+  --sidebar-primary: #3564c5;      /* Línea que marca la opción activa. */
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-border: var(--app-border);
+  --sidebar-ring: var(--sidebar-primary);
+}

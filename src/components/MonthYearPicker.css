@@ -1,0 +1,26 @@
+.month-year-picker { display: inline-flex; align-items: center; gap: 2px; min-width: 0; }
+.month-year-trigger { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 44px; min-height: 44px; padding: 8px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--foreground); font: inherit; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: background 240ms ease, border-color 240ms ease; }
+.month-year-trigger span { text-transform: capitalize; }
+.month-year-trigger svg { flex-shrink: 0; color: var(--muted-foreground); }
+.month-year-trigger:hover:not(:disabled), .month-year-trigger[data-state="open"] { background: var(--surface-subtle); border-color: var(--border); }
+.month-trigger { width: 128px; }
+.year-trigger { width: 100px; font-weight: 500; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.month-year-trigger:disabled { opacity: .45; cursor: default; }
+.month-year-trigger:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+/* Five 44px rows, matching the wheel's scroll and centering calculations. */
+.month-year-wheel { --period-row: 44px; z-index: 160; position: relative; width: 136px; height: 222px; padding: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 14px; background: var(--card); color: var(--foreground); box-shadow: 0 12px 32px rgb(25 36 58 / 14%), 0 2px 6px rgb(25 36 58 / 7%); transform-origin: center; animation: period-wheel-expand 340ms cubic-bezier(.2,.8,.2,1); }
+.year-wheel { width: 100px; }
+.period-wheel-selection { position: absolute; z-index: 1; top: calc(50% - var(--period-row) / 2); left: 4px; right: 4px; height: var(--period-row); border: 1px solid var(--border); border-radius: 9px; background: var(--surface-subtle); pointer-events: none; }
+.period-wheel-scroll { position: relative; z-index: 2; width: 100%; height: 220px; padding: 88px 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; scroll-snap-type: y mandatory; scrollbar-width: none; user-select: none; cursor: grab; outline: none; mask-image: linear-gradient(to bottom, transparent, black 28%, black 72%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 28%, black 72%, transparent); }
+.period-wheel-scroll::-webkit-scrollbar { display: none; }
+.period-wheel-scroll[data-dragging="true"] { cursor: grabbing; scroll-snap-type: none; }
+.month-year-wheel:has(.period-wheel-scroll:focus-visible) { outline: 2px solid var(--ring); outline-offset: 2px; }
+.period-wheel-option { display: grid; place-items: center; height: var(--period-row); min-height: var(--period-row); padding: 0 32px 0 8px; scroll-snap-align: center; color: var(--text-secondary); font-size: 15px; line-height: 20px; text-transform: capitalize; white-space: nowrap; font-variant-numeric: tabular-nums; transform-origin: center; cursor: pointer; }
+.period-wheel-option[aria-selected="true"] { color: var(--foreground); font-size: 16px; font-weight: 600; }
+.period-wheel-confirm { position: absolute; z-index: 3; top: calc(50% - 22px); right: 1px; display: grid; place-items: center; width: 32px; height: 44px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--muted-foreground); cursor: pointer; }
+.period-wheel-confirm:hover { color: var(--primary); background: color-mix(in srgb, var(--primary) 7%, transparent); }
+.period-wheel-confirm:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+.month-year-trigger:active:not(:disabled) { background: var(--surface-subtle); }
+.period-wheel-confirm { transition: color 220ms ease, background 220ms ease; }
+@keyframes period-wheel-expand { from { opacity: .5; transform: scaleY(.24); } to { opacity: 1; transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .month-year-wheel { animation: none; } .month-year-trigger { transition: none; } }

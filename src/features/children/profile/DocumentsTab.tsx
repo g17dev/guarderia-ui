@@ -1,7 +1,7 @@
 import { FiFile, FiDownload } from "react-icons/fi";
 import "./ProfileTabs.css";
 
-export function DocumentsTab({ childId }: { childId: string }) {
+export function DocumentsTab(_props: { childId: string }) {
   const mock = [
     { name: "Acta de nacimiento.pdf",  size: "245 KB", date: "2023-08-01" },
     { name: "CURP.pdf",                size: "89 KB",  date: "2023-08-01" },

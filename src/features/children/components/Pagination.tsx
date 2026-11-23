@@ -1,4 +1,9 @@
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 import "./Pagination.css";
 
 interface PaginationProps {
@@ -7,9 +12,17 @@ interface PaginationProps {
   totalItems: number;
   pageSize: number;
   onPageChange: (page: number) => void;
+  label?: string;
 }
 
-export function Pagination({ currentPage, totalPages, totalItems, pageSize, onPageChange }: PaginationProps) {
+export function Pagination({
+  currentPage,
+  totalPages,
+  totalItems,
+  pageSize,
+  onPageChange,
+  label = "niños",
+}: PaginationProps) {
   const from = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const to = Math.min(currentPage * pageSize, totalItems);
 
@@ -22,15 +35,31 @@ export function Pagination({ currentPage, totalPages, totalItems, pageSize, onPa
       return [1, 2, 3, 4, 5, "...", totalPages];
     }
     if (currentPage >= totalPages - 3) {
-      return [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+      return [
+        1,
+        "...",
+        totalPages - 4,
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages,
+      ];
     }
-    return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+    return [
+      1,
+      "...",
+      currentPage - 1,
+      currentPage,
+      currentPage + 1,
+      "...",
+      totalPages,
+    ];
   };
 
   return (
     <div className="pagination">
       <span className="pagination-info">
-        Mostrando {from}–{to} de {totalItems} niños
+        Mostrando {from}–{to} de {totalItems} {label}
       </span>
 
       <div className="pagination-controls">
@@ -53,7 +82,9 @@ export function Pagination({ currentPage, totalPages, totalItems, pageSize, onPa
 
         {getPages().map((page, i) =>
           page === "..." ? (
-            <span key={`dots-${i}`} className="page-dots">...</span>
+            <span key={`dots-${i}`} className="page-dots">
+              ...
+            </span>
           ) : (
             <button
               key={page}
@@ -62,7 +93,7 @@ export function Pagination({ currentPage, totalPages, totalItems, pageSize, onPa
             >
               {page}
             </button>
-          )
+          ),
         )}
 
         <button

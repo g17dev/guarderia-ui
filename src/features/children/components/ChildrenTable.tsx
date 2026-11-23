@@ -9,7 +9,7 @@ interface ChildrenTableProps {
   onDelete: (id: string) => void;
 }
 
-export function ChildrenTable({ children, onRowClick, onDelete }: ChildrenTableProps) {
+export function ChildrenTable({ children, onRowClick }: ChildrenTableProps) {
   if (children.length === 0) {
     return (
       <div className="table-empty">
