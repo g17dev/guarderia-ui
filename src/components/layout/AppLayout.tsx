@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Menu } from "lucide-react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Breadcrumbs } from "../BreadCrumbs";
@@ -34,18 +35,25 @@ function useBreadcrumbs() {
 
 export function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const breadcrumbs = useBreadcrumbs();
+  const { pathname } = useLocation();
+  const isReception = pathname === "/access" || pathname === "/handover";
 
   return (
-    <div className={`app-layout ${collapsed ? "sidebar-collapsed" : ""}`}>
-      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(p => !p)} />
+    <div className={`app-layout ${collapsed ? "sidebar-collapsed" : ""} ${mobileOpen ? "mobile-nav-open" : ""}`}>
+      <Sidebar collapsed={mobileOpen ? false : collapsed} onToggle={() => {
+        if (window.matchMedia("(max-width: 1024px)").matches) setMobileOpen(false);
+        else setCollapsed(p => !p);
+      }} onNavigate={() => setMobileOpen(false)} />
+      {mobileOpen && <button className="app-sidebar-backdrop" aria-label="Cerrar navegación" onClick={() => setMobileOpen(false)} />}
       <div className="app-right">
-        {breadcrumbs && (
-          <div className="app-topbar">
-            <Breadcrumbs items={breadcrumbs} />
+          <div className={`app-topbar ${breadcrumbs ? "" : "app-topbar-mobile-only"}`}>
+            <button className="app-menu-toggle" aria-label="Abrir navegación" aria-expanded={mobileOpen}
+              aria-controls="app-sidebar" onClick={() => setMobileOpen(true)}><Menu size={22} /></button>
+            {breadcrumbs ? <Breadcrumbs items={breadcrumbs} /> : <span className="app-mobile-title">Guardería</span>}
           </div>
-        )}
-        <main className="app-content">
+        <main className={`app-content ${isReception ? "app-content-reception" : ""}`}>
           <Outlet />
         </main>
       </div>

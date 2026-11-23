@@ -1,6 +1,6 @@
 import "./ProfileTabs.css";
 
-export function HandoverTab({ childId }: { childId: string }) {
+export function HandoverTab(_props: { childId: string }) {
   const mock = [
     { date: "2024-03-15", time: "14:35", person: "Carlos García", relation: "Padre",  verified: true  },
     { date: "2024-03-14", time: "14:20", person: "Ana López",     relation: "Madre",  verified: true  },
@@ -28,7 +28,7 @@ export function HandoverTab({ childId }: { childId: string }) {
                 <td style={{ fontWeight: 500 }}>{row.person}</td>
                 <td>{row.relation}</td>
                 <td>
-                  <span className="tab-badge" style={{ background: "#dcfce7", color: "#16a34a" }}>
+                  <span className="tab-badge" style={{ background: "var(--success-soft)", color: "var(--success)" }}>
                     ✓ Verificado
                   </span>
                 </td>

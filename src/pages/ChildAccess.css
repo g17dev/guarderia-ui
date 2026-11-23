@@ -28,8 +28,8 @@
   width: 520px;
   height: 280px;
   border-radius: 24px;
-  background: #FFFFFF;
-  border: 2px solid #D5E3FF;
+  background: var(--card);
+  border: 2px solid var(--primary-soft);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -43,27 +43,27 @@
 /* Efecto hover */
 .btn:hover {
   transform: translateY(-8px);
-  border-color: #004B92;
-  background: #f8fcff;
-  box-shadow: 0 12px 28px rgba(0, 75, 146, 0.15);
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.15);
 }
 
 .btn h2 {
-  color: #2A64AD;
+  color: var(--primary);
   transition: color 0.3s ease;
 }
 
 .btn:hover h2 {
-  color: #004B92;
+  color: var(--primary);
 }
 
 .btn p {
-  color: #424751;
+  color: var(--foreground);
   transition: color 0.3s ease;
 }
 
 .btn:hover p {
-  color: #1a2a3a;
+  color: var(--foreground);
 }
 
 /* Efecto de click activo */

@@ -18,7 +18,7 @@ export const useBiometricCapture = () => {
       }
         
       // Nuevos estados para huella
-      const [isFingerprintReady, setIsFingerprintReady] = useState(false);
+      const [isFingerprintReady] = useState(false);
       const [isFingerprintScanning, setIsFingerprintScanning] = useState(false);
       
       const [fingerprintMessage, setFingerprintMessage] = useState('Espere un momento, mientras estamos verificando el sensor de huella...');

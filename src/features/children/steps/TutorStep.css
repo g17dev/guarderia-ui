@@ -11,9 +11,9 @@
   margin-top: -28px; /* Eleva las pestañas para cubrir el espacio del padding superior */
   padding-top: 28px; /* Restaura el espaciado interno superior para que se vea bien alineado */
   padding-bottom: 16px; /* Espaciado inferior de las pestañas */
-  background-color: var(--bg, #f5f6fa); /* Usa la variable global de fondo de la aplicación para mezclarse perfectamente */
+  background-color: var(--bg, var(--background)); /* Usa la variable global de fondo de la aplicación para mezclarse perfectamente */
   z-index: 10; /* Asegura que las pestañas queden siempre por encima de los inputs y otros elementos */
-  border-bottom: 1px solid #e0e0e0; /* Agrega una sutil línea divisoria que separa las pestañas del formulario al hacer scroll */
+  border-bottom: 1px solid var(--border); /* Agrega una sutil línea divisoria que separa las pestañas del formulario al hacer scroll */
   margin-bottom: 24px; /* Espacio inferior respecto al formulario */
 
   display: flex;
@@ -63,46 +63,47 @@
   align-items: center;
   gap: 8px;
   padding: 7px 12px;
-  border: 1.5px solid #e0e0e0;
+  border: 1.5px solid var(--border);
   border-radius: 10px;
-  background: white;
+  background: var(--card);
   font-family: inherit;
   font-size: 13px;
   font-weight: 500;
-  color: #666;
+  color: var(--muted-foreground);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .tutor-tab-btn:hover {
-  border-color: #004B92;
-  color: #004B92;
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .tutor-tab.active .tutor-tab-btn {
-  border-color: #004B92;
-  background: #EEF3FB;
-  color: #004B92;
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .tutor-tab-avatar {
   width: 24px;
   height: 24px;
-  border-radius: 50%;
-  background: #e0e0e0;
-  color: #666;
+  border-radius: var(--app-avatar-radius);
+  background: var(--app-avatar-background);
+  color: var(--app-avatar-text);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
+  border: 1px solid var(--app-avatar-border);
 }
 
 .tutor-tab-avatar.active {
-  background: #004B92;
-  color: white;
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .tutor-tab-avatar img {
@@ -120,7 +121,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #dc2626;
+  background: var(--destructive);
   flex-shrink: 0;
 }
 
@@ -132,16 +133,16 @@
   height: 20px;
   border: none;
   border-radius: 50%;
-  background: #f3f4f6;
-  color: #999;
+  background: var(--surface-subtle);
+  color: var(--muted-foreground);
   cursor: pointer;
   transition: all 0.2s ease;
   margin-left: 4px;
 }
 
 .tutor-tab-remove:hover {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--destructive-soft);
+  color: var(--destructive);
 }
 
 .tutor-add-btn {
@@ -177,15 +178,15 @@
   position: relative;
   width: 130px;
   height: 130px;
-  border-radius: 50%;
+  border-radius: var(--app-avatar-radius);
   overflow: hidden;
   flex-shrink: 0;
-  background: #F0F4F8;
-  border: 3px dashed #B0C4D8;
+  background: var(--app-avatar-background);
+  border: 1px dashed var(--app-avatar-border);
   transition: border-color 0.2s ease;
 }
 
-.photo-preview:hover { border-color: #004B92; }
+.photo-preview:hover { border-color: var(--primary); }
 
 .avatar-placeholder-svg { width: 100%; height: 100%; }
 
@@ -199,7 +200,7 @@
   height: 24px;
   border-radius: 50%;
   background: rgba(0,0,0,0.5);
-  color: white;
+  color: var(--primary-foreground);
   border: none;
   cursor: pointer;
   display: flex;
@@ -208,7 +209,7 @@
   transition: background 0.2s ease;
 }
 
-.photo-remove:hover { background: #dc2626; }
+.photo-remove:hover { background: var(--destructive); }
 
 .photo-upload-info {
   display: flex;
@@ -221,13 +222,13 @@
 .photo-upload-title {
   font-size: 13px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--foreground);
   margin: 0;
 }
 
 .photo-upload-hint {
   font-size: 11px;
-  color: #999;
+  color: var(--muted-foreground);
   margin: 0;
   line-height: 1.4;
 }
@@ -237,10 +238,10 @@
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  border: 1.5px solid #004B92;
+  border: 1.5px solid var(--primary);
   border-radius: 8px;
-  background: white;
-  color: #004B92;
+  background: var(--card);
+  color: var(--primary);
   font-size: 12px;
   font-weight: 600;
   font-family: inherit;
@@ -248,7 +249,7 @@
   transition: all 0.2s ease;
 }
 
-.photo-upload-btn:hover { background: #004B92; color: white; }
+.photo-upload-btn:hover { background: var(--primary); color: var(--primary-foreground); }
 .photo-input-hidden { display: none; }
 
 /* ===== FORM RIGHT ===== */
@@ -261,7 +262,7 @@
 /* ===== DIVIDER ===== */
 .form-divider {
   height: 1px;
-  background: #f0f0f0;
+  background: var(--border);
   margin: 20px 0;
 }
 
@@ -275,7 +276,7 @@
 .form-section-title {
   font-size: 12px;
   font-weight: 600;
-  color: #999;
+  color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0;
@@ -305,29 +306,29 @@
 .form-field label {
   font-size: 12px;
   font-weight: 500;
-  color: #555;
+  color: var(--text-secondary);
 }
 
 .form-field input {
   height: 38px;
   padding: 0 12px;
-  border: 1.5px solid #e0e0e0;
+  border: 1.5px solid var(--border);
   border-radius: 8px;
   font-size: 13px;
   font-family: inherit;
-  color: #1a1a1a;
+  color: var(--foreground);
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-field input:focus {
-  border-color: #004B92;
-  box-shadow: 0 0 0 3px rgba(0,75,146,0.08);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb),0.08);
 }
 
-.form-field input.input-error { border-color: #dc2626; }
-.required { color: #dc2626; }
-.field-error { font-size: 11px; color: #dc2626; }
+.form-field input.input-error { border-color: var(--destructive); }
+.required { color: var(--destructive); }
+.field-error { font-size: 11px; color: var(--destructive); }
 
 /* ===== OPTION CARDS ===== */
 .option-cards {
@@ -342,9 +343,9 @@
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--border);
   border-radius: 12px;
-  background: white;
+  background: var(--card);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
@@ -352,14 +353,14 @@
 }
 
 .option-card:hover {
-  border-color: #004B92;
+  border-color: var(--primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,75,146,0.08);
+  box-shadow: 0 4px 12px rgba(var(--primary-rgb),0.08);
 }
 
 .option-card.selected {
-  border-color: #004B92;
-  background: #EEF3FB;
+  border-color: var(--primary);
+  background: var(--primary-soft);
 }
 
 .option-card-icon {
@@ -372,13 +373,13 @@
   padding: 10px;
 }
 
-.relation-icon { background: #EEF3FB; color: #004B92; }
-.option-card.selected .relation-icon { background: #004B92; color: white; }
+.relation-icon { background: var(--primary-soft); color: var(--primary); }
+.option-card.selected .relation-icon { background: var(--primary); color: var(--primary-foreground); }
 
 .option-card-label {
   font-size: 12px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--foreground);
 }
 
 /* ===== TELÉFONOS ===== */
@@ -389,8 +390,8 @@
 }
 
 .phone-card {
-  background: #fafafa;
-  border: 1px solid #e5e7eb;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 14px;
 }
@@ -405,7 +406,7 @@
 .phone-card-title {
   font-size: 13px;
   font-weight: 600;
-  color: #374151;
+  color: var(--foreground);
 }
 
 .phone-card-content {
@@ -419,47 +420,47 @@
 .phone-region-select {
   height: 38px;
   padding: 0 10px;
-  border: 1.5px solid #e0e0e0;
+  border: 1.5px solid var(--border);
   border-radius: 8px;
-  background: white;
+  background: var(--card);
   font-size: 13px;
   font-family: inherit;
-  color: #333;
+  color: var(--foreground);
   outline: none;
   transition: all 0.2s ease;
 }
 
 .phone-type-select:focus,
 .phone-region-select:focus {
-  border-color: #004B92;
-  box-shadow: 0 0 0 3px rgba(0,75,146,0.08);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb),0.08);
 }
 
 .phone-number-input {
   height: 38px;
   padding: 0 12px;
-  border: 1.5px solid #e0e0e0;
+  border: 1.5px solid var(--border);
   border-radius: 8px;
-  background: white;
+  background: var(--card);
   font-size: 13px;
   font-family: inherit;
-  color: #1a1a1a;
+  color: var(--foreground);
   outline: none;
   transition: all 0.2s ease;
 }
 
 .phone-number-input:focus {
-  border-color: #004B92;
-  box-shadow: 0 0 0 3px rgba(0,75,146,0.08);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb),0.08);
 }
 
 .phone-note-input {
   width: 100%;
   min-height: 72px;
   padding: 10px 12px;
-  border: 1.5px solid #e0e0e0;
+  border: 1.5px solid var(--border);
   border-radius: 8px;
-  background: white;
+  background: var(--card);
   font-size: 13px;
   font-family: inherit;
   resize: vertical;
@@ -468,8 +469,8 @@
 }
 
 .phone-note-input:focus {
-  border-color: #004B92;
-  box-shadow: 0 0 0 3px rgba(0,75,146,0.08);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb),0.08);
 }
 
 .phone-remove-btn {
@@ -480,15 +481,15 @@
   height: 34px;
   border: none;
   border-radius: 8px;
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--destructive-soft);
+  color: var(--destructive);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .phone-remove-btn:hover:not(:disabled) {
-  background: #dc2626;
-  color: white;
+  background: var(--destructive);
+  color: var(--primary-foreground);
 }
 
 .phone-remove-btn:disabled {
@@ -502,10 +503,10 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  border: 1.5px solid #004B92;
+  border: 1.5px solid var(--primary);
   border-radius: 8px;
-  background: white;
-  color: #004B92;
+  background: var(--card);
+  color: var(--primary);
   font-size: 12px;
   font-weight: 600;
   font-family: inherit;
@@ -513,12 +514,12 @@
   transition: all 0.2s ease;
 }
 
-.btn-add:hover { background: #004B92; color: white; }
+.btn-add:hover { background: var(--primary); color: var(--primary-foreground); }
 
 /* ===== HUELLAS ===== */
 .section-subtitle {
   font-size: 12px;
-  color: #999;
+  color: var(--muted-foreground);
   margin: 2px 0 0 0;
 }
 
@@ -528,8 +529,8 @@
   align-items: center;
   gap: 8px;
   padding: 32px 20px;
-  background: #fafafa;
-  border: 2px dashed #e0e0e0;
+  background: var(--surface-subtle);
+  border: 2px dashed var(--border);
   border-radius: 14px;
   text-align: center;
 }
@@ -538,23 +539,23 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: #EEF3FB;
+  background: var(--primary-soft);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #B3CAEA;
+  color: var(--illustration-fill);
 }
 
 .fingerprints-empty-title {
   font-size: 14px;
   font-weight: 600;
-  color: #999;
+  color: var(--muted-foreground);
   margin: 0;
 }
 
 .fingerprints-empty-hint {
   font-size: 12px;
-  color: #bbb;
+  color: var(--muted-foreground);
   margin: 0;
   max-width: 280px;
   line-height: 1.5;
@@ -571,13 +572,13 @@
   align-items: center;
   gap: 14px;
   padding: 12px 16px;
-  background: white;
-  border: 1.5px solid #e0e0e0;
+  background: var(--card);
+  border: 1.5px solid var(--border);
   border-radius: 12px;
   transition: border-color 0.2s ease;
 }
 
-.fingerprint-item:hover { border-color: #004B92; }
+.fingerprint-item:hover { border-color: var(--primary); }
 
 .fingerprint-item-icon {
   width: 44px;
@@ -587,13 +588,13 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: #f0f0f0;
-  color: #999;
+  background: var(--border);
+  color: var(--muted-foreground);
 }
 
 .fingerprint-item-icon.registered {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--success-soft);
+  color: var(--success);
 }
 
 .fingerprint-item-info {
@@ -606,12 +607,12 @@
 .fingerprint-item-name {
   font-size: 13px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--foreground);
 }
 
 .fingerprint-item-date {
   font-size: 11px;
-  color: #999;
+  color: var(--muted-foreground);
 }
 
 .fingerprint-item-remove {
@@ -622,14 +623,14 @@
   height: 30px;
   border: none;
   border-radius: 8px;
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--destructive-soft);
+  color: var(--destructive);
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
 .fingerprint-item-remove:hover {
-  background: #dc2626;
-  color: white;
+  background: var(--destructive);
+  color: var(--primary-foreground);
 }

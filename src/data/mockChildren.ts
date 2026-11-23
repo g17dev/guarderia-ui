@@ -3,6 +3,7 @@ import type { Child } from "../types/child";
 export const MOCK_CHILDREN: Child[] = [
   {
     id: "1",
+    slug: "mateo-garcia-lopez",
     name: "Mateo",
     lastName: "García López",
     birthDate: "2020-03-15",
@@ -20,6 +21,7 @@ export const MOCK_CHILDREN: Child[] = [
   },
   {
     id: "2",
+    slug: "valentina-rodriguez-soto",
     name: "Valentina",
     lastName: "Rodríguez Soto",
     birthDate: "2021-07-22",
@@ -37,6 +39,7 @@ export const MOCK_CHILDREN: Child[] = [
   },
   {
     id: "3",
+    slug: "santiago-lopez-mendez",
     name: "Santiago",
     lastName: "López Méndez",
     birthDate: "2019-11-05",
@@ -54,6 +57,7 @@ export const MOCK_CHILDREN: Child[] = [
   },
   {
     id: "4",
+    slug: "emma-martinez-ruiz",
     name: "Emma",
     lastName: "Martínez Ruiz",
     birthDate: "2022-05-18",
@@ -71,6 +75,7 @@ export const MOCK_CHILDREN: Child[] = [
   },
   {
     id: "5",
+    slug: "lucas-fernandez-gil",
     name: "Lucas",
     lastName: "Fernández Gil",
     birthDate: "2021-02-28",
@@ -88,6 +93,7 @@ export const MOCK_CHILDREN: Child[] = [
   },
   {
     id: "6",
+    slug: "sofia-gonzalez-vera",
     name: "Sofía",
     lastName: "González Vera",
     birthDate: "2020-09-10",

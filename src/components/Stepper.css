@@ -1,8 +1,8 @@
 :root {
   --circle-size: 40px;
-  --primary-color: #004B92;
-  --completed-color: #209e27;
-  --pending-border: #ddd;
+  --primary-color: var(--primary);
+  --completed-color: var(--success);
+  --pending-border: var(--border);
   --transition-speed: 0.5s;
 }
 
@@ -79,7 +79,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
+  background: var(--card);
   transition: all 0.3s ease;
   font-weight: bold;
   flex-shrink: 0;
@@ -87,27 +87,27 @@
 
 .circle.completed {
   background: var(--primary-color);
-  color: white;
+  color: var(--primary-foreground);
   border: 2px solid var(--primary-color);
 }
 
 .circle.current {
   border: 2px solid var(--primary-color);
   color: var(--primary-color);
-  background: white;
+  background: var(--card);
 }
 
 .circle.pending {
   border: 2px solid var(--pending-border);
-  color: #999;
-  background: white;
+  color: var(--muted-foreground);
+  background: var(--card);
 }
 
 /* ===== CONTENIDO ===== */
 .content h3 {
   margin: 0 0 4px 0;
   font-size: 0.9rem;
-  color: #1a1a1a;
+  color: var(--foreground);
   word-break: break-word;
 }
 
@@ -120,23 +120,23 @@
 }
 
 .badge.completed {
-  background: #ddecdd;
+  background: var(--success-soft);
   color: var(--completed-color);
 }
 
 .badge.current {
-  background: #cdd2f3;
-  color: #5765bd;
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .badge.pending {
-  background: #eee;
-  color: #636262;
+  background: var(--border);
+  color: var(--text-secondary);
 }
 
 /* ===== LÍNEAS ===== */
 .line-base {
-  stroke: #ddd;
+  stroke: var(--border);
   stroke-width: 2;
   stroke-linecap: round;
 }

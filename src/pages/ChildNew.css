@@ -24,13 +24,13 @@
 .child-new-header h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--foreground);
   margin: 0;
 }
 
 .child-new-header p {
   font-size: 14px;
-  color: #999;
+  color: var(--muted-foreground);
   margin: 0;
 }
 
@@ -49,7 +49,7 @@
 .progress-bar-track {
   flex: 1;
   height: 6px;
-  background: #e0e0e0;
+  background: var(--border);
   border-radius: 99px;
   overflow: hidden;
   max-width: 300px;
@@ -57,14 +57,14 @@
 
 .progress-bar-fill {
   height: 100%;
-  background: #004B92;
+  background: var(--primary);
   border-radius: 99px;
   transition: width 0.4s ease;
 }
 
 .progress-bar-label {
   font-size: 12px;
-  color: #999;
+  color: var(--muted-foreground);
   white-space: nowrap;
 }
 
@@ -80,7 +80,7 @@
 /* ===== SIDEBAR ===== */
 .child-new-sidebar {
   padding: 24px 24px 24px 0;
-  border-right: 1px solid #e0e0e0;
+  border-right: 1px solid var(--border);
   height: 100%;
 }
 
@@ -95,19 +95,19 @@
 
 .step-panel-header {
   padding: 24px 28px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border);
 }
 
 .step-panel-header h3 {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--foreground);
   margin: 0 0 4px 0;
 }
 
 .step-panel-header p {
   font-size: 13px;
-  color: #999;
+  color: var(--muted-foreground);
   margin: 0;
 }
 
@@ -123,9 +123,9 @@
   align-items: center;
   justify-content: center;
   height: 200px;
-  border: 2px dashed #e0e0e0;
+  border: 2px dashed var(--border);
   border-radius: 12px;
-  color: #bbb;
+  color: var(--muted-foreground);
   font-size: 14px;
 }
 
@@ -133,7 +133,7 @@
 .step-panel-footer {
   flex-shrink: 0; /* ← nunca se encoge */
   padding: 16px 28px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -144,8 +144,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: #004B92;
-  color: white;
+  background: var(--primary);
+  color: var(--primary-foreground);
   border: none;
   border-radius: 10px;
   font-size: 14px;
@@ -157,7 +157,7 @@
 }
 
 .btn-primary:hover {
-  background: #003d7a;
+  background: var(--primary-hover);
 }
 
 .btn-secondary {
@@ -166,8 +166,8 @@
   gap: 8px;
   padding: 10px 20px;
   background: transparent;
-  color: #666;
-  border: 2px solid #e0e0e0;
+  color: var(--muted-foreground);
+  border: 2px solid var(--border);
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
@@ -177,8 +177,8 @@
 }
 
 .btn-secondary:hover {
-  border-color: #004B92;
-  color: #004B92;
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .btn-success {
@@ -186,8 +186,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: #10b981;
-  color: white;
+  background: var(--success);
+  color: var(--primary-foreground);
   border: none;
   border-radius: 10px;
   font-size: 14px;
@@ -199,5 +199,5 @@
 }
 
 .btn-success:hover {
-  background: #059669;
+  background: var(--success-hover);
 }

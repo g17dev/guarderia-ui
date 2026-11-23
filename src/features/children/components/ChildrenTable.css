@@ -22,7 +22,7 @@
 .children-page-header h2 {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--foreground);
   margin: 0;
 }
 
@@ -30,8 +30,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #e8f0fe;
-  color: #004B92;
+  background: var(--primary-soft);
+  color: var(--primary);
   font-size: 13px;
   font-weight: 600;
   padding: 2px 10px;
@@ -44,8 +44,8 @@
   width: 100%;
   overflow-x: auto;
   border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  background: white;
+  border: 1px solid var(--border);
+  background: var(--card);
 }
 
 .children-table {
@@ -56,8 +56,8 @@
 
 /* Encabezados */
 .children-table thead tr {
-  border-bottom: 1px solid #e0e0e0;
-  background: #fafafa;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-subtle);
 }
 
 .children-table th {
@@ -66,7 +66,7 @@
   text-align: left;
   font-size: 11px;
   font-weight: 700;
-  color: #999;
+  color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   white-space: nowrap;
@@ -78,7 +78,7 @@
 
 /* Filas */
 .children-table tbody tr {
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border);
   transition: background 0.15s ease;
 }
 
@@ -87,13 +87,13 @@
 }
 
 .children-table tbody tr:hover {
-  background: #f8faff;
+  background: var(--primary-soft);
 }
 
 .children-table td {
   padding: 2px;
   padding-left: 15px;
-  color: #333;
+  color: var(--foreground);
   vertical-align: middle;
   cursor: pointer;
 }
@@ -122,12 +122,12 @@
 
 .tutor-name {
   font-weight: 500;
-  color: #1a1a1a;
+  color: var(--foreground);
 }
 
 .tutor-phone {
   font-size: 12px;
-  color: #999;
+  color: var(--muted-foreground);
 }
 
 /* Badges */
@@ -141,18 +141,18 @@
 }
 
 .badge-classroom {
-  background: #e8f0fe;
-  color: #004B92;
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .badge-active {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--success-soft);
+  color: var(--success);
 }
 
 .badge-inactive {
-  background: #f3f4f6;
-  color: #999;
+  background: var(--surface-subtle);
+  color: var(--muted-foreground);
 }
 
 /* Acciones */
@@ -176,33 +176,33 @@
 }
 
 .action-btn-view {
-  background: #e8f0fe;
-  color: #004B92;
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .action-btn-view:hover {
-  background: #004B92;
-  color: white;
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .action-btn-delete {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--destructive-soft);
+  color: var(--destructive);
 }
 
 .action-btn-delete:hover {
-  background: #dc2626;
-  color: white;
+  background: var(--destructive);
+  color: var(--primary-foreground);
 }
 
 /* Empty state */
 .table-empty {
   padding: 60px 20px;
   text-align: center;
-  color: #999;
-  background: white;
+  color: var(--muted-foreground);
+  background: var(--card);
   border-radius: 12px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
 }
 
 .td-child-inner {

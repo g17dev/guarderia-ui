@@ -15,7 +15,7 @@
   flex-shrink: 0; /* No se encoge */
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--card);
   z-index: 10;
   padding: 20px 20px 0 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -24,7 +24,7 @@
 .stepper-header h2 {
   text-align: center;
   margin: 0 0 20px 0;
-  color: #004B92;
+  color: var(--primary);
   font-size: 1.8rem;
 }
 
@@ -44,22 +44,22 @@
 }
 
 .stepper-content::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--surface-subtle);
   border-radius: 4px;
 }
 
 .stepper-content::-webkit-scrollbar-thumb {
-  background: #004B92;
+  background: var(--primary);
   border-radius: 4px;
 }
 
 .stepper-content::-webkit-scrollbar-thumb:hover {
-  background: #003d7a;
+  background: var(--primary-hover);
 }
 
 /* ========== PASO DE AUTORIZACIÓN ========== */
 .authorization-step {
-  background: white;
+  background: var(--card);
   border-radius: 16px;
   padding: 30px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -67,13 +67,13 @@
 
 .authorization-step h3 {
   margin: 0 0 8px 0;
-  color: #333;
+  color: var(--foreground);
   font-size: 1.5rem;
 }
 
 .authorization-step p {
   margin: 0 0 24px 0;
-  color: #666;
+  color: var(--muted-foreground);
 }
 
 /* ========== GRUPOS DE INPUT ========== */
@@ -85,14 +85,14 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #555;
+  color: var(--text-secondary);
 }
 
 .input-group input,
 .input-group textarea {
   width: 100%;
   padding: 12px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--border);
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.2s ease;
@@ -103,16 +103,16 @@
 .input-group input:focus,
 .input-group textarea:focus {
   outline: none;
-  border-color: #004B92;
-  box-shadow: 0 0 0 3px rgba(0, 75, 146, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
 }
 
 .input-group input.error {
-  border-color: #dc3545;
+  border-color: var(--destructive);
 }
 
 .error-message {
-  color: #dc3545;
+  color: var(--destructive);
   font-size: 12px;
   margin-top: 5px;
   display: block;
@@ -120,7 +120,7 @@
 
 /* ========== PASO DE CONFIRMACIÓN ========== */
 .confirmation-step {
-  background: white;
+  background: var(--card);
   border-radius: 16px;
   padding: 30px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -128,13 +128,13 @@
 
 .confirmation-step h3 {
   margin: 0 0 8px 0;
-  color: #333;
+  color: var(--foreground);
   font-size: 1.5rem;
 }
 
 .confirmation-step > p {
   margin: 0 0 24px 0;
-  color: #666;
+  color: var(--muted-foreground);
 }
 
 .confirmation-card {
@@ -144,17 +144,17 @@
 }
 
 .confirmation-section {
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 20px;
-  background: #fafafa;
+  background: var(--surface-subtle);
 }
 
 .confirmation-section h4 {
   margin: 0 0 16px 0;
-  color: #004B92;
+  color: var(--primary);
   font-size: 1.1rem;
-  border-bottom: 2px solid #004B92;
+  border-bottom: 2px solid var(--primary);
   padding-bottom: 8px;
   display: inline-block;
 }
@@ -162,7 +162,7 @@
 .info-row {
   display: flex;
   padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
 }
 
 .info-row:last-child {
@@ -172,12 +172,12 @@
 .info-row .label {
   font-weight: 600;
   width: 150px;
-  color: #555;
+  color: var(--text-secondary);
 }
 
 .info-row .value {
   flex: 1;
-  color: #333;
+  color: var(--foreground);
 }
 
 /* ========== BOTONES FIJOS ABAJO ========== */
@@ -185,7 +185,7 @@
   flex-shrink: 0; /* No se encoge */
   position: sticky;
   bottom: 0;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border);
   padding: 16px 20px;
   z-index: 10;
   display: flex;
@@ -218,13 +218,13 @@
 /* ========== BOTÓN ATRÁS ========== */
 .stepper-buttons button:first-child {
   background: transparent;
-  color: #666;
-  border: 2px solid #e0e0e0;
+  color: var(--muted-foreground);
+  border: 2px solid var(--border);
 }
 
 .stepper-buttons button:first-child:hover {
-  background: #f8f9fa;
-  border-color: #004B92;
+  background: var(--surface-subtle);
+  border-color: var(--primary);
   transform: translateX(-3px);
 }
 
@@ -234,15 +234,15 @@
 
 /* ========== BOTÓN SIGUIENTE ========== */
 .stepper-buttons button:last-child {
-  background: #004B92;
-  color: white;
-  box-shadow: 0 2px 8px rgba(0, 75, 146, 0.2);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 2px 8px rgba(var(--primary-rgb), 0.2);
 }
 
 .stepper-buttons button:last-child:hover {
-  background: #004B92;
+  background: var(--primary);
   transform: translateX(3px);
-  box-shadow: 0 4px 12px rgba(0, 75, 146, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
 }
 
 .stepper-buttons button:last-child:active {
@@ -256,13 +256,13 @@
 
 /* ========== BOTÓN CONFIRMAR ========== */
 .stepper-buttons .btn-success {
-  background: #10b981;
-  color: white;
+  background: var(--success);
+  color: var(--primary-foreground);
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
 }
 
 .stepper-buttons .btn-success:hover {
-  background: #059669;
+  background: var(--success-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
@@ -278,8 +278,8 @@
 .selected-summary {
   flex-shrink: 0; /* No se encoge */
   margin-top: auto; /* Empuja hacia abajo */
-  background: #e8f5e9;
-  border: 2px solid #4caf50;
+  background: var(--success-soft);
+  border: 2px solid var(--success);
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

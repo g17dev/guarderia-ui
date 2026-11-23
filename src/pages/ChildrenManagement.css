@@ -17,13 +17,13 @@
 .children-header-text h2 {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--foreground);
   margin: 0 0 4px 0;
 }
 
 .children-header-text p {
   font-size: 14px;
-  color: #999;
+  color: var(--muted-foreground);
   margin: 0;
 }
 
@@ -31,8 +31,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #004B92;
-  color: white;
+  background: var(--primary);
+  color: var(--primary-foreground);
   border: none;
   padding: 10px 18px;
   border-radius: 10px;
@@ -43,7 +43,7 @@
 }
 
 .btn-primary:hover {
-  background: #003d7a;
+  background: var(--primary-hover);
 }
 
 /* ===== TOOLBAR ===== */
@@ -69,15 +69,15 @@
 .children-count-label {
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--foreground);
 }
 
 .children-count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #e8f0fe;
-  color: #004B92;
+  background: var(--primary-soft);
+  color: var(--primary);
   font-size: 12px;
   font-weight: 700;
   padding: 2px 8px;
@@ -98,10 +98,10 @@
   gap: 6px;
   height: 36px;
   padding: 0 14px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: white;
-  color: #555;
+  background: var(--card);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 500;
   font-family: inherit;
@@ -110,6 +110,6 @@
 }
 
 .btn-tool:hover {
-  border-color: #004B92;
-  color: #004B92;
+  border-color: var(--primary);
+  color: var(--primary);
 }

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useCamera } from './useCamera';
 
 type SimulationStep = 'checking_camera' | 'requesting_permission' | 'starting_camera' | 'camera_ready' | 'detecting_face' | 'face_detected' | 'connecting_server' | 'ready';
 

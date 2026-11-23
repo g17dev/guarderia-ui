@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import {
   Banknote,
-  Clock3,
-  Tag,
   CalendarDays,
   CircleCheck,
   CreditCard,
@@ -28,6 +26,7 @@ import "./ProfileTabs.css";
 const STATUS_LABELS: Record<PaymentStatus, string> = {
   paid: "Pagado",
   pending: "Pendiente",
+  overdue: "Vencido",
   partial: "Parcial",
   cancelled: "Cancelado",
 };
@@ -50,22 +49,11 @@ const CONCEPT_LABELS: Record<PaymentConcept, string> = {
 const ALL_STATUSES: PaymentStatus[] = [
   "paid",
   "pending",
+  "overdue",
   "partial",
   "cancelled",
 ];
 const ALL_METHODS: PaymentMethod[] = ["cash", "transfer", "check"];
-const ALL_CONCEPTS: PaymentConcept[] = [
-  "mensualidad",
-  "inscripcion",
-  "materiales",
-  "uniforme",
-  "evento",
-  "otro",
-];
-
-// Preset inteligente: estados que representan dinero que aún se le debe a la escuela
-const PENDING_PAYMENT_STATUSES: PaymentStatus[] = ["pending", "partial"];
-
 type FilterCategoryId = "estado" | "metodo" | "concepto" | "fecha";
 
 const FILTER_CATEGORIES: {
@@ -340,7 +328,7 @@ const MOCK_PAYMENTS: Payment[] = [
   },
 ];
 
-export function PaymentsTab({ childId }: { childId: string }) {
+export function PaymentsTab(_props: { childId: string }) {
   const [search, setSearch] = useState("");
   const [statusFilters, setStatusFilters] = useState<Set<PaymentStatus>>(
     new Set(),
@@ -462,16 +450,6 @@ export function PaymentsTab({ childId }: { childId: string }) {
     (safePage - 1) * PAGE_SIZE,
     safePage * PAGE_SIZE,
   );
-
-  const isPendingPresetActive =
-    PENDING_PAYMENT_STATUSES.every((s) => statusFilters.has(s)) &&
-    statusFilters.size === PENDING_PAYMENT_STATUSES.length;
-
-  const togglePendingPreset = () => {
-    setStatusFilters(
-      isPendingPresetActive ? new Set() : new Set(PENDING_PAYMENT_STATUSES),
-    );
-  };
 
   const clearAllFilters = () => {
     setStatusFilters(new Set());

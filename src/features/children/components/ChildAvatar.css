@@ -1,5 +1,7 @@
 .child-avatar {
-  border-radius: 50%;
+  border-radius: var(--app-avatar-radius);
+  border: 1px solid var(--app-avatar-border);
+  background: var(--app-avatar-background);
   object-fit: cover;
   flex-shrink: 0;
 }
@@ -8,16 +10,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--app-avatar-text);
   font-weight: 600;
-  letter-spacing: 0.5px;
 }
 
 /* Tamaños */
 .child-avatar-sm {
-  width: 36px;
-  height: 36px;
-  font-size: 12px;
+  width: 42px;
+  height: 42px;
+  font-size: 13px;
 }
 
 .child-avatar-md {

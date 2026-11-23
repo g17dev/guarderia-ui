@@ -1,31 +1,18 @@
-import "./ChildAccess.css";
-import { useNavigate } from "react-router-dom";
-
+import { useState } from "react";
+import { ReceptionScreen } from "../features/child-handover/ReceptionScreen";
+import { createReceptionSimulation } from "../features/child-handover/receptionSimulation";
+import type { SimulationOutcome } from "../features/child-handover/receptionSimulation";
+import { RECEPTION_EXAMPLE_ADULTS, RECEPTION_EXAMPLE_CHILDREN } from "../features/child-handover/receptionFixtures";
 
 export default function ChildAccess() {
-
-    const navigate = useNavigate();
-
-    return (
-        <div className="page">
-            <section className="hero">
-                <h1>Control de Entradas y Salidas</h1>
-                <p>¿Que accion desea realizar?</p>
-            </section>
-
-            <section className="action-buttons">
-                <div className="cards">
-                    <div className="btn ingreso">
-                        <h2>Ingresar al menor</h2>
-                        <p>Registrar ingreso del niño a la guarderia</p>
-                    </div>
-
-                    <div className="btn salida" onClick={() => navigate("/handover")}>
-                        <h2>Entregar al menor</h2>
-                        <p>Registrar salida segura del niño</p>
-                    </div>
-                </div>
-            </section>
-        </div>
-    );
+  const [preview] = useState(() => {
+    let outcome: SimulationOutcome = "authorized";
+    return {
+      gateway: createReceptionSimulation(RECEPTION_EXAMPLE_CHILDREN, RECEPTION_EXAMPLE_ADULTS, {
+        getFingerprintAdultId: () => outcome === "unauthorized" ? "demo-unauthorized-fingerprint" : undefined,
+      }),
+      changeOutcome: (value: SimulationOutcome) => { outcome = value; },
+    };
+  });
+  return <ReceptionScreen gateway={preview.gateway} adults={RECEPTION_EXAMPLE_ADULTS} onSimulationOutcomeChange={preview.changeOutcome} />;
 }

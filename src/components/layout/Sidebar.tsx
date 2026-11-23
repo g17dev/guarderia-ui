@@ -11,14 +11,15 @@ const NAV_ITEMS = [
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
+  onNavigate?: () => void;
 }
 
-export function Sidebar({ collapsed, onToggle }: SidebarProps) {
+export function Sidebar({ collapsed, onToggle, onNavigate }: SidebarProps) {
   return (
-    <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+    <aside id="app-sidebar" className={`sidebar ${collapsed ? "collapsed" : ""}`}>
       <div className="sidebar-header">
         {!collapsed && <span className="sidebar-logo">Guardería</span>}
-        <button className="sidebar-toggle" onClick={onToggle}>
+        <button className="sidebar-toggle" onClick={onToggle} aria-label={collapsed ? "Expandir navegación" : "Contraer o cerrar navegación"}>
           {collapsed ? <Menu size={20} /> : <X size={20} />}
         </button>
       </div>
@@ -27,6 +28,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           <NavLink
             key={to}
             to={to}
+            onClick={onNavigate}
+            title={collapsed ? label : undefined}
             className={({ isActive }) => `sidebar-item ${isActive ? "active" : ""}`}
           >
             <Icon size={20} className="sidebar-icon" />

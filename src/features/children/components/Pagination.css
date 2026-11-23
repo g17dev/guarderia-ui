@@ -7,7 +7,7 @@
 
 .pagination-info {
   font-size: 13px;
-  color: #999;
+  color: var(--muted-foreground);
 }
 
 .pagination-controls {
@@ -23,10 +23,10 @@
   min-width: 32px;
   height: 32px;
   padding: 0 6px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: white;
-  color: #555;
+  background: var(--card);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 500;
   font-family: inherit;
@@ -35,8 +35,8 @@
 }
 
 .page-btn:hover:not(:disabled) {
-  border-color: #004B92;
-  color: #004B92;
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .page-btn:disabled {
@@ -45,15 +45,15 @@
 }
 
 .page-btn-active {
-  background: #004B92;
-  border-color: #004B92;
-  color: white;
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .page-btn-active:hover:not(:disabled) {
-  background: #003d7a;
-  border-color: #003d7a;
-  color: white;
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: var(--primary-foreground);
 }
 
 .page-dots {
@@ -62,6 +62,6 @@
   justify-content: center;
   min-width: 32px;
   height: 32px;
-  color: #999;
+  color: var(--muted-foreground);
   font-size: 13px;
 }

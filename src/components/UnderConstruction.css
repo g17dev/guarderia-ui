@@ -35,8 +35,8 @@
 
 .uc-badge {
   display: inline-block;
-  background: #e8f0fe;
-  color: #004B92;
+  background: var(--primary-soft);
+  color: var(--primary);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -48,13 +48,13 @@
 .uc-title {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--foreground);
   margin: 0;
 }
 
 .uc-description {
   font-size: 22px;
-  color: #666;
+  color: var(--muted-foreground);
   margin: 0;
   line-height: 1.6;
 }
@@ -63,8 +63,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #f5f6fa;
-  border: 1px solid #e0e0e0;
+  background: var(--background);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px 14px;
   margin-top: 4px;
@@ -73,7 +73,7 @@
 .uc-route-label {
   font-size: 16px;
   font-weight: 600;
-  color: #999;
+  color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -81,6 +81,6 @@
 .uc-route-code {
   font-family: monospace;
   font-size: 16px;
-  color: #004B92;
+  color: var(--primary);
   font-weight: 600;
 }

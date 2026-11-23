@@ -1,0 +1,131 @@
+.profile-information { height: 100%; overflow-y: auto; overscroll-behavior: contain; padding-right: 8px; scrollbar-width: thin; }
+.profile-detail-section { padding: 4px 0 24px; }
+.profile-detail-section + .profile-detail-section { border-top: 1px solid var(--border); padding-top: 20px; }
+.profile-detail-section h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; font-size: 16px; font-weight: 600; }
+.profile-detail-section h3 svg { color: var(--primary); }
+.profile-details-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 24px; margin: 0; }
+.profile-detail dt { margin-bottom: 5px; font-size: 12px; color: var(--muted-foreground); }
+.profile-detail dd { margin: 0; font-size: 14px; color: var(--foreground); overflow-wrap: anywhere; }
+.profile-detail a { color: var(--primary); }
+.profile-unspecified { color: var(--muted-foreground); }
+.profile-detail-line { display: block; margin-bottom: 4px; }
+.profile-responsible + .profile-responsible { border-top: 1px solid var(--border); padding-top: 18px; margin-top: 18px; }
+.profile-responsible h4 { font-size: 14px; font-weight: 600; margin: 0 0 12px; }
+.profile-editor-overlay { position: fixed; inset: 0; z-index: 150; background: rgb(25 36 58 / 35%); backdrop-filter: blur(3px); animation: profile-overlay-enter 160ms ease; }
+.profile-editor { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 151; width: min(760px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); display: flex; flex-direction: column; min-height: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 20px; background: var(--card); color: var(--foreground); box-shadow: 0 24px 80px rgb(25 36 58 / 22%); animation: profile-editor-enter 180ms ease; }
+.profile-editor-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 22px 24px 16px; }
+.profile-editor-header h2 { margin: 0; font-size: 22px; font-weight: 600; }
+.profile-editor-header p { margin: 6px 0 0; color: var(--muted-foreground); font-size: 13px; }
+.profile-editor-close { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 10px; background: transparent; color: var(--muted-foreground); cursor: pointer; }
+.profile-editor-close:hover { background: var(--surface-subtle); }
+.profile-editor-sections { display: flex; gap: 20px; padding: 0 24px; border-bottom: 1px solid var(--border); }
+.profile-editor-sections button { position: relative; min-height: 44px; padding: 10px 0; border: 0; background: transparent; font-size: 14px; color: var(--muted-foreground); cursor: pointer; }
+.profile-editor-sections button::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--primary); transform: scaleX(0); transition: transform 200ms ease; }
+.profile-editor-sections button[aria-pressed="true"] { color: var(--primary); }
+.profile-editor-sections button[aria-pressed="true"]::after { transform: scaleX(1); }
+.profile-editor-body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 24px; }
+.profile-editor-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.profile-editor-grid label { display: flex; flex-direction: column; gap: 7px; font-size: 13px; color: var(--text-secondary); }
+.profile-editor-grid input, .profile-editor-grid select { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--border-strong); border-radius: 9px; padding: 8px 12px; font: inherit; font-size: 14px; background: var(--card); color: var(--foreground); }
+.profile-editor-photo { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; }
+.profile-editor-photo .child-avatar { width: 112px; height: 112px; }
+.profile-photo-picker { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 9px; color: var(--primary); cursor: pointer; font-size: 13px; position: relative; overflow: hidden; }
+.profile-photo-picker:focus-within { outline: 2px solid var(--ring); outline-offset: 2px; }
+.profile-photo-picker input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.profile-editor-photo p { color: var(--muted-foreground); font-size: 12px; margin: 8px 0 0; }
+.profile-photo-remove { border: 0; background: transparent; color: var(--muted-foreground); font-size: 12px; min-height: 36px; padding: 4px 0; cursor: pointer; }
+.profile-editor-note { display: flex; align-items: flex-start; gap: 8px; padding: 12px; border-radius: 10px; background: var(--surface-subtle); color: var(--muted-foreground); font-size: 12px; line-height: 1.5; margin: 20px 0 0; }
+.profile-editor-note svg { flex-shrink: 0; margin-top: 1px; }
+.profile-editor-error { font-size: 13px; color: var(--destructive); margin: 14px 0 0; }
+.profile-editor-footer { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; padding: 16px 24px; border-top: 1px solid var(--border); }
+.profile-editor-footer > span { margin-right: auto; color: var(--muted-foreground); font-size: 12px; }
+.profile-editor-cancel, .profile-editor-save { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); color: var(--foreground); font-size: 14px; cursor: pointer; }
+.profile-editor-save { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+.profile-editor-save:hover { background: var(--primary-hover); }
+.profile-editor-save:disabled { opacity: .5; cursor: wait; }
+.profile-editor :is(button, input, select):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+@media (max-width: 800px) { .profile-details-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 540px) { .profile-editor-grid { grid-template-columns: minmax(0, 1fr); } .profile-editor-footer > span { width: 100%; } }
+@keyframes profile-overlay-enter { from { opacity: 0; } to { opacity: 1; } }
+@keyframes profile-editor-enter { from { opacity: 0; transform: translate(-50%, calc(-50% + 8px)); } to { opacity: 1; transform: translate(-50%, -50%); } }
+@media (prefers-reduced-motion: reduce) { .profile-editor, .profile-editor-overlay { animation: none; } .profile-editor *::after { transition: none; } }
+
+/* Pickup permissions and enrollment share the editor's draft, never live data. */
+.profile-editor-sections { overflow-x: auto; flex-shrink: 0; }
+.profile-editor-sections button { flex-shrink: 0; }
+.profile-editor-sections button:disabled { opacity: .5; cursor: default; }
+.profile-adults-intro { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.profile-adults-intro h3, .profile-adult-detail-heading h3 { margin: 0; font-size: 18px; font-weight: 600; }
+.profile-adults-intro p, .profile-adult-detail-heading p { margin: 6px 0 0; font-size: 13px; color: var(--muted-foreground); line-height: 1.5; }
+.profile-adults-intro > button { flex-shrink: 0; }
+.profile-adults-list { display: flex; flex-direction: column; }
+.profile-adult-row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 88px; padding: 14px 0; border: 0; border-bottom: 1px solid var(--border); background: transparent; color: var(--foreground); text-align: left; cursor: pointer; }
+.profile-adult-row:hover { background: var(--surface-subtle); }
+.profile-adult-row-name { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; }
+.profile-adult-row-name strong { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.profile-adult-row-name small { font-size: 12px; color: var(--muted-foreground); }
+.profile-adult-permission { display: inline-flex; align-items: center; gap: 5px; color: var(--muted-foreground); font-size: 11px; padding: 4px 7px; border-radius: 6px; background: var(--surface-subtle); white-space: nowrap; }
+.profile-adult-permission.allowed { color: var(--success); background: var(--success-soft); }
+.profile-adult-fingerprint-status { display: inline-flex; align-items: center; gap: 5px; max-width: 115px; color: var(--muted-foreground); font-size: 11px; line-height: 1.4; }
+.profile-adult-fingerprint-status svg { flex-shrink: 0; }
+.profile-adults-back { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; margin-bottom: 16px; padding: 0; border: 0; background: transparent; color: var(--primary); font-size: 13px; cursor: pointer; }
+.profile-adult-detail-heading { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+.profile-pickup-permission { display: flex; align-items: center; gap: 12px; padding: 16px; margin-top: 22px; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; }
+.profile-pickup-permission input { width: 20px; height: 20px; accent-color: var(--primary); flex-shrink: 0; }
+.profile-pickup-permission span { flex: 1; }
+.profile-pickup-permission strong { display: block; font-size: 14px; font-weight: 500; }
+.profile-pickup-permission small { display: block; font-size: 12px; margin-top: 5px; color: var(--muted-foreground); }
+.profile-pickup-permission > svg { color: var(--primary); flex-shrink: 0; }
+.profile-fingerprint-section { border-top: 1px solid var(--border); margin-top: 24px; padding-top: 22px; }
+.profile-fingerprint-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.profile-fingerprint-heading h4 { margin: 0; font-size: 15px; font-weight: 600; }
+.profile-fingerprint-heading p { margin: 6px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted-foreground); }
+.profile-preview-tag { font-size: 10px; color: var(--muted-foreground); padding: 4px 7px; background: var(--surface-subtle); border-radius: 6px; white-space: nowrap; }
+.profile-fingerprint-summary { display: flex; align-items: center; gap: 12px; padding: 20px 0 4px; }
+.profile-fingerprint-summary > svg { color: var(--primary); flex-shrink: 0; }
+.profile-fingerprint-summary > div { flex: 1; min-width: 0; }
+.profile-fingerprint-summary strong { font-size: 13px; font-weight: 500; }
+.profile-fingerprint-summary p { font-size: 12px; color: var(--muted-foreground); margin: 5px 0 0; line-height: 1.5; }
+.profile-fingerprint-summary > button { flex-shrink: 0; }
+.profile-fingerprint-remove { display: grid; place-items: center; min-width: 36px; min-height: 44px; background: transparent; border: 0; border-radius: 8px; color: var(--muted-foreground); cursor: pointer; }
+.profile-remove-adult { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; margin-top: 20px; padding: 8px 0; border: 0; background: transparent; color: var(--destructive); font-size: 12px; cursor: pointer; }
+.profile-adults-empty { display: grid; justify-items: center; gap: 10px; padding: 32px 12px; text-align: center; color: var(--muted-foreground); }
+.profile-adults-empty h4 { margin: 0; font-size: 16px; color: var(--foreground); }
+.profile-adults-empty p { margin: 0; font-size: 13px; }
+.profile-fingerprint-capture { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 26px 12px 8px; text-align: center; animation: profile-overlay-enter 180ms ease; }
+.profile-enrollment-symbol { display: grid; place-items: center; width: 88px; height: 88px; border-radius: 26px; background: var(--primary-soft); color: var(--primary); }
+.profile-enrollment-symbol.complete { background: var(--success-soft); color: var(--success); }
+.profile-fingerprint-capture h4 { margin: 0; font-size: 18px; font-weight: 600; }
+.profile-fingerprint-capture p { margin: 6px 0 0; font-size: 13px; color: var(--muted-foreground); line-height: 1.5; }
+.profile-finger-select { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted-foreground); }
+.profile-finger-select select { min-height: 44px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 9px; background: var(--card); font: inherit; color: var(--foreground); }
+.profile-enrollment-steps { display: flex; align-items: center; gap: 8px; }
+.profile-enrollment-steps span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--surface-subtle); color: var(--muted-foreground); font-size: 12px; }
+.profile-enrollment-steps span.done { background: var(--success-soft); color: var(--success); }
+.profile-enrollment-steps i { width: 36px; height: 1px; background: var(--border); }
+.profile-enrollment-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; }
+.profile-pickup-overview > div { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.profile-pickup-overview strong { display: block; font-size: 14px; font-weight: 500; }
+.profile-pickup-overview small { display: block; margin-top: 4px; color: var(--muted-foreground); font-size: 12px; }
+@media (max-width: 700px) {
+  .profile-adults-intro { flex-wrap: wrap; }
+  .profile-adult-row { flex-wrap: wrap; }
+  .profile-adult-row-name { flex-basis: calc(100% - 58px); }
+  .profile-adult-permission { margin-left: 54px; }
+  .profile-pickup-overview .profile-adult-permission { margin-left: 0; }
+  .profile-fingerprint-summary { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) { .profile-fingerprint-capture { animation: none; } }
+
+.profile-adult-fields { padding: 0; margin: 0; border: 0; min-width: 0; }
+.profile-adult-fields:disabled { opacity: .6; }
+.profile-fingerprint-summary > button:disabled { opacity: .5; cursor: default; }
+.profile-editor-header, .profile-editor-footer { flex-shrink: 0; }
+/* A previous save notification must not cover actions in an open editor. */
+body:has(.profile-editor) .toast-container { z-index: 149; }
+
+.profile-adult-detail[data-capturing="true"] .profile-adult-detail-heading { margin-bottom: 12px; }
+.profile-adult-detail[data-capturing="true"] .profile-adult-detail-heading > div:not(.child-avatar) { flex: 1; }
+.profile-adult-detail[data-capturing="true"] .profile-fingerprint-section { border: 0; padding-top: 0; margin-top: 0; }
+.profile-adult-detail[data-capturing="true"] .profile-fingerprint-capture { padding: 12px 0 0; gap: 12px; }
+.profile-adult-detail[data-capturing="true"] .profile-enrollment-symbol { width: 72px; height: 72px; border-radius: 22px; }

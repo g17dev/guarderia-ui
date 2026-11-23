@@ -1,21 +1,19 @@
-import { useMemo, useState, useRef, useEffect } from "react";
-import { format } from "date-fns";
+import { createContext, lazy, Suspense, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { addMonths, format, isSameMonth, parseISO, startOfMonth } from "date-fns";
 import { es } from "date-fns/locale";
-import { LogIn, LogOut, Calendar as CalendarIcon, MapPin } from "lucide-react";
+import { LogIn, LogOut, Calendar as CalendarIcon, MapPin, ChevronLeft, ChevronRight, Info, BusFront, School, UserRound, Clock3 } from "lucide-react";
+
+import type { WeekdayProps } from "react-day-picker";
+import { createCurrentMonthAttendance } from "./attendancePreview";
+import { getAttendanceEvents, type AttendanceEvent, type AttendanceRecord, type AttendanceStatus } from "./attendanceRecords";
 
 import "./ProfileTabs.css";
 
 import { Calendar } from "../../../components/ui/calendar";
+import "./AttendanceCalendar.css";
 
-type AttendanceStatus = "present" | "absent" | "early";
-
-type AttendanceRecord = {
-  date: string;
-  entry: string;
-  exit: string;
-  status: AttendanceStatus;
-  location: string;
-};
+const AttendanceRecordDetail = lazy(() => import("./AttendanceRecordDetail").then(module => ({ default: module.AttendanceRecordDetail })));
+const MonthYearPicker = lazy(() => import("../../../components/MonthYearPicker").then(module => ({ default: module.MonthYearPicker })));
 
 const LOCATIONS = [
   "3890 Poplar Dr, Mexicali, BC, 21000",
@@ -70,239 +68,149 @@ function generateMockAttendance(
   return records;
 }
 
-const MOCK_ATTENDANCE = generateMockAttendance("2026-06-15", "2026-06-21");
+// One explicit school-journey preview. Real movements are supplied later by the backend.
+const MOCK_ATTENDANCE: AttendanceRecord[] = generateMockAttendance("2026-06-15", "2026-06-21").map(record => record.date === "2026-06-15"
+  ? { ...record, schoolJourney: { schoolName: "Escuela de ejemplo", departure: "08:10", delivered: "08:30", pickedUp: "12:30", returned: "12:50" } } : record);
 
 interface EventCardProps {
   selectedDate: Date;
-  label: string;
-  type: "entry" | "exit" | "status";
-  datetime: string;
-  location: string;
-  iconBgColor: string;
-  iconColor: string;
+  event: AttendanceEvent;
+  delay: number;
+  onOpen: (trigger: HTMLButtonElement) => void;
 }
 
-function EventCard({
-  selectedDate,
-  label,
-  type,
-  datetime,
-  location,
-}: EventCardProps) {
-  const MONTHS_SHORT = [
-    "Ene",
-    "Feb",
-    "Mar",
-    "Abr",
-    "May",
-    "Jun",
-    "Jul",
-    "Ago",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dic",
-  ];
+const movementIcons = { entry: LogIn, exit: LogOut, school: School, transport: BusFront };
 
-  const formatDateTime = (dateStr: string) => {
-    if (!dateStr) return "";
-    const [hours, minutes] = dateStr.split(":").map(Number);
-    const hour12 = hours % 12 || 12;
-    const ampm = hours >= 12 ? "pm" : "am";
-    const monthName = MONTHS_SHORT[selectedDate.getMonth()];
-    const monthCap = monthName.charAt(0).toUpperCase() + monthName.slice(1);
-    return `${monthCap} ${selectedDate.getDate()} a las ${hour12}:${String(minutes).padStart(2, "0")}${ampm}`;
-  };
-
-  const truncateLocation = (loc: string, maxChars = 22) => {
-    if (!loc) return "";
-
-    const parts = loc.split(",").map((p) => p.trim());
-    let result = parts[0];
-
-    // Si el primer segmento (calle) ya excede el límite, lo truncamos con "…"
-    if (result.length > maxChars) {
-      return result.slice(0, maxChars).trimEnd() + "…";
-    }
-
-    // Si hay un segundo segmento (ciudad), intentamos agregarlo
-    if (parts[1]) {
-      const withCity = `${result}, ${parts[1]}`;
-      if (withCity.length <= maxChars) {
-        result = withCity;
-      } else {
-        // No cabe completo, agregamos "…" para indicar que hay más info
-        result = result + "…";
-      }
-    } else {
-      // No hay segundo segmento, pero si quedó espacio igual indicamos truncado
-      result = result + "…";
-    }
-
-    return result;
-  };
-
+function EventCard({ selectedDate, event, delay, onOpen }: EventCardProps) {
+  const Icon = movementIcons[event.kind];
+  const timestamp = parseISO(`${format(selectedDate, "yyyy-MM-dd")}T${event.time}`);
+  const person = event.adult ?? event.responsibleName;
+  const personLabel = event.adult ? event.kind === "entry" ? "Entregó" : "Recogió" : "Responsable";
   return (
-    <div className="event-card">
-      <div className="event-card-icon-container">
-        <span className="event-card-day-number">
-          {format(selectedDate, "d")}
+    <button type="button" className={`event-card event-card-${event.kind}`} aria-haspopup="dialog" aria-label={`Ver detalle: ${event.label}, ${format(selectedDate, "d MMMM", { locale: es })}, ${event.time}${person ? `, ${personLabel}: ${person}` : ""}`} style={{ animationDelay: `${delay}ms` }} onClick={e => onOpen(e.currentTarget)}>
+      <span className="event-card-icon-container"><span className={`event-card-movement-icon ${event.kind}`}><Icon size={20} aria-hidden="true" /></span></span>
+      <span className="event-card-info">
+        <span className="event-card-label">{event.label}</span>
+        <span className="event-card-badges">
+          <span className="badge badge-datetime"><Clock3 size={13} aria-hidden="true" /><time dateTime={format(timestamp, "yyyy-MM-dd'T'HH:mm")}>{format(timestamp, "h:mm a", { locale: es })}</time></span>
+          <span className="badge badge-location" title={event.location}><MapPin size={13} aria-hidden="true" /><span>{event.location}</span></span>
         </span>
-        <span className="event-card-day-name">
-          {format(selectedDate, "EEEE", { locale: es })}
-        </span>
-      </div>
-      <div className="event-card-info">
-        <span className="event-card-label">{label}</span>
-        <div className="event-card-details">
-          <div className="event-card-badges">
-            {type === "entry" && (
-              <span className="badge badge-type badge-type-entry">
-                <LogIn size={12} />
-                <span>Entrada</span>
-              </span>
-            )}
-            {type === "exit" && (
-              <span className="badge badge-type badge-type-exit">
-                <LogOut size={12} />
-                <span>Salida</span>
-              </span>
-            )}
-            {type === "status" && (
-              <span className="badge badge-type badge-type-status">
-                <LogIn size={12} />
-                <span>{label}</span>
-              </span>
-            )}
-            {datetime && (
-              <span className="badge badge-datetime">
-                <CalendarIcon size={12} />
-                <span>{formatDateTime(datetime)}</span>
-              </span>
-            )}
-            {location && (
-              <span className="badge badge-location" title={location}>
-                <MapPin size={12} />
-                <span>{truncateLocation(location)}</span>
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+        {person && <span className="event-card-person"><UserRound size={13} aria-hidden="true" /><span>{personLabel}: {person}</span></span>}
+      </span>
+      <ChevronRight size={15} className="event-card-chevron" aria-hidden="true" />
+    </button>
   );
 }
 
-export function AttendanceTab({ childId }: { childId: string }) {
+const SelectedWeekdayContext = createContext<string | undefined>(undefined);
+
+function AttendanceWeekday({ children, ...props }: WeekdayProps) {
+  const selectedWeekday = useContext(SelectedWeekdayContext);
+  return <th {...props} data-selected-weekday={children === selectedWeekday || undefined}>{children}</th>;
+}
+
+export function AttendanceTab({ childId, childName = "Niño seleccionado" }: { childId: string; childName?: string }) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [showTopFade, setShowTopFade] = useState(false);
-  const [showBottomFade, setShowBottomFade] = useState(false);
-
-  const checkScroll = () => {
-    const el = containerRef.current;
-    if (el) {
-      const { scrollTop, scrollHeight, clientHeight } = el;
-      setShowTopFade(scrollTop > 2);
-      setShowBottomFade(scrollHeight - scrollTop - clientHeight > 2);
-    }
+  const [month, setMonth] = useState(() => startOfMonth(new Date()));
+  const [detail, setDetail] = useState<{ record: AttendanceRecord; event: AttendanceEvent["id"] | "journey"; request: number; source: HTMLButtonElement }>();
+  const [detailOpen, setDetailOpen] = useState(false);
+  const detailRequest = useRef(0);
+  const detailTrigger = useRef<HTMLButtonElement>(null);
+  const attendanceRoot = useRef<HTMLDivElement>(null);
+  const displayedMonth = format(month, "yyyy-MM");
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const grid = attendanceRoot.current?.querySelector(".rdp-month_grid");
+    const animation = grid?.animate([{ opacity: .5, transform: "translateY(4px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 360, easing: "cubic-bezier(.2,.75,.25,1)" });
+    return () => animation?.cancel();
+  }, [displayedMonth]);
+  function openDetail(record: AttendanceRecord, event: AttendanceEvent["id"] | "journey", trigger: HTMLButtonElement) {
+    detailTrigger.current = trigger;
+    setDetail({ record, event, request: ++detailRequest.current, source: trigger });
+    setDetailOpen(true);
+  }
+  const [today] = useState(() => new Date());
+  const previewRecords = useMemo(() => {
+    const current = createCurrentMonthAttendance(childId, today);
+    const dates = new Set(current.map(record => record.date));
+    return [...MOCK_ATTENDANCE.filter(record => !dates.has(record.date)), ...current];
+  }, [childId, today]);
+  const firstYear = Math.min(today.getFullYear() - 10, 2026);
+  const lastYear = today.getFullYear() + 1;
+  const changeMonth = (next: Date) => {
+    if (next.getFullYear() >= firstYear && next.getFullYear() <= lastYear) setMonth(startOfMonth(next));
   };
 
-  useEffect(() => {
-    const timer = setTimeout(checkScroll, 50);
-    return () => clearTimeout(timer);
-  }, [selectedDate]);
-
-  useEffect(() => {
-    window.addEventListener("resize", checkScroll);
-    return () => window.removeEventListener("resize", checkScroll);
-  }, []);
-
-  const maskStyle = useMemo(() => {
-    if (!showTopFade && !showBottomFade) return {};
-
-    const top = showTopFade ? "transparent 0%, black 24px" : "black 0px";
-    const bottom = showBottomFade
-      ? "black calc(100% - 24px), transparent 100%"
-      : "black 100%";
-
-    const gradient = `linear-gradient(to bottom, ${top}, ${bottom})`;
-    return {
-      WebkitMaskImage: gradient,
-      maskImage: gradient,
-    };
-  }, [showTopFade, showBottomFade]);
-
-  const toDateKey = (date: Date) => date.toISOString().split("T")[0];
+  const toDateKey = (date: Date) => format(date, "yyyy-MM-dd");
 
   const attendanceMap = useMemo(
-    () => new Map(MOCK_ATTENDANCE.map((record) => [record.date, record])),
-    [],
+    () => new Map(previewRecords.map((record) => [record.date, record])),
+    [previewRecords],
   );
 
   const selectedRecord = attendanceMap.get(toDateKey(selectedDate));
 
   const modifiers = {
-    present: MOCK_ATTENDANCE.filter((r) => r.status === "present").map(
-      (r) => new Date(r.date),
+    present: previewRecords.filter((r) => r.status === "present").map(
+      (r) => parseISO(r.date),
     ),
 
-    absent: MOCK_ATTENDANCE.filter((r) => r.status === "absent").map(
-      (r) => new Date(r.date),
+    absent: previewRecords.filter((r) => r.status === "absent").map(
+      (r) => parseISO(r.date),
     ),
 
-    early: MOCK_ATTENDANCE.filter((r) => r.status === "early").map(
-      (r) => new Date(r.date),
+    early: previewRecords.filter((r) => r.status === "early").map(
+      (r) => parseISO(r.date),
     ),
   };
 
-  const cardsData = useMemo(() => {
-    if (!selectedRecord) return [];
-
-    const isEntryValid = selectedRecord.entry !== "-";
-    const isExitValid = selectedRecord.exit !== "-";
-
-    return [
-      {
-        id: "entry",
-        type: "entry" as const,
-        label: "Hora de Entrada",
-        datetime: isEntryValid ? selectedRecord.entry : "",
-        location: selectedRecord.location,
-        iconBgColor: isEntryValid ? "#dcfce7" : "#f1f5f9",
-        iconColor: isEntryValid ? "#15803d" : "#94a3b8",
-      },
-      {
-        id: "exit",
-        type: "exit" as const,
-        label: "Hora de Salida",
-        datetime: isExitValid ? selectedRecord.exit : "",
-        location: selectedRecord.location,
-        iconBgColor: isExitValid ? "#e0f2fe" : "#f1f5f9",
-        iconColor: isExitValid ? "#0369a1" : "#94a3b8",
-      },
-    ];
-  }, [selectedRecord]);
+  const cardsData = useMemo(() => selectedRecord ? getAttendanceEvents(selectedRecord) : [], [selectedRecord]);
 
   return (
-    <div className="tab-content" data-child-id={childId}>
+    <div className="tab-content attendance-content" data-child-id={childId} ref={attendanceRoot}>
       <div className="attendance-split">
         {/* CALENDARIO */}
         <div className="attendance-left">
+          <div className="attendance-calendar-toolbar">
+            <Suspense fallback={<span className="attendance-period-loading" aria-busy="true">{format(month, "MMMM yyyy", { locale: es })}</span>}><MonthYearPicker value={month} onChange={changeMonth} minYear={firstYear} maxYear={lastYear} /></Suspense>
+            <div className="attendance-month-navigation" role="group" aria-label="Navegar por meses">
+              <button type="button" className="attendance-today" disabled={isSameMonth(month, today) && toDateKey(selectedDate) === toDateKey(today)} onClick={() => { setSelectedDate(today); setMonth(startOfMonth(today)); }}>Hoy</button>
+              <button type="button" aria-label="Mes anterior" disabled={month.getFullYear() === firstYear && month.getMonth() === 0} onClick={() => changeMonth(addMonths(month, -1))}><ChevronLeft size={18} aria-hidden="true" /></button>
+              <button type="button" aria-label="Mes siguiente" disabled={month.getFullYear() === lastYear && month.getMonth() === 11} onClick={() => changeMonth(addMonths(month, 1))}><ChevronRight size={18} aria-hidden="true" /></button>
+            </div>
+          </div>
+          <span className="sr-only" role="status">{format(month, "MMMM yyyy", { locale: es })}</span>
+          <SelectedWeekdayContext.Provider value={isSameMonth(selectedDate, month) ? format(selectedDate, "EEE", { locale: es }) : undefined}>
           <Calendar
             mode="single"
+            required
             locale={es}
+            components={{ Weekday: AttendanceWeekday }}
+            formatters={{ formatWeekdayName: date => format(date, "EEE", { locale: es }) }}
+            labels={{ labelDayButton: (date, dayModifiers) => [
+              format(date, "PPPP", { locale: es }),
+              dayModifiers.today ? "hoy" : "",
+              dayModifiers.selected ? "seleccionado" : "",
+              dayModifiers.present ? "asistencia registrada" : "",
+              dayModifiers.absent ? "ausencia registrada" : "",
+              dayModifiers.early ? "salida anticipada" : "",
+            ].filter(Boolean).join(", ") }}
             selected={selectedDate}
+            month={month}
+            onMonthChange={changeMonth}
             onSelect={(date) => {
               if (date) {
                 setSelectedDate(date);
+                changeMonth(date);
               }
             }}
-            captionLayout="dropdown"
+            hideNavigation
+            fixedWeeks
+            weekStartsOn={1}
             showOutsideDays
-            startMonth={new Date(2026, 5)}
-            endMonth={new Date(2026, 5)}
+            startMonth={new Date(firstYear, 0)}
+            endMonth={new Date(lastYear, 11)}
+            classNames={{ month_caption: "attendance-calendar-caption" }}
             modifiers={modifiers}
             modifiersClassNames={{
               present: "attendance-present",
@@ -311,37 +219,31 @@ export function AttendanceTab({ childId }: { childId: string }) {
 
               early: "attendance-early",
             }}
-            className="rounded-xl w-full h-full"
+            className="attendance-calendar"
           />
+          </SelectedWeekdayContext.Provider>
+          <div className="attendance-calendar-legend" aria-label="Indicadores de asistencia">
+            <span><i className="attendance-legend-dot present" aria-hidden="true" />Asistencia</span>
+            <span><i className="attendance-legend-dot absent" aria-hidden="true" />Ausencia</span>
+            <span><i className="attendance-legend-dot early" aria-hidden="true" />Salida anticipada</span>
+          </div>
         </div>
 
         {/* DETALLES */}
 
         <div className="attendance-right">
-          <h3>Registros</h3>
-          {selectedRecord ? (
-            <div
-              ref={containerRef}
-              className="record-details"
-              onScroll={checkScroll}
-              style={maskStyle}
-            >
-              {cardsData.map((card) => (
-                <EventCard
-                  key={card.id}
-                  selectedDate={selectedDate}
-                  label={card.label}
-                  type={card.type}
-                  datetime={card.datetime}
-                  location={card.location}
-                  iconBgColor={card.iconBgColor}
-                  iconColor={card.iconColor}
-                />
+          <div className="attendance-record-heading"><div><h3>Registros del día <span className="attendance-record-preview" title="Datos ficticios de demostración">Demo</span></h3><p>{format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}</p></div>{cardsData.length > 0 && <span className="attendance-movement-count"><Clock3 size={13} aria-hidden="true" />{cardsData.length} {cardsData.length === 1 ? "movimiento" : "movimientos"}</span>}</div>
+          {selectedRecord?.status === "absent" ? <div key={`absence-${selectedRecord.date}`} className="attendance-no-record"><div className="no-record-icon"><Info size={28} aria-hidden="true" /></div><p className="no-record-title">Ausencia registrada</p><p className="no-record-desc">No hay entradas ni salidas registradas para este día.</p></div> : selectedRecord && cardsData.length > 0 ? (
+            <ol className="record-details attendance-day-timeline" key={selectedRecord.date} aria-label={`Movimientos del ${format(selectedDate, "d MMMM", { locale: es })}`} tabIndex={0}>
+              {cardsData.map((event, index) => (
+                <li key={event.id}>
+                  <EventCard selectedDate={selectedDate} event={event} delay={index * 55} onOpen={trigger => openDetail(selectedRecord, event.id, trigger)} />
+                </li>
               ))}
-            </div>
+            </ol>
           ) : (
-            <div className="attendance-no-record">
-              <div className="no-record-icon">📅</div>
+            <div key={`empty-${toDateKey(selectedDate)}`} className="attendance-no-record">
+              <div className="no-record-icon"><CalendarIcon size={28} aria-hidden="true" /></div>
 
               <p className="no-record-title">Sin registros</p>
 
@@ -353,6 +255,7 @@ export function AttendanceTab({ childId }: { childId: string }) {
           )}
         </div>
       </div>
+      {detail && <Suspense fallback={null}><AttendanceRecordDetail key={detail.request} record={detail.record} source={detail.source} initialEvent={detail.event} childName={childName} open={detailOpen} onClose={() => setDetailOpen(false)} onRestoreFocus={() => { if (detailTrigger.current?.isConnected) detailTrigger.current.focus(); }} /></Suspense>}
     </div>
   );
 }
