@@ -22,17 +22,21 @@
   overflow: hidden;
   flex-shrink: 0;
   background: var(--app-avatar-background);
-  border: 1px dashed var(--app-avatar-border);
-  transition: border-color 0.2s ease;
+  border: 1px dashed var(--primary);
 }
 
-.photo-preview:hover {
-  border-color: var(--primary);
-}
-
-.avatar-placeholder-svg {
+.photo-avatar-placeholder {
+  display: grid;
+  place-items: center;
   width: 100%;
   height: 100%;
+  background: var(--app-avatar-background);
+  color: var(--app-avatar-text);
+}
+
+.photo-avatar-placeholder svg {
+  width: 42%;
+  height: 42%;
 }
 
 .photo-img {
@@ -219,20 +223,23 @@
 .option-card-icon {
   width: 52px;
   height: 52px;
-  border-radius: 50%;
+  border-radius: var(--app-avatar-radius);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 10px;
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
 }
 
-.gender-male  { background: var(--info-soft); color: var(--info); }
-.gender-female { background: var(--rose-soft); color: var(--rose); }
-.classroom-icon { background: var(--primary-soft); color: var(--primary); }
+.gender-male { --option-accent: var(--info); --option-surface: var(--info-soft); }
+.gender-female { --option-accent: var(--rose); --option-surface: var(--rose-soft); }
+.classroom-maternal-a { --option-accent: var(--teal); --option-surface: var(--teal-soft); }
+.classroom-preescolar-1 { --option-accent: var(--violet); --option-surface: var(--violet-soft); }
+.classroom-primaria { --option-accent: var(--primary); --option-surface: var(--primary-soft); }
 
-.option-card.selected .classroom-icon { background: var(--primary); color: var(--primary-foreground); }
-.option-card.selected .gender-male    { background: var(--info); color: var(--primary-foreground); }
-.option-card.selected .gender-female  { background: var(--rose); color: var(--primary-foreground); }
+.option-card-icon { background: var(--option-surface, var(--app-avatar-background)); color: var(--option-accent, var(--app-avatar-text)); }
+.option-card.selected .option-card-icon { background: var(--option-accent, var(--primary)); color: var(--primary-foreground); transform: scale(1.04); }
+.option-card:focus-visible .option-card-icon { box-shadow: 0 0 0 3px color-mix(in srgb, var(--option-accent, var(--primary)) 20%, transparent); }
 
 .option-card-label {
   font-size: 12px;
