@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { FiUpload, FiX, FiPlus, FiTrash2 } from "react-icons/fi";
-import { FingerprintPattern } from "lucide-react";
+import { FingerprintPattern, UserRound } from "lucide-react";
 import "./TutorStep.css";
 
 // ===== TIPOS =====
@@ -153,18 +153,6 @@ const RELATIONSHIPS = [
   },
 ];
 
-const TutorPlaceholderSVG = () => (
-  <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="avatar-placeholder-svg">
-    <circle cx="60" cy="60" r="60" fill="var(--surface-subtle)"/>
-    <circle cx="60" cy="42" r="22" fill="var(--border-strong)"/>
-    <ellipse cx="60" cy="98" rx="32" ry="22" fill="var(--border-strong)"/>
-    <circle cx="52" cy="40" r="2.5" fill="var(--primary)"/>
-    <circle cx="68" cy="40" r="2.5" fill="var(--primary)"/>
-    <path d="M52 50c3 3 13 3 16 0" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round"/>
-    <path d="M42 28c3-6 10-10 18-10s15 4 18 10" stroke="var(--illustration-fill)" strokeWidth="2.5" strokeLinecap="round"/>
-  </svg>
-);
-
 // ===== SUBCOMPONENTE: FORMULARIO DE UN TUTOR =====
 function TutorForm({
   data,
@@ -226,7 +214,9 @@ function TutorForm({
                 </button>
               </>
             ) : (
-              <TutorPlaceholderSVG />
+              <div className="photo-avatar-placeholder" aria-hidden="true">
+                <UserRound size={52} strokeWidth={1.35} />
+              </div>
             )}
           </div>
           <div className="photo-upload-info">

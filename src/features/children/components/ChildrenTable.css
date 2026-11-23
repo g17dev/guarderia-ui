@@ -42,16 +42,20 @@
 /* ===== TABLA ===== */
 .table-wrapper {
   width: 100%;
+  min-height: 0;
   overflow-x: auto;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid var(--border);
   background: var(--card);
+  box-shadow: 0 2px 10px rgba(25, 36, 58, .035);
+  scrollbar-width: thin;
 }
 
 .children-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  text-align: left;
 }
 
 /* Encabezados */
@@ -61,8 +65,7 @@
 }
 
 .children-table th {
-  padding: 12px;
-  padding-left: 15px;
+  padding: 14px 16px;
   text-align: left;
   font-size: 11px;
   font-weight: 700;
@@ -79,23 +82,44 @@
 /* Filas */
 .children-table tbody tr {
   border-bottom: 1px solid var(--border);
-  transition: background 0.15s ease;
+  transition: background-color 180ms ease, box-shadow 180ms ease;
+  animation: children-row-enter 300ms cubic-bezier(.2,.75,.25,1) both;
 }
+.children-table tbody tr:nth-child(1) { animation-delay: 0ms; }
+.children-table tbody tr:nth-child(2) { animation-delay: 24ms; }
+.children-table tbody tr:nth-child(3) { animation-delay: 48ms; }
+.children-table tbody tr:nth-child(4) { animation-delay: 72ms; }
+.children-table tbody tr:nth-child(5) { animation-delay: 96ms; }
+.children-table tbody tr:nth-child(6) { animation-delay: 120ms; }
+.children-table tbody tr:nth-child(7) { animation-delay: 144ms; }
+.children-table tbody tr:nth-child(8) { animation-delay: 168ms; }
+.children-table tbody tr:nth-child(9) { animation-delay: 192ms; }
+.children-table tbody tr:nth-child(10) { animation-delay: 216ms; }
 
 .children-table tbody tr:last-child {
   border-bottom: none;
 }
 
 .children-table tbody tr:hover {
+  background: color-mix(in srgb, var(--primary-soft) 62%, var(--card));
+}
+
+.children-table tbody tr:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 52%, transparent);
+  outline-offset: -3px;
   background: var(--primary-soft);
 }
 
+.children-table tbody tr td { transition: color 180ms ease; }
+.td-child-inner > :first-child { transition: transform 220ms cubic-bezier(.2,.75,.25,1), box-shadow 220ms ease; }
+.children-table tbody tr:hover .td-child-inner > :first-child { transform: scale(1.045); box-shadow: 0 3px 8px rgba(25,36,58,.1); }
+
 .children-table td {
-  padding: 2px;
-  padding-left: 15px;
+  padding: 12px 16px;
   color: var(--foreground);
   vertical-align: middle;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .children-table td:last-child {
@@ -203,6 +227,16 @@
   background: var(--card);
   border-radius: 12px;
   border: 1px solid var(--border);
+  animation: children-empty-enter 240ms ease both;
+}
+
+@keyframes children-row-enter {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes children-empty-enter {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .td-child-inner {
@@ -211,12 +245,31 @@
   gap: 12px;
   font-weight: 500;
   white-space: nowrap;
-  max-width: 100px;
+  min-width: 200px;
+  max-width: 270px;
+}
+
+.table-child-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .td-tutor-inner {
   display: flex;
   flex-direction: column;
+  gap: 3px;
+}
+
+.children-table .badge { padding: 5px 10px; }
+
+@media (max-width: 900px) {
+  .children-table { min-width: 760px; }
+  .children-table th, .children-table td { padding-right: 13px; padding-left: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .children-table tbody tr, .children-table tbody tr td,
+  .td-child-inner > :first-child, .table-empty { transition: none; animation: none; }
 }
 
 .td-actions-inner {

@@ -2,11 +2,13 @@
 .drawer-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgb(25 36 58 / 20%);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
   z-index: 200;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.32s ease, backdrop-filter 0.32s ease;
 }
 
 .drawer-overlay.visible {
@@ -33,6 +35,21 @@
 
 .drawer.open {
   transform: translateX(0);
+}
+
+.drawer.open .drawer-header,
+.drawer.open .drawer-section,
+.drawer.open .drawer-footer {
+  animation: child-drawer-content-enter 360ms cubic-bezier(.2,.75,.25,1) both;
+}
+.drawer.open .drawer-header { animation-delay: 55ms; }
+.drawer.open .drawer-section:nth-child(1) { animation-delay: 100ms; }
+.drawer.open .drawer-section:nth-child(2) { animation-delay: 145ms; }
+.drawer.open .drawer-section:nth-child(3) { animation-delay: 190ms; }
+.drawer.open .drawer-footer { animation-delay: 210ms; }
+@keyframes child-drawer-content-enter {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Header */
@@ -77,6 +94,9 @@
   background: var(--border);
   color: var(--foreground);
 }
+.drawer-close { transition: background 180ms ease, color 180ms ease, transform 180ms ease; }
+.drawer-close:hover { transform: rotate(90deg); }
+.drawer-close:active { transform: scale(.94); }
 
 /* Acciones */
 .drawer-btn-primary {
@@ -98,7 +118,10 @@
 
 .drawer-btn-primary:hover {
   background: var(--primary-hover);
+  box-shadow: 0 5px 14px rgba(var(--primary-rgb), .17);
 }
+.drawer-btn-primary { transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
+.drawer-btn-primary:active { transform: translateY(1px) scale(.99); }
 
 /* Contenido scrollable */
 .drawer-content {
@@ -195,4 +218,9 @@
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: flex-end;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer, .drawer-overlay, .drawer-close, .drawer-btn-primary { transition-duration: .01ms; }
+  .drawer.open .drawer-header, .drawer.open .drawer-section, .drawer.open .drawer-footer { animation: none; }
 }

@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { FiUpload, FiX } from "react-icons/fi";
+import { UserRound } from "lucide-react";
 import "./BasicInfoStep.css";
 
 interface BasicInfoData {
@@ -75,20 +76,6 @@ const CLASSROOMS = [
   },
 ];
 
-const ChildPlaceholderSVG = () => (
-  <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="avatar-placeholder-svg">
-    <circle cx="60" cy="60" r="60" fill="var(--primary-soft)"/>
-    <circle cx="60" cy="45" r="20" fill="var(--illustration-fill)"/>
-    <ellipse cx="60" cy="95" rx="28" ry="20" fill="var(--illustration-fill)"/>
-    <circle cx="53" cy="43" r="2.5" fill="var(--primary)"/>
-    <circle cx="67" cy="43" r="2.5" fill="var(--primary)"/>
-    <path d="M53 52c2.5 3 11.5 3 14 0" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round"/>
-    <path d="M45 30c4-8 18-10 24-4" stroke="var(--illustration-fill)" strokeWidth="2.5" strokeLinecap="round"/>
-    <circle cx="39" cy="45" r="5" fill="var(--illustration-fill)"/>
-    <circle cx="81" cy="45" r="5" fill="var(--illustration-fill)"/>
-  </svg>
-);
-
 const MaleSVG = () => (
   <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="32" cy="20" r="12" stroke="currentColor" strokeWidth="2.5"/>
@@ -148,7 +135,9 @@ export function BasicInfoStep({ data, onChange, errors }: BasicInfoStepProps) {
               </button>
             </>
           ) : (
-            <ChildPlaceholderSVG />
+            <div className="photo-avatar-placeholder" aria-hidden="true">
+              <UserRound size={58} strokeWidth={1.35} />
+            </div>
           )}
         </div>
         <div className="photo-upload-info">
@@ -270,7 +259,7 @@ export function BasicInfoStep({ data, onChange, errors }: BasicInfoStepProps) {
                   className={`option-card option-card-classroom ${data.classroom === room.id ? "selected" : ""}`}
                   onClick={() => update({ classroom: room.id })}
                 >
-                  <div className="option-card-icon classroom-icon">
+                  <div className={`option-card-icon classroom-icon classroom-${room.id}`}>
                     {room.icon}
                   </div>
                   <span className="option-card-label">{room.label}</span>

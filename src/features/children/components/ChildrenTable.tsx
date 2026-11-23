@@ -35,12 +35,20 @@ export function ChildrenTable({ children, onRowClick }: ChildrenTableProps) {
             <tr
               key={child.id}
               className="table-row-clickable"
+              tabIndex={0}
+              aria-label={`Ver información de ${child.name} ${child.lastName}`}
               onClick={() => onRowClick(child.id)}
+              onKeyDown={event => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onRowClick(child.id);
+                }
+              }}
             >
               <td>
                 <div className="td-child-inner">
                   <ChildAvatar child={child} size="sm" />
-                  <span>{child.name} {child.lastName}</span>
+                  <span className="table-child-name">{child.name} {child.lastName}</span>
                 </div>
               </td>
               <td>{getAge(child.birthDate)} años</td>
