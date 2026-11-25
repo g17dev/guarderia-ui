@@ -1,4 +1,4 @@
-import { Fingerprint, LoaderCircle, ShieldCheck, ShieldX, ScanLine, RotateCcw, ArrowLeft } from "lucide-react";
+import { Fingerprint, LoaderCircle, ShieldCheck, ShieldX } from "lucide-react";
 import type { Authorization } from "./reception";
 
 interface AuthorizePickupStepProps {
@@ -9,11 +9,9 @@ interface AuthorizePickupStepProps {
   verifying: boolean;
   denied?: boolean;
   authorization?: Authorization;
-  onVerify: () => void;
-  onChangeSelection: () => void;
 }
 
-export function AuthorizePickupStep({ relationship, candidateCount, childCount, simulation, verifying, denied, authorization, onVerify, onChangeSelection }: AuthorizePickupStepProps) {
+export function AuthorizePickupStep({ relationship, candidateCount, childCount, simulation, verifying, denied, authorization }: AuthorizePickupStepProps) {
   if (authorization) {
     const adult = authorization.adult;
     const initials = adult.name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join("");
@@ -33,13 +31,9 @@ export function AuthorizePickupStep({ relationship, candidateCount, childCount, 
       <div className="reception-verification reception-verification-denied">
         <div className="reception-verification-heading" role="alert">
           <div className="reception-symbol reception-denied-symbol" aria-hidden="true"><ShieldX /></div>
-          <div><h2>Huella no reconocida</h2>
+          <div><h2>Adulto sin autorización para este grupo</h2>
             <p>Sin autorización para los niños seleccionados.</p>
           </div>
-        </div>
-        <div className="reception-recovery-actions">
-          <button className="reception-button primary full" onClick={onVerify}><RotateCcw size={18} aria-hidden="true" />Intentar de nuevo</button>
-          <button className="reception-button quiet reception-change-selection" onClick={onChangeSelection}><ArrowLeft size={16} aria-hidden="true" />Cambiar selección</button>
         </div>
       </div>
     );
@@ -57,10 +51,6 @@ export function AuthorizePickupStep({ relationship, candidateCount, childCount, 
           </span>
         </div>
       </div>
-      <button className="reception-button primary full" disabled={verifying} onClick={onVerify}>
-        {verifying ? <LoaderCircle size={18} className="reception-spin" aria-hidden="true" /> : <ScanLine size={18} aria-hidden="true" />}
-        {verifying ? "Leyendo huella…" : simulation ? "Simular huella" : "Leer huella"}
-      </button>
     </div>
   );
 }

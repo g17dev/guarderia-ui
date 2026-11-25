@@ -1,0 +1,38 @@
+.belongings-editor { border-block: 1px solid var(--border); padding: 14px 0; }
+.belongings-editor h3 { font-size: 15px; font-weight: 600; }
+.belongings-editor h3 > span { display: block; color: var(--muted-foreground); font-size: 12px; font-weight: 400; margin-top: 3px; }
+.belonging-child { padding-top: 14px; }
+.belonging-child + .belonging-child { margin-top: 14px; border-top: 1px solid var(--border); }
+.belonging-child h4 { font-size: 14px; margin-bottom: 10px; font-weight: 600; }
+.belonging-shortcuts { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.belongings-editor button[data-slot="button"], .belongings-followup button[data-slot="button"] { white-space: normal; font-size: 13px; }
+.belongings-editor details, .belongings-followup details { margin-top: 8px; }
+.belongings-editor summary, .belongings-followup summary { cursor: pointer; font-size: 13px; min-height: 44px; padding: 12px 0; color: var(--text-secondary); }
+.belongings-editor label, .belongings-followup label { display: grid; gap: 5px; font-size: 13px; color: var(--text-secondary); }
+.belongings-editor input:not([type="checkbox"]), .belongings-editor select, .belongings-followup input:not([type="checkbox"]), .belongings-followup select, .movement-comment input, .movement-comment textarea { width: 100%; min-height: 44px; border: 1px solid var(--border-strong); border-radius: 7px; background: var(--card); padding: 8px 10px; font: inherit; font-size: 14px; color: var(--foreground); }
+.belonging-entry-fields, .belonging-custom, .belonging-exception { display: grid; gap: 10px; padding: 10px 0; }
+.belonging-entry-fields > label:first-child, .belonging-exception input[type="number"] { max-width: 160px; }
+.belongings-editor .belonging-checkbox, .belongings-followup .belonging-checkbox { display: flex; align-items: center; min-height: 44px; gap: 8px; }
+.belonging-checkbox input { width: 18px; height: 18px; }
+.belonging-hint, .belonging-previous { color: var(--muted-foreground); font-size: 12px; line-height: 1.5; margin: 7px 0; }
+.belonging-item-name { display: flex; align-items: flex-start; gap: 8px; }
+.belonging-item-name > svg { flex-shrink: 0; margin-top: 2px; color: var(--text-secondary); }
+.belonging-item-name strong { display: block; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.belonging-item-name small { display: block; color: var(--muted-foreground); font-size: 12px; margin-top: 3px; overflow-wrap: anywhere; }
+.belonging-check-row { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.belonging-item-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; margin-top: 8px; }
+.belonging-item-actions details { flex: 1; min-width: min(100%, 180px); margin: 0; }
+.belonging-item-actions summary { padding: 12px 4px; }
+.belonging-check-result { color: var(--text-secondary); font-size: 13px; margin-top: 6px; overflow-wrap: anywhere; }
+.belonging-bulk { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 14px; }
+.belonging-bulk .belonging-hint { width: 100%; }
+.movement-comment { border-top: 1px solid var(--border); padding-top: 10px; }
+.movement-comment summary { min-height: 44px; padding: 12px 0; cursor: pointer; color: var(--text-secondary); font-size: 13px; }
+.movement-comment label { display: grid; gap: 6px; margin-bottom: 12px; font-size: 13px; }
+.movement-comment textarea { resize: vertical; min-height: 80px; }
+.movement-comment > p { font-size: 12px; color: var(--muted-foreground); }
+@media (prefers-reduced-motion: reduce) { .belongings-editor * { transition: none !important; animation: none !important; } }
+.belonging-single-child { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
+.belongings-editor h3 > span { display: inline; margin-left: 6px; }
+.belonging-child:has(.belonging-single-child) { padding-top: 4px; }
+.belongings-editor input:not([type="checkbox"]), .belongings-editor select, .movement-comment textarea { border-color: var(--muted-foreground); }

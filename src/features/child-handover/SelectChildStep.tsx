@@ -14,9 +14,10 @@ interface SelectChildStepProps {
   disabled: boolean;
   onSearch: (value: string) => void;
   onToggle: (id: string) => void;
+  pendingCounts?: Record<string, number>;
 }
 
-export function SelectChildStep({ children, selectedIds, search, filterLabel, filter, onFilterChange, disabled, onSearch, onToggle }: SelectChildStepProps) {
+export function SelectChildStep({ children, selectedIds, search, filterLabel, filter, onFilterChange, disabled, onSearch, onToggle, pendingCounts }: SelectChildStepProps) {
   const rowElements = useReceptionListMotion(children);
   const results = useRef<HTMLDivElement>(null);
   return (
@@ -56,6 +57,7 @@ export function SelectChildStep({ children, selectedIds, search, filterLabel, fi
             <span className="reception-person"><strong>{child.name} {child.lastName}</strong><small>{child.classroom || "Sin grupo"}</small></span>
             <span className="reception-child-indicators">
               <span className={`reception-status ${child.attendanceStatus}`}>{attendanceLabels[child.attendanceStatus]}</span>
+              {!!pendingCounts?.[child.id] && <span className="reception-pending-belongings">{pendingCounts[child.id]} {pendingCounts[child.id] === 1 ? "pertenencia pendiente" : "pertenencias pendientes"}</span>}
             </span>
           </label>
         ))}
