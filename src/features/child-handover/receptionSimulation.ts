@@ -10,14 +10,15 @@ export type SimulationOutcome = "authorized" | "unauthorized";
 export function createReceptionSimulation(
   initialChildren: ReceptionChild[],
   adults: ReceptionAdult[],
-  { verificationDelayMs = 1200, saveDelayMs = 650, fingerprintAdultId, getFingerprintAdultId }: {
+  { verificationDelayMs = 1200, saveDelayMs = 650, fingerprintAdultId, getFingerprintAdultId, onCommit }: {
     verificationDelayMs?: number; saveDelayMs?: number; fingerprintAdultId?: string;
     getFingerprintAdultId?: () => string | undefined;
+    onCommit?: (request: Parameters<ReceptionGateway["save"]>[0], receipt: MovementReceipt) => void;
   } = {},
 ): ReceptionGateway {
   const children = new Map(initialChildren.map(child => [child.id, { ...child }]));
   const authorizations = new Map<string, Authorization>();
-  const receipts = new Map<string, { token: string; receipt: MovementReceipt }>();
+  const receipts = new Map<string, { token: string; receipt: MovementReceipt; details: string }>();
   const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
   function selectedChildren(ids: string[]) {
@@ -71,7 +72,7 @@ export function createReceptionSimulation(
       await delay(saveDelayMs);
       const existing = receipts.get(request.idempotencyKey);
       if (existing) {
-        if (existing.token !== request.authorizationToken || existing.receipt.action !== request.action
+        if (existing.details !== JSON.stringify(request.details ?? null) || existing.token !== request.authorizationToken || existing.receipt.action !== request.action
           || existing.receipt.childIds.length !== request.childIds.length
           || !existing.receipt.childIds.every(id => request.childIds.includes(id))
           || new Set(request.childIds).size !== request.childIds.length) {
@@ -90,12 +91,15 @@ export function createReceptionSimulation(
         id: `demo-movement-${crypto.randomUUID()}`, action: request.action,
         childIds: [...request.childIds], adultId: authorization.adult.id, savedAt: new Date().toISOString(),
       };
+      // The synchronous callback validates/builds a complete snapshot before
+      // publishing it. A rejection leaves attendance and receipt caches intact.
+      onCommit?.(structuredClone(request), structuredClone(receipt));
       // Validate the complete group before updating any child, without awaiting
       // between validation and update. Retries recover the same in-memory receipt.
       selected.forEach(child => children.set(child.id, {
         ...child, attendanceStatus: request.action === "entry" ? "inside" : "out",
       }));
-      receipts.set(request.idempotencyKey, { token: request.authorizationToken, receipt });
+      receipts.set(request.idempotencyKey, { token: request.authorizationToken, receipt, details: JSON.stringify(request.details ?? null) });
       authorizations.delete(request.authorizationToken);
       return structuredClone(receipt);
     },
