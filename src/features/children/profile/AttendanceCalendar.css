@@ -229,3 +229,10 @@
 .event-card-person svg { flex-shrink: 0; margin-top: 2px; }
 .attendance-day-timeline:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: 10px; }
 @container attendance (max-height: 360px) { .attendance-day-timeline .event-card { padding: 9px 8px; } .attendance-day-timeline .event-card-info { gap: 5px; padding-left: 0; } }
+
+/* A width fallback must not depend on the available panel height. */
+@container attendance (max-width: 620px) {
+  .attendance-content .attendance-split { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(240px, 1fr); gap: 18px; overflow-y: auto; }
+  .attendance-content .attendance-left { min-height: 320px; }
+  .attendance-content .attendance-right { min-height: 240px; padding: 16px 0 0; border-left: 0; border-top: 1px solid var(--border); }
+}

@@ -37,10 +37,11 @@ export const useBiometricCapture = () => {
             }, 3000);
         };
 
-      // Iniciar la cámara automáticamente cuando el hook se usa
+      const [initialStartCamera] = useState(() => startCamera);
+      // Preserve the legacy mount-only behavior without an unstable dependency.
       useEffect(() => {
-        startCamera();  // ← Llamar a la función para iniciar la cámara
-      }, []);
+        initialStartCamera();  // ← Llamar a la función para iniciar la cámara
+      }, [initialStartCamera]);
     
     
       return {

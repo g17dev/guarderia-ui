@@ -13,7 +13,7 @@ interface BreadcrumbsProps {
 
 export function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
-    <nav className="breadcrumbs">
+    <nav className="breadcrumbs" aria-label="Ruta de navegación">
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
         return (
@@ -23,7 +23,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
                 {item.label}
               </Link>
             ) : (
-              <span className="breadcrumb-current">{item.label}</span>
+              <span className="breadcrumb-current" aria-current="page">{item.label}</span>
             )}
             {!isLast && (
               <ChevronRight size={14} className="breadcrumb-separator" />

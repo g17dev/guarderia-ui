@@ -1,4 +1,5 @@
 import type { Child } from "../../types/child";
+import type { MovementDetails } from "./belongings";
 
 export type Movement = "entry" | "pickup";
 export type AttendanceStatus = "inside" | "pending" | "out" | "absent";
@@ -55,7 +56,7 @@ export interface ReceptionGateway {
   // recheck current permissions; client-provided candidate IDs are not proof.
   identify?(request: IdentificationRequest): Promise<Authorization>;
   verify(request: VerificationRequest): Promise<Authorization>;
-  save(request: MovementRequest & { authorizationToken: string; idempotencyKey: string }): Promise<MovementReceipt>;
+  save(request: MovementRequest & { authorizationToken: string; idempotencyKey: string; details?: MovementDetails }): Promise<MovementReceipt>;
 }
 
 export const disconnectedGateway: ReceptionGateway = {

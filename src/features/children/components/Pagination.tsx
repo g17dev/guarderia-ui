@@ -66,7 +66,7 @@ export function Pagination({
         <button
           className="page-btn"
           onClick={() => onPageChange(1)}
-          disabled={currentPage === 1}
+          disabled={totalItems === 0 || currentPage <= 1}
           title="Primera página"
         >
           <ChevronsLeft size={15} />
@@ -74,7 +74,7 @@ export function Pagination({
         <button
           className="page-btn"
           onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
+          disabled={totalItems === 0 || currentPage <= 1}
           title="Página anterior"
         >
           <ChevronLeft size={15} />
@@ -88,6 +88,8 @@ export function Pagination({
           ) : (
             <button
               key={page}
+              aria-current={currentPage === page ? "page" : undefined}
+              aria-label={`Página ${page}`}
               className={`page-btn ${currentPage === page ? "page-btn-active" : ""}`}
               onClick={() => onPageChange(page as number)}
             >
@@ -99,7 +101,7 @@ export function Pagination({
         <button
           className="page-btn"
           onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          disabled={totalItems === 0 || currentPage >= totalPages}
           title="Página siguiente"
         >
           <ChevronRight size={15} />
@@ -107,7 +109,7 @@ export function Pagination({
         <button
           className="page-btn"
           onClick={() => onPageChange(totalPages)}
-          disabled={currentPage === totalPages}
+          disabled={totalItems === 0 || currentPage >= totalPages}
           title="Última página"
         >
           <ChevronsRight size={15} />

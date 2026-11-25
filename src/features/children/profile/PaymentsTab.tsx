@@ -1,3 +1,4 @@
+import { parseLocalDate } from "../../../utils/date";
 import { useState, useRef, useEffect } from "react";
 import {
   Banknote,
@@ -86,7 +87,7 @@ function formatCurrency(amount: number): string {
 
 function formatDate(dateStr: string | undefined): string {
   if (!dateStr) return "—";
-  return new Date(dateStr).toLocaleDateString("es-MX", {
+  return parseLocalDate(dateStr).toLocaleDateString("es-MX", {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -160,7 +161,7 @@ function FilterOptionRow({
 function isDateWithinRange(value: string | undefined, from?: Date, to?: Date) {
   if (!value) return false;
 
-  const date = new Date(value);
+  const date = parseLocalDate(value);
 
   if (from && date < from) return false;
 
@@ -328,7 +329,7 @@ const MOCK_PAYMENTS: Payment[] = [
   },
 ];
 
-export function PaymentsTab(_props: { childId: string }) {
+export function PaymentsTab({ childId }: { childId: string }) {
   const [search, setSearch] = useState("");
   const [statusFilters, setStatusFilters] = useState<Set<PaymentStatus>>(
     new Set(),
@@ -408,7 +409,7 @@ export function PaymentsTab(_props: { childId: string }) {
     filterFrom = dateRange?.from;
 
     filterTo = dateRange?.to
-      ? new Date(dateRange.to.setHours(23, 59, 59, 999))
+      ? new Date(new Date(dateRange.to).setHours(23, 59, 59, 999))
       : undefined;
   }
 
@@ -510,7 +511,7 @@ export function PaymentsTab(_props: { childId: string }) {
     // Nuestro onClick (listener de React) corre antes de la "activation
     // behavior" nativa del botón (la que dispara popoverTargetAction),
     // así que este estilo ya está aplicado cuando el panel se vuelve visible.
-    (panel.style as any).positionAnchor = `--nav-anchor-${id}`;
+    panel.style.setProperty("position-anchor", `--nav-anchor-${id}`);
     setActiveCategory(id);
 
     // OJO: ya NO llamamos panel.togglePopover(true) aquí. Ese era el origen
@@ -585,7 +586,7 @@ export function PaymentsTab(_props: { childId: string }) {
   }, []);
 
   return (
-    <div className="tab-content payments-tab">
+    <div data-child-id={childId} className="tab-content payments-tab">
       <div className="payments-toolbar">
         <InputSearch
           placeholder="Buscar por concepto, referencia..."
@@ -597,7 +598,7 @@ export function PaymentsTab(_props: { childId: string }) {
         <button
           className={`btn-filter edit ${hasFilters ? "active" : ""}`}
           popoverTarget="payments-filter-popover"
-          style={{ anchorName: "--payments-btn-filter" } as any}
+          style={{ anchorName: "--payments-btn-filter" } as React.CSSProperties}
         >
           <ListFilterPlus size={16} strokeWidth={2.5} />
           Filtrar
@@ -620,7 +621,7 @@ export function PaymentsTab(_props: { childId: string }) {
                 type="button"
                 popoverTarget="filter-details-panel"
                 popoverTargetAction="show"
-                style={{ anchorName: `--nav-anchor-${id}` } as any}
+                style={{ anchorName: `--nav-anchor-${id}` } as React.CSSProperties}
                 className={`payments-filter-nav-item ${activeCategory === id ? "active" : ""}`}
                 onClick={() => handleCategoryClick(id)}
               >

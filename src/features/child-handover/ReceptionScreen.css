@@ -22,18 +22,16 @@
 }
 .reception button, .reception input { font: inherit; }
 .reception button, .reception a, .reception input { -webkit-tap-highlight-color: transparent; }
-.reception button:focus-visible, .reception a:focus-visible, .reception input:focus-visible {
+.reception :is(button, a, input, textarea, select, summary, [tabindex="0"]):focus-visible {
   outline: 3px solid var(--reception-brand); outline-offset: 3px;
 }
-.reception-body { width: 100%; height: 100%; min-height: 0; max-width: 1600px; margin: 0 auto; padding: 20px 24px; display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 14px; }
-.reception-eyebrow { color: var(--reception-muted); font-size: 13px; letter-spacing: 1.8px; font-weight: 600; margin-bottom: 8px; }
-.reception h1 { font-size: 36px; font-weight: 600; letter-spacing: -1px; line-height: 1.25; margin-bottom: 8px; }
-.reception-subtitle { font-size: 16px; color: var(--reception-muted); }
+.reception-body { width: 100%; height: 100%; min-height: 0; max-width: 1600px; margin: 0 auto; padding: 16px 20px; display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 14px; }
+.reception h1 { font-size: 26px; font-weight: 600; letter-spacing: -.6px; line-height: 1.25; }
 .reception-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .reception-stat { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px; min-height: clamp(96px, 9cqi, 128px); padding: 12px 20px; border: 1px solid var(--reception-line); background: var(--reception-panel); border-radius: 14px; text-align: left; color: var(--reception-ink); }
 .reception-stat strong { display: block; font-size: 38px; font-weight: 600; line-height: 1; margin: 0; font-variant-numeric: tabular-nums; }
 .reception-stat span { font-size: 16px; line-height: 1.3; color: var(--reception-muted); }
-.reception-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, .6fr); gap: 20px; min-height: 0; align-items: start; }
+.reception-layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: minmax(0, 1fr); gap: 20px; min-height: 0; min-width: 0; }
 .reception-list { height: 100%; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 .reception-rows { position: relative; flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; scroll-padding: 8px; }
 .reception-list, .reception-panel { background: var(--reception-panel); border: 1px solid var(--reception-line); border-radius: 16px; min-width: 0; }
@@ -56,8 +54,8 @@
 .reception-status.out { color: var(--reception-muted); background: var(--reception-bg); }
 .reception-status.absent { color: var(--violet); background: var(--violet-soft); }
 .reception-child-indicators { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; max-width: 160px; }
-.reception-panel { padding: 18px; display: grid; align-content: start; gap: 10px; }
-.reception-filter-options { display: flex; gap: 18px; overflow-x: auto; scrollbar-width: none; }
+.reception-panel { --panel-padding: 16px; display: flex; flex-direction: column; height: 100%; min-height: 0; overflow: hidden; container: reception-panel / inline-size; }
+.reception-filter-options { display: flex; flex-wrap: wrap; column-gap: 14px; }
 .reception-filter { position: relative; flex-shrink: 0; white-space: nowrap; min-height: 44px; padding: 10px 0; border: 0; border-radius: 0; background: transparent; color: var(--reception-muted); font-size: 13px !important; font-weight: 500; }
 .reception-filter::after { content: ""; position: absolute; height: 2px; bottom: 0; left: 0; right: 0; background: var(--reception-brand); transform: scaleX(0); transform-origin: center; transition: transform 200ms ease; }
 .reception-filter:hover { color: var(--reception-brand); }
@@ -65,11 +63,24 @@
 .reception-filter[aria-pressed="true"]::after { transform: scaleX(1); }
 .reception-panel-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .reception-panel h2 { font-size: 17px; font-weight: 600; line-height: 1.4; }
-.reception-panel-top h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .9px; color: var(--reception-muted); }
-.reception-text-button { color: var(--reception-brand); background: transparent; border: 0; font-size: 12px !important; min-height: 44px; }
-.reception-picked { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 6px 10px; border-radius: 8px; background: var(--reception-soft); font-size: 12px; }
-.reception-picked strong { flex-shrink: 0; font-weight: 600; }
-.reception-picked > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.reception-panel-top h2 { font-size: 15px; color: var(--reception-ink); }
+.reception-panel-title { flex: 1; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; min-width: 0; }
+.reception-panel-title h2 { flex-shrink: 0; }
+.reception-selection-count { display: inline-flex; align-items: center; gap: 7px; padding: 4px 8px; color: var(--reception-brand); font-size: 16px; font-weight: 700; white-space: nowrap; }
+.reception-selection-count > svg { flex-shrink: 0; }
+.reception-selection-count strong { display: inline-grid; place-items: center; width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: var(--reception-brand); color: var(--primary-foreground); font-size: 15px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.reception-clear-selection[data-slot="button"] { min-height: 44px; flex-shrink: 0; padding: 8px; gap: 6px; color: var(--reception-muted); font-size: 12px; font-weight: 700; border-radius: 8px; }
+.reception-selection-context { display: flex; align-items: flex-start; padding-bottom: 6px; min-width: 0; }
+/* Animate only the occupied width and gap; no empty slot remains after exit. */
+.reception-movement-slot { display: inline-flex; align-items: center; flex: none; width: var(--movement-width); min-height: 30px; margin-right: 10px; overflow: hidden; pointer-events: none; }
+.reception-selection-context > .reception-picked { flex: 1; }
+.reception-movement-label { white-space: nowrap; pointer-events: none; display: inline-flex; align-items: center; gap: 5px; color: var(--reception-ink); font-size: 12px; font-weight: 600; flex-shrink: 0; }
+.reception-selection-context:empty { display: none; }
+.reception-picked { position: relative; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; padding: 0; margin: 0; list-style: none; }
+.reception-child-tag { max-width: 100%; padding: 5px 9px; border: 1px solid color-mix(in srgb, var(--reception-brand) 18%, var(--reception-line)); border-radius: 7px; background: var(--reception-soft); color: var(--reception-brand); font-size: 13px; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+@media (hover: hover) and (pointer: fine) {
+  .reception-clear-selection[data-slot="button"]:hover { color: var(--destructive-hover); background: var(--destructive-soft); border-color: color-mix(in srgb, var(--destructive) 25%, transparent); }
+}
 .reception-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
 .reception-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 9px 12px; border: 1px solid var(--reception-line); border-radius: 10px; background: var(--reception-panel); color: var(--reception-ink); font-size: 14px !important; font-weight: 500 !important; transition: background .16s; }
 .reception-button.primary { color: var(--primary-foreground); background: var(--reception-brand); border-color: var(--reception-brand); }
@@ -79,8 +90,17 @@
 .reception-button:not(:disabled):hover { background: var(--reception-soft); }
 .reception-button.primary:not(:disabled):hover { background: var(--primary-hover); }
 .reception-placeholder, .reception-verification, .reception-confirmation { text-align: center; display: grid; justify-items: center; align-content: center; gap: 10px; padding: 12px 0; overflow-wrap: anywhere; }
+.reception-clear-selection[data-slot="button"]:active { color: var(--destructive-hover); background: var(--destructive-soft); }
+.reception-selection-issue { gap: 12px; }
+.reception-selection-issue > .reception-symbol { color: var(--destructive); background: var(--destructive-soft); }
+.reception-selection-issue h3 { font-size: 22px; font-weight: 700; line-height: 1.35; }
+.reception-selection-issue > p { max-width: 34ch; }
 .reception-placeholder > p, .reception-verification > p, .reception-confirmation > p { font-size: 14px; color: var(--reception-muted); }
-.reception-verification { padding: 0; text-align: left; justify-items: stretch; animation: reception-enter 180ms ease both; }
+.reception-placeholder > .reception-symbol { width: 84px; height: 84px; }
+.reception-placeholder > .reception-symbol svg { width: 44px; height: 44px; }
+.reception-placeholder > h2 { font-size: 22px; font-weight: 700; }
+.reception-placeholder > p { font-size: 16px; line-height: 1.5; }
+.reception-verification { padding: 0; text-align: left; justify-items: stretch; }
 .reception-verification-heading { display: flex; align-items: center; gap: 12px; }
 .reception-verification-heading > div:last-child { min-width: 0; }
 .reception-verification-heading p { color: var(--reception-muted); font-size: 13px; overflow-wrap: anywhere; }
@@ -101,10 +121,10 @@
 .reception-spin { animation: reception-rotate 1.3s linear infinite; }
 @keyframes reception-rotate { to { transform: rotate(360deg); } }
 
-.reception-page-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.reception-page-heading { display: flex; align-items: center; justify-content: space-between; gap: 6px 16px; flex-wrap: wrap; }
 .reception-reader-status { display: inline-flex; align-items: center; gap: 7px; color: var(--reception-muted); font-size: 12px; padding: 6px 0; }
-.reception-confirmation-names { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.reception-confirmation, .reception-warning, .reception-empty { animation: reception-enter 180ms ease both; }
+.reception-confirmation-names { overflow-wrap: anywhere; }
+.reception-warning, .reception-empty { animation: reception-enter 180ms ease both; }
 .reception button, .reception-search, .reception-row, .reception-avatar, .reception-status {
   transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
@@ -117,214 +137,152 @@
 .reception-button { transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, transform 120ms ease; }
 @keyframes reception-enter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Desktop and tablet keep two columns; narrow windows and high zoom use the fallback. */
+/* The viewport provides one shared panel height; only task content scrolls. */
+.reception-critical-context { display: grid; flex: 0 0 auto; gap: 4px; padding: 8px var(--panel-padding); border-bottom: 1px solid transparent; }
+.reception-panel-top { min-height: 44px; }
+.reception-panel-content { flex: 1; min-height: 0; min-width: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; padding: 12px var(--panel-padding); display: flex; flex-direction: column; gap: 12px; scroll-padding-block: 16px; }
+.reception-panel-content > * { flex-shrink: 0; min-width: 0; }
+.reception-panel-content > :is(.reception-placeholder, .reception-verification, .reception-confirmation, .reception-blocked) { flex: 1 0 auto; }
+.reception-panel-footer { flex: 0 0 auto; display: grid; gap: 4px; padding: 8px var(--panel-padding); border-top: 1px solid transparent; background: var(--reception-panel); }
+/* Align separators with the title and action buttons, preserving panel spacing. */
+.reception-critical-context, .reception-panel-footer { position: relative; }
+.reception-critical-context::after, .reception-panel-footer::before { content: ""; position: absolute; inset-inline: var(--panel-padding); border-top: 1px solid var(--reception-line); pointer-events: none; }
+.reception-critical-context::after { bottom: -1px; }
+.reception-panel-footer::before { top: -1px; }
+.reception-panel-footer > .reception-button { max-width: 100%; }
+.reception-flow-navigation { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.reception-flow-navigation > button { flex: 1; min-width: 0; font-size: 12px !important; }
+.reception-mode { color: var(--info); font-size: 12px; }
+.reception-current-mode { color: var(--info); font-size: 11px; white-space: nowrap; }
+.reception-pending-belongings { color: var(--text-secondary); font-size: 11px; text-align: right; }
+.reception-belonging-review, .reception-simulation-options { border-top: 1px solid var(--border); font-size: 13px; }
+.reception-belonging-review summary, .reception-simulation-options summary { min-height: 44px; padding: 12px 0; cursor: pointer; color: var(--text-secondary); }
+.reception-belonging-review p { color: var(--muted-foreground); font-size: 12px; margin: 4px 0 12px; }
+.reception-comment-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.reception-confirmation-links { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+.reception-confirmation-links a { min-height: 44px; padding: 10px; color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+
+/* Short tasks are centered; longer content remains reachable through panel scroll. */
+.reception-verification { --reader-size: 96px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 16px 0; }
+.reception-verification-heading { flex-direction: column; text-align: center; gap: 16px; }
+.reception-verification-heading h2 { font-size: 22px; }
+.reception-verification-heading p { font-size: 15px; margin-top: 6px; }
+.reception-verification .reception-symbol { width: var(--reader-size); height: var(--reader-size); border-radius: 28px; }
+.reception-verification .reception-symbol svg { width: 58%; height: 58%; }
+.reception-reader-symbol { position: relative; overflow: hidden; }
+.reception-reader-state { display: inline-flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; color: var(--reception-muted); font-size: 12px; }
+.reception-ready-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; flex-shrink: 0; }
+.reception-verification-denied h2 { color: var(--destructive); }
+.reception-denied-symbol { color: var(--destructive); background: var(--destructive-soft); }
+.reception-identified-adult { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid color-mix(in srgb, var(--success) 22%, var(--border)); border-radius: 12px; background: var(--success-soft); }
+.reception-adult-avatar { display: grid; place-items: center; width: 54px; height: 54px; flex-shrink: 0; border: 1px solid var(--app-avatar-border); border-radius: var(--app-avatar-radius); background: var(--app-avatar-background); color: var(--app-avatar-text); font-size: 20px; font-weight: 600; overflow: hidden; }
+.reception-adult-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.reception-adult-details { min-width: 0; overflow-wrap: anywhere; }
+.reception-adult-details h3 { font-size: 20px; line-height: 1.3; font-weight: 600; margin: 3px 0; }
+.reception-adult-details > p { font-size: 13px; color: var(--text-secondary); }
+.reception-permission { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--success); margin-top: 6px; }
+.reception-permission > svg { flex-shrink: 0; }
+.reception-blocked { display: grid; justify-items: center; align-content: center; text-align: center; gap: 10px; padding: 16px 0; }
+.reception-blocked p { font-size: 14px; color: var(--reception-muted); }
+.reception-warning > svg { display: inline; vertical-align: -3px; margin-right: 5px; }
+.reception-button > svg { flex-shrink: 0; }
+
 @container reception (max-width: 1100px) {
-  .reception-stat { min-height: 92px; padding: 12px 16px; }
-  .reception-stat strong { font-size: 34px; }
-  .reception-stat span { font-size: 15px; }
-  .reception h1 { font-size: 34px; }
+  .reception-stat { min-height: 80px; padding: 10px 16px; }
+  .reception-stat strong { font-size: 30px; }
+  .reception-stat span { font-size: 14px; }
   .reception-body { padding: 16px; }
-  .reception-layout { grid-template-columns: minmax(0, 1fr) minmax(300px, .7fr); gap: 14px; }
-  .reception-panel { padding: 14px; }
-  .reception-row { padding: 10px 12px; gap: 10px; }
+  .reception-layout { gap: 14px; }
+  .reception-panel { --panel-padding: 14px; }
+  .reception-row { padding: 10px 12px; gap: 8px; flex-wrap: wrap; }
+  .reception-child-indicators { margin-left: auto; max-width: 130px; }
 }
-@container reception (max-width: 700px) {
-  .reception-body { padding: 16px; grid-template-rows: auto auto minmax(0, 1fr); gap: 12px; }
-  .reception-layout { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; gap: 12px; }
-  .reception-panel { padding: 12px 14px; gap: 8px; }
-  .reception-panel-top h2 { font-size: 11px; }
-  .reception-placeholder { padding: 0; gap: 4px; }
-  .reception-placeholder > .reception-symbol, .reception-placeholder > h2 { display: none; }
-  .reception-placeholder > p { font-size: 12px; }
-  .reception-placeholder > .reception-warning { font-size: 12px; padding: 8px; }
-  .reception-text-button { min-height: 28px; }
-  .reception-footer { display: none; }
-  .reception-stats { gap: 8px; }
-  .reception-stat { min-height: 76px; padding: 10px 12px; gap: 6px; }
-  .reception-stat strong { font-size: 26px; margin-bottom: 6px; }
-  .reception h1 { font-size: 25px; }
-  .reception-eyebrow, .reception-subtitle { display: none; }
+/* Portrait tablets and narrow windows use selection, then the full operating panel. */
+@container reception (max-width: 850px) {
+  .reception-layout { grid-template-columns: minmax(0, 1fr); }
+  .reception[data-phase="select"] .reception-panel { height: auto; }
+  .reception[data-phase="select"] .reception-layout { grid-template-rows: minmax(0, 1fr) auto; }
+  .reception[data-phase="select"] .reception-panel-content { display: none; }
+  .reception[data-phase="select"] .reception-panel-content:has(.reception-selection-issue) { display: flex; }
+  .reception[data-phase="select"] .reception-selection-issue { flex: 0 0 auto; gap: 8px; padding-block: 4px; }
+  .reception[data-phase="select"] .reception-selection-issue .reception-symbol { width: 56px; height: 56px; border-radius: 18px; }
+  .reception[data-phase="select"] .reception-selection-issue .reception-symbol svg { width: 32px; height: 32px; }
+  .reception[data-phase="select"] .reception-selection-issue h3 { font-size: 19px; }
+  .reception[data-phase="select"] .reception-selection-issue > p { font-size: 15px; }
   .reception:not([data-phase="select"]) .reception-list { display: none; }
-  .reception:not([data-phase="select"]) .reception-layout { grid-template-rows: minmax(0, 1fr); }
-  .reception:not([data-phase="select"]) .reception-panel { width: 100%; max-width: 620px; justify-self: center; }
+  .reception:not([data-phase="select"]) .reception-panel { width: 100%; }
+  .reception-child-indicators { max-width: none; }
 }
 @container reception (max-width: 540px) {
-  .reception-body { padding: 12px; gap: 10px; }
-  .reception-page-heading { gap: 2px; }
-  .reception h1 { font-size: 22px; }
-  .reception-reader-status { font-size: 11px; padding: 0; }
   .reception-stats { gap: 6px; }
-  .reception-stat { min-height: 66px; padding: 8px; gap: 4px; border-radius: 10px; }
-  .reception-stat strong { font-size: 22px; margin-bottom: 0; }
-  .reception-stat span { font-size: 11px; line-height: 1.25; display: block; }
-  .reception-tools { padding: 10px 12px; gap: 6px; }
-  .reception-row { gap: 8px; }
-  .reception-status { white-space: normal; max-width: 80px; }
-  .reception-child-indicators { max-width: 90px; }
-  .reception-avatar { width: 34px; height: 36px; }
+  .reception-stat { min-height: 0; padding: 8px; gap: 4px; border-radius: 10px; }
+  .reception-stat strong { font-size: 22px; }
+  .reception-stat span { font-size: 11px; }
+  .reception-body { padding: 12px; gap: 10px; }
+  .reception h1 { font-size: 22px; }
+  .reception-tools { padding: 10px 12px; gap: 4px; }
   .reception-panel-top { flex-wrap: wrap; }
+  .reception-flow-navigation > button { padding-inline: 4px; }
 }
-@container reception (max-height: 620px) {
-  .reception-body { padding: 12px; gap: 8px; }
-  .reception-eyebrow, .reception-subtitle, .reception-footer { display: none; }
-  .reception-body { grid-template-rows: auto auto minmax(0, 1fr); }
-  .reception h1 { font-size: 22px; margin-bottom: 0; }
-  .reception-stat { min-height: 0; padding: 6px 10px; gap: 4px; }
-  .reception-stat strong { font-size: 22px; margin-bottom: 0; }
-  .reception-panel { padding: 12px; gap: 8px; }
-  .reception-placeholder { padding: 0; }
-  .reception-placeholder > .reception-symbol { display: none; }
-  .reception-save-note { display: none; }
-  .reception-verification .reception-note { line-height: 1.4; }
-  .reception-warning { padding: 8px; font-size: 12px; }
-  .reception-confirmation { padding: 0; }
+@container reception (max-height: 800px) {
+  .reception-stat { min-height: 0; padding: 8px 12px; gap: 4px; }
+  .reception-stat strong { font-size: 26px; }
+  .reception-stat span { font-size: 13px; }
+  .reception-body { padding: 12px; gap: 10px; }
+  .reception-panel { --panel-padding: 12px; }
+  .reception-panel-content { padding-block: 12px; }
+  .reception-critical-context, .reception-panel-footer { padding-block: 8px; gap: 6px; }
+  .reception-verification { --reader-size: 64px; }
+  .reception-verification-heading { gap: 10px; }
+}
+@container reception (max-height: 480px) {
+  .reception-stats { display: none; }
+  .reception-mode { font-size: 11px; }
+  .reception-body { grid-template-rows: auto minmax(0, 1fr); gap: 6px; }
+}
+.reception-panel-content > h2 { letter-spacing: -.2px; }
+.reception-panel .reception-button.primary { transition: background-color 150ms ease, border-color 150ms ease, transform 120ms ease; }
+@media (hover: hover) and (pointer: fine) {
+  .reception-panel .reception-button.quiet:not(:disabled):hover { color: var(--reception-ink); background: var(--surface-subtle); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .reception-movement-slot { animation: reception-movement-expand 340ms ease-out both; }
+  .reception-movement-slot[data-exiting="true"] { animation: reception-movement-collapse 240ms ease-out both; }
+  .reception-movement-label { animation: reception-movement-in 340ms ease-out both; }
+  .reception-movement-label[data-exiting="true"] { animation: reception-movement-out 240ms ease-out both; }
+  @keyframes reception-movement-expand { from { width: 0; margin-right: 0; } to { width: var(--movement-width); margin-right: 10px; } }
+  @keyframes reception-movement-collapse { from { width: var(--movement-width); margin-right: 10px; } to { width: 0; margin-right: 0; } }
+  @keyframes reception-movement-in { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes reception-movement-out { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-18px); } }
+  .reception-child-tag { animation: reception-tag-in 340ms cubic-bezier(.22,1,.36,1) both; }
+  .reception-child-tag[data-exiting="true"] { pointer-events: none; animation: reception-tag-out 300ms cubic-bezier(.4,0,.2,1) both; }
+  .reception-selection-issue > .reception-symbol,
+  .reception-verification-denied .reception-denied-symbol,
+  .reception-blocked > .reception-symbol { animation: reception-error-signal 850ms cubic-bezier(.22,.61,.36,1) both; transform-origin: center; }
+  @keyframes reception-tag-in { from { opacity: 0; transform: translateY(7px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes reception-tag-out { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-5px) scale(.96); } }
+  @keyframes reception-error-signal {
+    0% { opacity: .3; transform: translateY(5px) scale(.88); }
+    20% { opacity: 1; transform: translateY(0) scale(1.04); }
+    34% { transform: translateX(-7px) rotate(-4deg) scale(1.02); }
+    48% { transform: translateX(7px) rotate(4deg) scale(1.02); }
+    62% { transform: translateX(-5px) rotate(-3deg); }
+    74% { transform: translateX(4px) rotate(2deg); }
+    86% { transform: translateX(-2px) rotate(-1deg); }
+    100% { opacity: 1; transform: translate(0) rotate(0) scale(1); }
+  }
+  .reception-selection-count strong { animation: reception-count-change 300ms cubic-bezier(.2,.7,.2,1); }
+  .reception-placeholder:not(.reception-selection-issue) > .reception-symbol { animation: reception-prompt-in 320ms cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes reception-count-change { from { opacity: .5; transform: scale(.82); } to { opacity: 1; transform: scale(1); } }
+  @keyframes reception-prompt-in { from { opacity: 0; transform: translateY(5px) scale(.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .reception-identified-adult .reception-adult-avatar,
+  .reception-confirmation > .success { animation: reception-confirm-in 180ms cubic-bezier(.2,.7,.2,1) both; }
+  .reception-verification[data-scanning="true"] .reception-reader-symbol::before { content: ""; position: absolute; inset: 4px; border: 2px solid var(--reception-brand); border-radius: inherit; animation: reception-reader-pulse 1200ms ease-in-out infinite; }
+  .reception-verification[data-scanning="true"] .reception-reader-symbol::after { content: ""; position: absolute; inset-inline: 16%; top: 20%; height: 2px; background: var(--reception-brand); animation: reception-reader-scan 1200ms ease-in-out infinite; }
+  @keyframes reception-confirm-in { from { opacity: .6; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+  @keyframes reception-reader-pulse { 0%, 100% { opacity: .12; transform: scale(.92); } 50% { opacity: .4; transform: scale(1); } }
+  @keyframes reception-reader-scan { 0%, 100% { opacity: 0; transform: translateY(0); } 30%, 70% { opacity: .45; } 80% { opacity: 0; transform: translateY(calc(var(--reader-size) * .6)); } }
 }
 @media (prefers-reduced-motion: reduce) {
   .reception *, .reception *::before, .reception *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
-
-@container reception (max-width: 700px) {
-  .reception-placeholder { display: none; }
-  .reception-placeholder:has(.reception-warning) { display: grid; }
-  .reception-placeholder > p:not(.reception-warning) { display: none; }
-  .reception-panel-top h2 { font-size: 10px; letter-spacing: .6px; }
-  .reception-text-button { font-size: 11px !important; min-height: 24px; }
-}
-@container reception (min-width: 560px) and (max-height: 480px) {
-  .reception[data-phase="select"] .reception-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(230px, .8fr);
-    grid-template-rows: minmax(0, 1fr);
-  }
-  .reception-stat { flex-direction: row; align-items: center; justify-content: flex-start; gap: 8px; }
-  .reception-stat span { font-size: 11px; }
-  .reception-tools { padding: 8px 10px; gap: 4px; }
-}
-@container reception (max-height: 480px) {
-  .reception:not([data-phase="select"]) .reception-stats { display: none; }
-  .reception:not([data-phase="select"]) .reception-body { grid-template-rows: auto minmax(0, 1fr); }
-}
-@container reception (max-height: 360px) {
-  .reception:not([data-phase="select"]) .reception-page-heading { display: none; }
-  .reception:not([data-phase="select"]) .reception-body { grid-template-rows: minmax(0, 1fr); padding: 8px; }
-  .reception:not([data-phase="select"]) .reception-picked { display: none; }
-  .reception-panel { padding: 8px; gap: 6px; }
-  .reception-verification { gap: 6px; }
-  .reception-verification .reception-symbol { width: 36px; height: 36px; }
-  .reception-verification h2 { font-size: 14px; }
-}
-@container reception (max-width: 540px) and (max-height: 620px) {
-  .reception-reader-status, .reception-list-meta { display: none; }
-  .reception-tools { gap: 4px; }
-  .reception-search input { min-height: 44px; }
-}
-
-@container reception (max-width: 540px) and (max-height: 620px) {
-  .reception[data-selection-blocked="true"] .reception-picked { display: none; }
-}
-
-/* Keep balanced counters on short desktop/tablet windows as well. */
-@container reception (min-width: 700px) and (min-height: 481px) and (max-height: 620px) {
-  .reception-stat { min-height: clamp(92px, 9cqi, 112px); padding: 10px 16px; gap: 6px; }
-  .reception-stat strong { font-size: 34px; }
-  .reception-stat span { font-size: 15px; }
-  .reception h1 { font-size: 30px; }
-}
-
-@container reception (min-width: 700px) and (min-height: 541px) and (max-height: 620px) {
-  .reception-eyebrow, .reception-subtitle { display: block; }
-  .reception-eyebrow { font-size: 12px; margin-bottom: 4px; }
-  .reception h1 { font-size: 32px; margin-bottom: 4px; }
-  .reception-subtitle { font-size: 15px; }
-}
-
-.reception-demo-label { display: inline-block; margin-left: 12px; padding: 2px 8px; border-radius: 6px; background: var(--info-soft); color: var(--info); font-size: 11px; font-weight: 500; letter-spacing: 0; text-transform: none; vertical-align: middle; }
-.reception-flow-navigation { display: flex; gap: 8px; }
-.reception-flow-navigation > button { flex: 1; min-width: 0; font-size: 12px !important; line-height: 1.3; }
-
-/* Fingerprint identification and authorization feedback. */
-.reception-picked strong { display: inline-flex; align-items: center; gap: 5px; }
-.reception-reader-symbol { position: relative; isolation: isolate; overflow: hidden; }
-.reception-verification .reception-reader-symbol { width: 64px; height: 64px; border-radius: 18px; }
-.reception-reader-symbol::before { content: ""; position: absolute; inset: 0; border: 2px solid var(--reception-brand); border-radius: inherit; opacity: .12; animation: reception-reader-breathe 2600ms ease-in-out infinite; }
-.reception-reader-symbol::after { content: ""; position: absolute; left: 10px; right: 10px; height: 2px; top: 10px; background: var(--reception-brand); opacity: 0; }
-.reception-verification[data-scanning="true"] .reception-reader-symbol::after { animation: reception-scan 1400ms ease-in-out infinite; }
-.reception-reader-state { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; color: var(--reception-muted); font-size: 11px; line-height: 1.35; }
-.reception-reader-state > svg, .reception-ready-dot { flex-shrink: 0; }
-.reception-ready-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; }
-.reception-identified-adult { display: flex; align-items: center; gap: 12px; border: 1px solid color-mix(in srgb, var(--success) 22%, var(--border)); border-radius: 12px; background: var(--success-soft); padding: 12px; animation: reception-enter 220ms ease both; }
-.reception-adult-avatar { display: grid; place-items: center; width: 48px; height: 48px; flex-shrink: 0; border: 1px solid var(--app-avatar-border); border-radius: var(--app-avatar-radius); background: var(--app-avatar-background); color: var(--app-avatar-text); font-size: 18px; font-weight: 600; overflow: hidden; }
-.reception-adult-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.reception-adult-details { min-width: 0; overflow-wrap: anywhere; }
-.reception-adult-details h3 { font-size: 17px; line-height: 1.3; font-weight: 600; margin: 2px 0; }
-.reception-adult-details > p { font-size: 12px; color: var(--text-secondary); }
-.reception-permission { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--success); }
-.reception-permission > svg { flex-shrink: 0; }
-.reception-blocked { display: grid; justify-items: center; text-align: center; gap: 10px; padding: 8px 0; animation: reception-enter 180ms ease both; }
-.reception-blocked .reception-symbol { width: 56px; height: 56px; border-radius: 16px; color: var(--warning); background: var(--warning-soft); }
-.reception-blocked p { color: var(--reception-muted); font-size: 13px; }
-.reception-warning > svg { display: inline; vertical-align: -3px; margin-right: 5px; }
-.reception-button > svg { flex-shrink: 0; }
-.reception-button.primary:not(:disabled):hover { box-shadow: 0 3px 12px rgba(var(--primary-rgb), .16); }
-.reception-confirmation .success svg path { stroke-dasharray: 30; animation: reception-draw-check 300ms ease both; }
-@keyframes reception-reader-breathe { 0%, 100% { opacity: .1; } 50% { opacity: .3; } }
-@keyframes reception-scan { 0%, 100% { transform: translateY(0); opacity: 0; } 20%, 80% { opacity: .6; } 50% { transform: translateY(calc(var(--reader-size, 64px) - 24px)); } }
-@keyframes reception-draw-check { from { stroke-dashoffset: 30; } to { stroke-dashoffset: 0; } }
-@container reception (max-height: 620px) {
-  .reception-verification .reception-reader-symbol { width: 52px; height: 52px; border-radius: 16px; }
-  .reception-identified-adult { padding: 10px; gap: 10px; }
-  .reception-adult-details h3 { font-size: 16px; }
-}
-
-/* Let the main task use the panel's remaining height; the panel itself never scrolls. */
-.reception-panel { height: 100%; min-height: 0; display: flex; flex-direction: column; }
-.reception-panel > :not(.reception-verification, .reception-identified-adult, .reception-placeholder, .reception-blocked, .reception-confirmation) { flex-shrink: 0; }
-.reception-placeholder, .reception-blocked, .reception-confirmation { flex: 1; min-height: 0; }
-.reception-verification { --reader-size: 112px; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; padding: 8px 0; text-align: center; }
-.reception-verification-heading { flex-direction: column; align-items: center; gap: 12px; text-align: center; }
-.reception-verification .reception-reader-symbol { width: var(--reader-size); height: var(--reader-size); border-radius: 28px; }
-.reception-verification .reception-reader-symbol svg { width: 58%; height: 58%; }
-.reception-verification-heading h2 { font-size: 22px; line-height: 1.3; }
-.reception-verification-heading p { margin-top: 4px; font-size: 15px; line-height: 1.4; }
-.reception-reader-state { justify-content: center; margin-top: 7px; font-size: 12px; }
-.reception-verification > .reception-button { max-width: 360px; }
-.reception-identified-adult { flex: 1; min-height: 0; flex-direction: column; justify-content: center; text-align: center; padding: 18px; gap: 12px; }
-.reception-adult-avatar { width: 80px; height: 80px; border-radius: 24px; font-size: 28px; }
-.reception-adult-details h3 { font-size: 24px; margin: 5px 0; }
-.reception-adult-details > p { font-size: 14px; }
-.reception-permission { justify-content: center; margin-top: 8px; padding: 5px 9px; border-radius: 7px; background: var(--card); font-size: 12px; }
-.reception-verification .reception-denied-symbol { width: var(--reader-size); height: var(--reader-size); border-radius: 28px; color: var(--destructive); background: var(--destructive-soft); }
-.reception-verification .reception-denied-symbol svg { width: 54%; height: 54%; }
-.reception-verification-denied { animation: reception-enter 220ms ease both; }
-.reception-verification-denied h2 { color: var(--destructive); }
-.reception-denied-note { display: block; margin-top: 6px; font-size: 12px; color: var(--reception-muted); }
-@container reception (max-height: 800px) {
-  .reception-verification { --reader-size: 88px; gap: 12px; padding: 0; }
-  .reception-verification-denied { --reader-size: 72px; }
-  .reception-verification-heading { gap: 10px; }
-  .reception-verification-heading h2 { font-size: 20px; }
-  .reception-verification-heading p { font-size: 14px; }
-  .reception-identified-adult { gap: 8px; padding: 12px; }
-  .reception-adult-avatar { width: 64px; height: 64px; border-radius: 19px; font-size: 23px; }
-  .reception-adult-details h3 { font-size: 22px; }
-}
-@container reception (max-height: 620px) {
-  .reception-verification { --reader-size: 64px; gap: 8px; }
-  .reception-verification-denied { --reader-size: 48px; }
-  .reception-verification-heading { gap: 7px; }
-  .reception-verification-heading h2 { font-size: 18px; line-height: 1.3; }
-  .reception-verification-heading p { font-size: 13px; margin-top: 2px; }
-  .reception-reader-state { margin-top: 3px; font-size: 11px; }
-  .reception-denied-note { margin-top: 3px; font-size: 11px; }
-  .reception-identified-adult { flex-direction: row; gap: 12px; text-align: left; padding: 10px; }
-  .reception-adult-details h3 { font-size: 20px; margin: 3px 0; }
-  .reception-adult-details > p { font-size: 13px; }
-  .reception-permission { font-size: 11px; padding: 3px 5px; margin-top: 4px; }
-  .reception-flow-navigation > button { font-size: 11px !important; }
-}
-
-.reception-adult-details > .reception-note { display: block; font-size: 11px !important; line-height: 1.25; }
-.reception-adult-details h3 { margin: 3px 0; }
-.reception-permission { margin-top: 6px; padding: 4px 8px; }
-
-.reception-recovery-actions { width: 100%; max-width: 360px; display: grid; justify-items: center; gap: 12px; }
-.reception-recovery-actions > .reception-change-selection { width: 100%; justify-self: stretch; font-size: 12px !important; padding-inline: 12px; }

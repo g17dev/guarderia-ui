@@ -48,8 +48,11 @@ export const FingerprintCapture = ({
   // Resetear cuando se reactiva
   useEffect(() => {
     if (isActive && !isVerified) {
-      setFlowState('checking_sensor');
-      setVerificationSuccess(false);
+      const resetTimer = setTimeout(() => {
+        setFlowState('checking_sensor');
+        setVerificationSuccess(false);
+      }, 0);
+      return () => clearTimeout(resetTimer);
     }
   }, [isActive, isVerified]);
 

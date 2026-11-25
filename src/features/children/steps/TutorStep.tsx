@@ -1,6 +1,5 @@
+import { Upload, X, Plus, Trash2, FingerprintPattern, UserRound } from "lucide-react";
 import { useState, useRef } from "react";
-import { FiUpload, FiX, FiPlus, FiTrash2 } from "react-icons/fi";
-import { FingerprintPattern, UserRound } from "lucide-react";
 import "./TutorStep.css";
 
 // ===== TIPOS =====
@@ -40,7 +39,7 @@ interface TutorStepProps {
 }
 
 // ===== FACTORY =====
-export const newTutorData = (): TutorData => ({
+const newTutorData = (): TutorData => ({
   id: crypto.randomUUID(),
   photoFile: null,
   photoPreview: "",
@@ -210,7 +209,7 @@ function TutorForm({
               <>
                 <img src={data.photoPreview} alt="Foto del tutor" className="photo-img" />
                 <button className="photo-remove" onClick={handleRemovePhoto} type="button">
-                  <FiX size={14} />
+                  <X size={14} />
                 </button>
               </>
             ) : (
@@ -223,7 +222,7 @@ function TutorForm({
             <p className="photo-upload-title">Foto del tutor</p>
             <p className="photo-upload-hint">Opcional · JPG, PNG o WEBP · Máx. 5MB</p>
             <button className="photo-upload-btn" type="button" onClick={() => fileInputRef.current?.click()}>
-              <FiUpload size={13} />
+              <Upload size={13} />
               {data.photoPreview ? "Cambiar foto" : "Subir foto"}
             </button>
             <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp"
@@ -309,7 +308,7 @@ function TutorForm({
         <div className="section-header-row">
           <h4 className="form-section-title">Teléfonos <span className="required">*</span></h4>
           <button type="button" className="btn-add" onClick={addPhone}>
-            <FiPlus size={14} />
+            <Plus size={14} />
             Agregar
           </button>
         </div>
@@ -321,7 +320,7 @@ function TutorForm({
                 <button type="button" className="phone-remove-btn"
                   onClick={() => removePhone(phone.id)}
                   disabled={data.phones.length <= 1}>
-                  <FiTrash2 size={15} />
+                  <Trash2 size={15} />
                 </button>
               </div>
               <div className="phone-card-content">
@@ -411,7 +410,7 @@ function TutorForm({
             <p className="section-subtitle">Requeridas para autorizar la entrega del menor</p>
           </div>
           <button type="button" className="btn-add">
-            <FiPlus size={14} />
+            <Plus size={14} />
             Agregar huella
           </button>
         </div>
@@ -487,7 +486,7 @@ export function TutorStep({ tutors, onChange, errors }: TutorStepProps) {
                         e.stopPropagation(); // Evita que se cambie de tab activo al eliminar
                         removeTutor(i);
                       }} title="Eliminar tutor">
-                      <FiTrash2 size={12} />
+                      <Trash2 size={12} />
                     </button>
                   )}
                 </div>
@@ -496,7 +495,7 @@ export function TutorStep({ tutors, onChange, errors }: TutorStepProps) {
           </div>
         )}
         <button type="button" className="btn-add tutor-add-btn" onClick={addTutor}>
-          <FiPlus size={14} />
+          <Plus size={14} />
           Agregar tutor
         </button>
       </div>

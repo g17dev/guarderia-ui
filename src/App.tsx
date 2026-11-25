@@ -9,6 +9,9 @@ import { ChildProfile } from "./pages/ChildProfile";
 import { ToastProvider } from "./context/ToastContext";
 import { ToastContainer } from "./components/toasts/ToastContainer";
 import { BreadcrumbProvider } from "./context/BreadcrumbContext";
+import { lazy, Suspense } from "react";
+
+const DesignLab = lazy(() => import("./features/design-lab/DesignLab"));
 
 export default function App() {
   return (
@@ -16,6 +19,7 @@ export default function App() {
       <BreadcrumbProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/design-lab/*" element={<Suspense fallback={<p role="status">Cargando laboratorio…</p>}><DesignLab /></Suspense>} />
             <Route path="/" element={<AppLayout />}>
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard"     element={<Dashboard />} />

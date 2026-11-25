@@ -17,12 +17,12 @@ function Instruction({ item }: { item: CareInstruction }) {
   </article>;
 }
 
-export function SpecialCareDetails({ plan }: { plan?: SpecialCarePlan; onEdit: () => void }) {
+export function SpecialCareDetails({ plan, onEdit }: { plan?: SpecialCarePlan; onEdit: () => void }) {
   const summary = getSpecialCareSummary(plan);
   const other = [...summary.upcoming, ...summary.expired];
   return <>
     <div className="special-care-detail-heading">
-      <h3><HeartPulse size={18} aria-hidden="true" />Cuidados especiales</h3>
+      <h3><HeartPulse size={18} aria-hidden="true" />Cuidados especiales</h3><button type="button" onClick={onEdit}>Editar cuidados</button>
     </div>
     <p className={`special-care-review-note ${summary.reviewed ? "reviewed" : ""}`}>{plan?.review ? `Información revisada por ${plan.review.reviewedBy} · ${shortDate(plan.review.reviewedAt)}` : "Información pendiente de revisión"}</p>
     {summary.active.length ? <div className="special-care-detail-list">{summary.active.map(item => <Instruction key={item.id} item={item} />)}</div> : <div className="special-care-empty"><HeartPulse size={24} aria-hidden="true" /><div><strong>{other.length ? "Sin indicaciones vigentes hoy" : "Sin indicaciones registradas"}</strong><p>{other.length ? "Consulta las indicaciones próximas o finalizadas debajo." : summary.reviewed ? "La revisión quedó registrada sin indicaciones adicionales." : "Puedes registrar y revisar los cuidados desde «Editar cuidados»."}</p></div></div>}

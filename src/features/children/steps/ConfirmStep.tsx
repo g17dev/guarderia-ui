@@ -1,4 +1,5 @@
-import { FiEdit2, FiUser, FiHeart } from "react-icons/fi";
+import { parseLocalDate } from "../../../utils/date";
+import { Pencil, UserRound, Heart } from "lucide-react";
 import type { HealthData } from "./HealthStep";
 import "./ConfirmStep.css";
 
@@ -158,18 +159,18 @@ export function ConfirmStep({ formData, onEdit }: ConfirmStepProps) {
         <div className="confirm-section">
           <div className="confirm-section-header">
             <div className="confirm-section-title">
-              <span className="confirm-section-icon"><FiUser size={13} /></span>
+              <span className="confirm-section-icon"><UserRound size={13} /></span>
               Información básica
             </div>
             <button type="button" className="confirm-edit-btn" onClick={() => onEdit(0)}>
-              <FiEdit2 size={12} /> Editar
+              <Pencil size={12} /> Editar
             </button>
           </div>
           <ConfirmRow label="Nombre completo" value={childFullName} />
           <ConfirmRow
             label="Fecha de nacimiento"
             value={basicInfo.birthDate
-              ? new Date(basicInfo.birthDate).toLocaleDateString("es-MX", {
+              ? parseLocalDate(basicInfo.birthDate).toLocaleDateString("es-MX", {
                   day: "2-digit", month: "long", year: "numeric",
                 })
               : null}
@@ -187,11 +188,11 @@ export function ConfirmStep({ formData, onEdit }: ConfirmStepProps) {
         <div className="confirm-section">
           <div className="confirm-section-header">
             <div className="confirm-section-title">
-              <span className="confirm-section-icon"><FiUser size={13} /></span>
+              <span className="confirm-section-icon"><UserRound size={13} /></span>
               Padre o Tutor
             </div>
             <button type="button" className="confirm-edit-btn" onClick={() => onEdit(1)}>
-              <FiEdit2 size={12} /> Editar
+              <Pencil size={12} /> Editar
             </button>
           </div>
           <ConfirmRow label="Nombre completo" value={tutorFullName} />
@@ -227,11 +228,11 @@ export function ConfirmStep({ formData, onEdit }: ConfirmStepProps) {
         <div className="confirm-section">
           <div className="confirm-section-header">
             <div className="confirm-section-title">
-              <span className="confirm-section-icon"><FiHeart size={13} /></span>
+              <span className="confirm-section-icon"><Heart size={13} /></span>
               Salud
             </div>
             <button type="button" className="confirm-edit-btn" onClick={() => onEdit(2)}>
-              <FiEdit2 size={12} /> Editar
+              <Pencil size={12} /> Editar
             </button>
           </div>
           <ConfirmRow label="Tipo de sangre" value={health.bloodType || null} />

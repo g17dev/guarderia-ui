@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiPlus, FiTrash2, FiX } from "react-icons/fi";
+import { Plus, Trash2, X } from "lucide-react";
 import "./HealthStep.css";
 
 type AllergyCategory = "food" | "medication" | "environmental" | "other";
@@ -172,7 +172,7 @@ export function HealthStep({ data, onChange, errors }: HealthStepProps) {
             onClick={addAllergy}
             disabled={!allergyInput.trim()}
           >
-            <FiPlus size={15} />
+            <Plus size={15} />
             Agregar
           </button>
         </div>
@@ -192,7 +192,7 @@ export function HealthStep({ data, onChange, errors }: HealthStepProps) {
                   className="tag-remove"
                   onClick={() => removeAllergy(allergy.id)}
                 >
-                  <FiX size={12} />
+                  <X size={12} />
                 </button>
               </span>
             ))}
@@ -241,7 +241,7 @@ export function HealthStep({ data, onChange, errors }: HealthStepProps) {
         <div className="section-header-row">
           <h4 className="form-section-title">Medicamentos</h4>
           <button type="button" className="btn-add" onClick={addMedication}>
-            <FiPlus size={14} />
+            <Plus size={14} />
             Agregar
           </button>
         </div>
@@ -259,7 +259,7 @@ export function HealthStep({ data, onChange, errors }: HealthStepProps) {
                     className="phone-remove-btn"
                     onClick={() => removeMedication(med.id)}
                   >
-                    <FiTrash2 size={14} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
                 <div className="medication-fields">

@@ -1,15 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { useState } from "react";
 import type { ReactNode } from "react";
-
-interface BreadcrumbContextValue {
-  customLabel: string;
-  setCustomLabel: (label: string) => void;
-}
-
-const BreadcrumbContext = createContext<BreadcrumbContextValue>({
-  customLabel: "",
-  setCustomLabel: () => {},
-});
+import { BreadcrumbContext } from "./breadcrumbStore";
 
 export function BreadcrumbProvider({ children }: { children: ReactNode }) {
   const [customLabel, setCustomLabel] = useState("");
@@ -18,8 +9,4 @@ export function BreadcrumbProvider({ children }: { children: ReactNode }) {
       {children}
     </BreadcrumbContext.Provider>
   );
-}
-
-export function useBreadcrumb() {
-  return useContext(BreadcrumbContext);
 }
