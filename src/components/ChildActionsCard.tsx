@@ -1,6 +1,6 @@
 import "./ChildActionCard.css";
 
-export default function ChildActionCard({ onSelect }: any) {
+export default function ChildActionCard({ onSelect }: { onSelect: (action: "ENTREGAR" | "RECOGER") => void }) {
   return (
     <div className="card-container">
       <div className="buttons">

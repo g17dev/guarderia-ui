@@ -11,6 +11,9 @@ import "./ProfileTabs.css";
 
 import { Calendar } from "../../../components/ui/calendar";
 import "./AttendanceCalendar.css";
+import { useOperationalSimulation } from "../../child-handover/operationalSimulation";
+import { OperationalHistory, BelongingsFollowUp } from "./OperationalHistory";
+import { localDateKey } from "./specialCare";
 
 const AttendanceRecordDetail = lazy(() => import("./AttendanceRecordDetail").then(module => ({ default: module.AttendanceRecordDetail })));
 const MonthYearPicker = lazy(() => import("../../../components/MonthYearPicker").then(module => ({ default: module.MonthYearPicker })));
@@ -110,6 +113,7 @@ function AttendanceWeekday({ children, ...props }: WeekdayProps) {
 }
 
 export function AttendanceTab({ childId, childName = "Niño seleccionado" }: { childId: string; childName?: string }) {
+  const operationState = useOperationalSimulation();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
   const [detail, setDetail] = useState<{ record: AttendanceRecord; event: AttendanceEvent["id"] | "journey"; request: number; source: HTMLButtonElement }>();
@@ -149,22 +153,24 @@ export function AttendanceTab({ childId, childName = "Niño seleccionado" }: { c
   );
 
   const selectedRecord = attendanceMap.get(toDateKey(selectedDate));
+  const confirmedMovements = operationState.movements.filter(movement => movement.receipt.childIds.includes(childId) && localDateKey(new Date(movement.receipt.savedAt)) === toDateKey(selectedDate));
 
+  const confirmedDates = new Set(operationState.movements.filter(movement => movement.receipt.childIds.includes(childId)).map(movement => localDateKey(new Date(movement.receipt.savedAt))));
   const modifiers = {
-    present: previewRecords.filter((r) => r.status === "present").map(
+    present: [...previewRecords.filter((r) => r.status === "present").map(r => parseISO(r.date)), ...operationState.movements.filter(m => m.receipt.childIds.includes(childId)).map(m => parseISO(localDateKey(new Date(m.receipt.savedAt))))],
+
+    absent: previewRecords.filter((r) => r.status === "absent" && !confirmedDates.has(r.date)).map(
       (r) => parseISO(r.date),
     ),
 
-    absent: previewRecords.filter((r) => r.status === "absent").map(
-      (r) => parseISO(r.date),
-    ),
-
-    early: previewRecords.filter((r) => r.status === "early").map(
+    early: previewRecords.filter((r) => r.status === "early" && !confirmedDates.has(r.date)).map(
       (r) => parseISO(r.date),
     ),
   };
 
   const cardsData = useMemo(() => selectedRecord ? getAttendanceEvents(selectedRecord) : [], [selectedRecord]);
+
+  const movementCount = confirmedMovements.length || cardsData.length;
 
   return (
     <div className="tab-content attendance-content" data-child-id={childId} ref={attendanceRoot}>
@@ -232,8 +238,9 @@ export function AttendanceTab({ childId, childName = "Niño seleccionado" }: { c
         {/* DETALLES */}
 
         <div className="attendance-right">
-          <div className="attendance-record-heading"><div><h3>Registros del día <span className="attendance-record-preview" title="Datos ficticios de demostración">Demo</span></h3><p>{format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}</p></div>{cardsData.length > 0 && <span className="attendance-movement-count"><Clock3 size={13} aria-hidden="true" />{cardsData.length} {cardsData.length === 1 ? "movimiento" : "movimientos"}</span>}</div>
-          {selectedRecord?.status === "absent" ? <div key={`absence-${selectedRecord.date}`} className="attendance-no-record"><div className="no-record-icon"><Info size={28} aria-hidden="true" /></div><p className="no-record-title">Ausencia registrada</p><p className="no-record-desc">No hay entradas ni salidas registradas para este día.</p></div> : selectedRecord && cardsData.length > 0 ? (
+          <div className="attendance-record-heading"><div><h3>Registros del día <span className="attendance-record-preview" title="Datos ficticios de demostración">Demo</span></h3><p>{format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}</p></div>{movementCount > 0 && <span className="attendance-movement-count"><Clock3 size={13} aria-hidden="true" />{movementCount} {movementCount === 1 ? "movimiento" : "movimientos"}</span>}</div>
+          <OperationalHistory childId={childId} date={toDateKey(selectedDate)} />
+          {confirmedMovements.length ? null : selectedRecord?.status === "absent" ? <div key={`absence-${selectedRecord.date}`} className="attendance-no-record"><div className="no-record-icon"><Info size={28} aria-hidden="true" /></div><p className="no-record-title">Ausencia registrada</p><p className="no-record-desc">No hay entradas ni salidas registradas para este día.</p></div> : selectedRecord && cardsData.length > 0 ? (
             <ol className="record-details attendance-day-timeline" key={selectedRecord.date} aria-label={`Movimientos del ${format(selectedDate, "d MMMM", { locale: es })}`} tabIndex={0}>
               {cardsData.map((event, index) => (
                 <li key={event.id}>
@@ -253,6 +260,7 @@ export function AttendanceTab({ childId, childName = "Niño seleccionado" }: { c
               </p>
             </div>
           )}
+          <BelongingsFollowUp childId={childId} />
         </div>
       </div>
       {detail && <Suspense fallback={null}><AttendanceRecordDetail key={detail.request} record={detail.record} source={detail.source} initialEvent={detail.event} childName={childName} open={detailOpen} onClose={() => setDetailOpen(false)} onRestoreFocus={() => { if (detailTrigger.current?.isConnected) detailTrigger.current.focus(); }} /></Suspense>}

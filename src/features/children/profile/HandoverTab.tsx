@@ -1,6 +1,7 @@
+import { parseLocalDate } from "../../../utils/date";
 import "./ProfileTabs.css";
 
-export function HandoverTab(_props: { childId: string }) {
+export function HandoverTab({ childId }: { childId: string }) {
   const mock = [
     { date: "2024-03-15", time: "14:35", person: "Carlos García", relation: "Padre",  verified: true  },
     { date: "2024-03-14", time: "14:20", person: "Ana López",     relation: "Madre",  verified: true  },
@@ -8,7 +9,7 @@ export function HandoverTab(_props: { childId: string }) {
   ];
 
   return (
-    <div className="tab-content">
+    <div className="tab-content" data-child-id={childId}>
       <div className="tab-table-wrapper">
         <table className="tab-table">
           <thead>
@@ -23,7 +24,7 @@ export function HandoverTab(_props: { childId: string }) {
           <tbody>
             {mock.map((row, i) => (
               <tr key={i}>
-                <td>{new Date(row.date).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" })}</td>
+                <td>{parseLocalDate(row.date).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" })}</td>
                 <td>{row.time}</td>
                 <td style={{ fontWeight: 500 }}>{row.person}</td>
                 <td>{row.relation}</td>

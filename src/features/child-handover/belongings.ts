@@ -10,7 +10,9 @@ export const belongingCatalog = [
   { kind: "diapers", label: "Pañales", returnable: false },
 ] as const;
 export type BelongingKind = typeof belongingCatalog[number]["kind"] | "custom";
-export type EntryBelonging = { kind: BelongingKind; label: string; quantity: number; details: string; returnable: boolean };
+export type PersonalCategory = Exclude<BelongingKind, "custom"> | "cap" | "hat" | "plush" | "thermos" | "generic";
+export type EntryBelonging = { kind: BelongingKind; label: string; quantity: number; details: string; returnable: boolean;
+  custom?: { id: string; originalText: string; category: PersonalCategory } };
 export type EntryRegistration = { registration: "unrecorded" | "none" | "recorded"; items: EntryBelonging[] };
 export const outcomeLabels = {
   delivered: "Entregado", stays: "Permanece en guardería", missing: "No localizado",

@@ -1,3 +1,4 @@
+import { parseLocalDate } from "./date";
 const COLORS = [
   "var(--avatar-peach)",
   "var(--avatar-lilac)",
@@ -21,7 +22,7 @@ export function getInitials(name: string, lastName: string): string {
 
 export function getAge(birthDate: string): number {
   const today = new Date();
-  const birth = new Date(birthDate);
+  const birth = parseLocalDate(birthDate);
   const age = today.getFullYear() - birth.getFullYear();
   const notHadBirthdayYet =
     today.getMonth() < birth.getMonth() ||

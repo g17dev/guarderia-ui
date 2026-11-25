@@ -7,13 +7,14 @@ interface ChildrenTableProps {
   children: Child[];
   onRowClick: (id: string) => void;
   onDelete: (id: string) => void;
+  isFiltered?: boolean;
 }
 
-export function ChildrenTable({ children, onRowClick }: ChildrenTableProps) {
+export function ChildrenTable({ children, onRowClick, isFiltered }: ChildrenTableProps) {
   if (children.length === 0) {
     return (
       <div className="table-empty">
-        <p>No se encontraron niños.</p>
+        <p>{isFiltered ? "No hay coincidencias con tu búsqueda y filtros." : "Aún no hay niños registrados."}</p>
       </div>
     );
   }

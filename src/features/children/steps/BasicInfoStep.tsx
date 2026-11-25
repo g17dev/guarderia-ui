@@ -1,6 +1,5 @@
+import { Upload, X, UserRound } from "lucide-react";
 import { useRef } from "react";
-import { FiUpload, FiX } from "react-icons/fi";
-import { UserRound } from "lucide-react";
 import "./BasicInfoStep.css";
 
 interface BasicInfoData {
@@ -131,7 +130,7 @@ export function BasicInfoStep({ data, onChange, errors }: BasicInfoStepProps) {
             <>
               <img src={data.photoPreview} alt="Foto del niño" className="photo-img" />
               <button className="photo-remove" onClick={handleRemovePhoto} type="button">
-                <FiX size={14} />
+                <X size={14} />
               </button>
             </>
           ) : (
@@ -148,7 +147,7 @@ export function BasicInfoStep({ data, onChange, errors }: BasicInfoStepProps) {
             type="button"
             onClick={() => fileInputRef.current?.click()}
           >
-            <FiUpload size={13} />
+            <Upload size={13} />
             {data.photoPreview ? "Cambiar foto" : "Subir foto"}
           </button>
           <input

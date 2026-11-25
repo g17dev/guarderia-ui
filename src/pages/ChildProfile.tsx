@@ -1,7 +1,6 @@
+import { Pencil, ChevronRight, HeartPulse, Phone, UsersRound } from "lucide-react";
 import { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { FiEdit2 } from "react-icons/fi";
-import { ChevronRight, HeartPulse, Phone, UsersRound } from "lucide-react";
 import { useToast } from "../context/toastStore";
 import { ProfileInformation } from "../features/children/profile/ProfileInformation";
 import { getProfileAuthorizedAdults, getProfilePreviewState, serviceLabels, type ProfileChild, type ProfileEditSection } from "../features/children/profile/childProfile";
@@ -10,8 +9,8 @@ import { getSpecialCareSummary } from "../features/children/profile/specialCare"
 import "../features/children/profile/ChildProfileDetails.css";
 import { ChildAvatar } from "../features/children/components/ChildAvatar";
 import { getAge, generateSlug } from "../utils/child";
-import { MOCK_CHILDREN } from "../data/mockChildren";
-import { useBreadcrumb } from "../context/BreadcrumbContext";
+import { useOperationalSimulation } from "../features/child-handover/operationalSimulation";
+import { useBreadcrumb } from "../context/breadcrumbStore";
 import { PaymentsTab } from "../features/children/profile/PaymentsTab";
 import { IncidentsTab } from "../features/children/profile/IncidentsTab";
 import { HandoverTab } from "../features/children/profile/HandoverTab";
@@ -39,6 +38,7 @@ const CLASSROOM_LABELS: Record<string, string> = {
 
 export function ChildProfile() {
   const { state } = useLocation();
+  const operationState = useOperationalSimulation();
   const navigate = useNavigate();
   const { setCustomLabel } = useBreadcrumb();
   const [activeTab, setActiveTab] = useState("attendance");
@@ -55,11 +55,12 @@ export function ChildProfile() {
   const id = state?.id as string;
   const { slug } = useParams<{ slug: string }>();
   const sourceChild = id
-    ? MOCK_CHILDREN.find((c) => c.id === id)
-    : MOCK_CHILDREN.find((c) => generateSlug(c.name, c.lastName) === slug);
+    ? operationState.children.find((c) => c.id === id)
+    : operationState.children.find((c) => generateSlug(c.name, c.lastName) === slug);
 
   const child: ProfileChild | undefined = sourceChild ? editedChildren[sourceChild.id] ?? sourceChild : undefined;
-  const preview = child ? getProfilePreviewState(child.id) : undefined;
+  const currentOperationChild = operationState.children.find(item => item.id === child?.id);
+  const preview = child ? { ...getProfilePreviewState(child.id), attendance: currentOperationChild?.attendanceStatus, service: currentOperationChild?.serviceStatus === "active" ? "active" as const : "inactive" as const } : undefined;
   const authorizedCount = child ? getProfileAuthorizedAdults(child).filter(adult => adult.canPickup).length : 0;
   const careSummary = getSpecialCareSummary(child?.specialCare);
   const careStatus = careSummary.priorityCount ? `${careSummary.priorityCount} ${careSummary.priorityCount === 1 ? "prioritaria" : "prioritarias"} · ${careSummary.active.length} ${careSummary.active.length === 1 ? "indicación" : "indicaciones"}`
@@ -102,7 +103,7 @@ export function ChildProfile() {
           </div>
           <button type="button" className="profile-authorized-summary" onClick={() => { setEditingSection("adults"); setEditingId(child.id); }}><UsersRound size={15} aria-hidden="true" /><span>{authorizedCount ? `${authorizedCount} ${authorizedCount === 1 ? "adulto autorizado" : "adultos autorizados"}` : "Sin adultos autorizados"}</span><ChevronRight size={14} aria-hidden="true" /></button>
         </div>
-        <button ref={editButton} className="profile-action-btn edit" aria-label="Editar perfil" title="Editar perfil" onClick={() => { setEditingSection("personal"); setEditingId(child.id); }}><FiEdit2 size={17} aria-hidden="true" /></button>
+        <button ref={editButton} className="profile-action-btn edit" aria-label="Editar perfil" title="Editar perfil" onClick={() => { setEditingSection("personal"); setEditingId(child.id); }}><Pencil size={17} aria-hidden="true" /></button>
       </div>
 
       {/* ===== TABS ===== */}

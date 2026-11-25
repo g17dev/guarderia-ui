@@ -4,17 +4,19 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Breadcrumbs } from "../BreadCrumbs";
 import "./AppLayout.css";
+import { useBreadcrumb } from "../../context/breadcrumbStore";
 
 const ROUTE_LABELS: Record<string, string> = {
   dashboard: "Dashboard",
   children:  "Niños",
   new:       "Nuevo niño",
-  access:    "Control de acceso",
+  access:    "Recepción",
   handover:  "Registro de salida",
 };
 
 function useBreadcrumbs() {
   const { pathname, state } = useLocation();
+  const { customLabel } = useBreadcrumb();
   const segments = pathname.split("/").filter(Boolean);
 
   if (segments.length <= 1) return null;
@@ -24,7 +26,7 @@ function useBreadcrumbs() {
     const isLast = index === segments.length - 1;
 
     // Si está en el mapa lo usa, si no busca en el state.name
-    const label = ROUTE_LABELS[segment] ?? (state?.name as string) ?? segment;
+    const label = ROUTE_LABELS[segment] ?? (state?.name as string) ?? (customLabel || "Expediente");
 
     return {
       label,

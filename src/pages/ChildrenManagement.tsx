@@ -46,7 +46,7 @@ export function ChildrenManagement() {
   const toggleStatus = (status: Child["status"]) => {
     setStatusFilters(previous => {
       const next = new Set(previous);
-      next.has(status) ? next.delete(status) : next.add(status);
+      if (next.has(status)) next.delete(status); else next.add(status);
       return next;
     });
     setCurrentPage(1);
@@ -55,7 +55,7 @@ export function ChildrenManagement() {
   const toggleClassroom = (classroom: string) => {
     setClassroomFilters(previous => {
       const next = new Set(previous);
-      next.has(classroom) ? next.delete(classroom) : next.add(classroom);
+      if (next.has(classroom)) next.delete(classroom); else next.add(classroom);
       return next;
     });
     setCurrentPage(1);
@@ -142,6 +142,7 @@ export function ChildrenManagement() {
 
       {/* Tabla */}
       <ChildrenTable
+        isFiltered={!!search.trim() || activeFilterCount > 0}
         children={paginated}
         onRowClick={handleViewProfile}
         onDelete={handleDelete}

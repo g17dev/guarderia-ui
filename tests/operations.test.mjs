@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createReceptionSimulation } from '../src/features/child-handover/receptionSimulation.ts';
 import { addStayBelongings, commitMovement, recordResolution } from '../src/features/child-handover/operations.ts';
 import { belongingCatalog, checkRemaining, emptyMovementDetails, frequentBelongings, outstandingBelongings } from '../src/features/child-handover/belongings.ts';
+import { parseLocalDate } from '../src/utils/date.ts';
 
 const children = ['one', 'two'].map(id => ({ id, name: id, lastName: 'Familia ficticia', slug: id, birthDate: '2023-04-05', classroom: 'Maternal A', status: 'active', enrollmentDate: '2026-01-01', tutor: { name: 'Adulto', lastName: 'Ficticio', phone: '0000000000', relationship: 'Tutor' }, allergies: [], attendanceStatus: 'pending', serviceStatus: 'active' }));
 const adults = [{ id: 'adult', name: 'Adulto Ficticio', permissions: children.map(child => ({ childId: child.id, actions: ['entry', 'pickup'], relationship: 'Tutor' })) }];
@@ -29,6 +30,30 @@ test('entry without interaction and explicit no belongings are different records
   assert.equal(a.state.belongings.length, 0);
   const b = setup(); await b.move('entry', { ...emptyMovementDetails(), entries: { one: { registration: 'none', items: [] } } });
   assert.equal(b.state.stays.one.registration, 'none');
+});
+
+test('declaring no new belongings on reentry preserves historical pending items and sibling details', async () => {
+  const app = setup();
+  await app.move('entry', registration([article('water')]));
+  const previousItem = pending(app.state)[0];
+  await app.move('pickup', checks(app.state, 'later'));
+  const previousMovement = structuredClone(app.state.movements.at(-1));
+  const details = {
+    ...emptyMovementDetails(),
+    entries: {
+      one: { registration: 'none', items: [] },
+      two: { registration: 'recorded', items: [article('diapers', 2)] },
+    },
+    commonComment: 'Comentario ficticio del movimiento',
+    childComments: { one: 'Hoy no trae artículos nuevos' },
+  };
+  await app.move('entry', details, ['one', 'two']);
+  assert.equal(app.state.stays.one.registration, 'none');
+  assert.equal(pending(app.state)[0].id, previousItem.id);
+  assert.equal(pending(app.state)[0].lastOutcome, 'later');
+  assert.equal(pending(app.state, 'two')[0].remaining, 2);
+  assert.deepEqual(app.state.movements.at(-1).details, details);
+  assert.deepEqual(app.state.movements.at(-2), previousMovement);
 });
 test('entry creates backpack, bottle, custom items and independent sibling quantities', async () => {
   const app = setup();
@@ -137,7 +162,10 @@ test('frequent suggestions require three stays and never select items automatica
   assert.equal(frequentBelongings(history.slice(0, 2), 'one')[0].kind, 'backpack');
   assert.equal(frequentBelongings(history, 'one')[0].kind, 'blanket');
 });
-
+test('calendar-only dates preserve the local calendar day', () => {
+  const parsed = parseLocalDate('2023-04-05');
+  assert.equal(parsed.getDate(), 5); assert.equal(parsed.getMonth(), 3);
+});
 
 test('bulk confirmation carries historical exceptions instead of silently returning them', async () => {
   const { carryExceptions } = await import('../src/features/child-handover/belongings.ts');

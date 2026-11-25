@@ -325,3 +325,8 @@
   .profile-quick-contact, .profile-quick-care { margin-top: 4px; font-size: 11px; }
   .profile-authorized-summary { margin-top: 5px; min-height: 30px; }
 }
+
+/* Health information is actionable and must remain readable in narrow columns. */
+.profile-quick-care { flex-wrap: wrap; text-align: left; }
+.profile-quick-care > span { white-space: normal; overflow: visible; text-overflow: clip; }
+.profile-care-alert-text { overflow-wrap: anywhere; }

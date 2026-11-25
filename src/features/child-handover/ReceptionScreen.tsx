@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useToast } from "../../context/toastStore";
-import { LogIn, LogOut, RotateCcw, MousePointer2, ArrowLeft, UsersRound, ShieldX, ShieldAlert, CircleCheck, Info, ScanLine } from "lucide-react";
+import { LogIn, LogOut, RotateCcw, MousePointer2, ArrowLeft, UsersRound, ShieldX, ShieldAlert, CircleCheck, Info, ScanLine, ListX } from "lucide-react";
 import { SelectChildStep } from "./SelectChildStep";
 import { AuthorizePickupStep } from "./AuthorizePickupStep";
 import { ConfirmPickupStep } from "./ConfirmPickupStep";
+import { SelectedChildrenTags } from "./components/SelectedChildrenTags";
+import { MovementIndicator } from "./components/MovementIndicator";
 import { getMovementNotification } from "./movementNotification";
 import type { SimulationOutcome } from "./receptionSimulation";
 import { RECEPTION_EXAMPLE_CHILDREN } from "./receptionFixtures";
@@ -15,7 +17,8 @@ import {
 import "./ReceptionScreen.css";
 import { Button } from "../../components/ui/button";
 import { BelongingsEditor } from "./BelongingsEditor";
-import { carryExceptions, checkRemaining, emptyMovementDetails, outstandingBelongings, type MovementDetails } from "./belongings";
+import { MovementCommentInput } from "./components/MovementCommentInput";
+import { carryExceptions, checkRemaining, emptyMovementDetails, outstandingBelongings, type MovementDetails, type EntryRegistration } from "./belongings";
 import type { OperationsState } from "./operations";
 
 type Phase = "select" | "blocked" | "denied" | "belongings" | "ready" | "verifying" | "review" | "saving" | "save-error" | "success";
@@ -35,6 +38,7 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
   const [movementDetails, setMovementDetails] = useState(emptyMovementDetails);
   const [needsDecision, setNeedsDecision] = useState(false);
   const savedDetails = useRef<MovementDetails | undefined>(undefined);
+  const entryDrafts = useRef<Record<string, EntryRegistration>>({});
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<ReceptionFilter>("all");
@@ -65,6 +69,14 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
   const pickupCandidates = getCompatibleAdults(adults, { childIds: selectedIds, action: "pickup" });
   const noCommonAdult = (canMove(selected, "entry") && !entryCandidates.length)
     || (canMove(selected, "pickup") && !pickupCandidates.length);
+  const incompatibleSelection = selected.length > 0 && !canMove(selected, "entry") && !canMove(selected, "pickup");
+  const selectionIssue = incompatibleSelection
+    ? selected.some(child => child.attendanceStatus !== "inside" && child.serviceStatus !== "active")
+      ? { title: "Ingreso no habilitado", description: "Solicita una revisión con administración." }
+      : { title: "Estados incompatibles", description: "Ajusta la selección para registrar una entrada o salida." }
+    : noCommonAdult
+      ? { title: "Sin un adulto autorizado en común", description: "Ajusta la selección para continuar." }
+      : undefined;
   const identifiedAdult = authorization ? compatibleAdults.find(adult => adult.id === authorization.adult.id) : undefined;
   const relationship = identifiedAdult ? [...new Set(identifiedAdult.permissions.filter(permission => selectedIds.includes(permission.childId))
     .map(permission => permission.relationship))].join(" / ") : undefined;
@@ -86,12 +98,21 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
     setMovementDetails(emptyMovementDetails());
     setNeedsDecision(false);
     savedDetails.current = undefined;
+    entryDrafts.current = {};
     idempotencyKey.current = "";
-  }, [setSelectedIds, setSearch, setFilter, setAction, setAuthorization, setReceipt, setError, setPhase, setMovementDetails, setNeedsDecision]);
+  }, [setSelectedIds, setSearch, setFilter, setAction, setAuthorization, setReceipt, setReceiptReentry, setError, setPhase, setMovementDetails, setNeedsDecision]);
 
   useEffect(() => () => { operation.current += 1; }, []);
   useEffect(() => {
-    panelContent.current?.scrollTo({ top: 0 });
+    const content = panelContent.current;
+    content?.scrollTo({ top: 0 });
+    content?.getAnimations().forEach(animation => animation.cancel());
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      content?.animate([
+        { opacity: 0.85, transform: "translateY(4px)" },
+        { opacity: 1, transform: "translateY(0)" },
+      ], { duration: 180, easing: "cubic-bezier(.2,.7,.2,1)" });
+    }
     if (phase !== "select") panelHeading.current?.focus({ preventScroll: true });
   }, [phase, reset]);
 
@@ -122,6 +143,21 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
     setMovementDetails(emptyMovementDetails());
     setNeedsDecision(false);
     savedDetails.current = undefined;
+    entryDrafts.current = {};
+  }
+
+  function toggleNoBelongings(childId: string) {
+    if (phase !== "belongings" || action !== "entry" || busy.current || !selectedIds.includes(childId)) return;
+    const entry = movementDetails.entries[childId] ?? { registration: "unrecorded", items: [] };
+    let next: EntryRegistration;
+    if (entry.registration === "none") {
+      next = entryDrafts.current[childId] ?? { registration: "unrecorded", items: [] };
+      delete entryDrafts.current[childId];
+    } else {
+      entryDrafts.current[childId] = structuredClone(entry);
+      next = { registration: "none", items: [] };
+    }
+    setMovementDetails(previous => ({ ...previous, entries: { ...previous.entries, [childId]: next } }));
   }
 
   function continueToBiometrics(skip = false) {
@@ -232,11 +268,11 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
 
   return (
     <div className="reception" data-phase={phase}
-      data-selection-blocked={selected.length > 0 && !canMove(selected, "entry") && !canMove(selected, "pickup")}>
+      data-selection-blocked={incompatibleSelection}>
       <div className="reception-body">
         <div className="reception-page-heading">
-          <div><p className="reception-eyebrow">RECEPCIÓN</p>{simulation && <p className="reception-mode">Simulación · datos ficticios · solo durante esta sesión</p>}<h1>Entradas y salidas</h1>
-            <p className="reception-subtitle">Selecciona a los niños. La huella valida quién los entrega o recoge.</p></div>
+          <h1>Entradas y salidas</h1>
+          {simulation && <p className="reception-mode">Simulación · datos ficticios · solo durante esta sesión</p>}
         </div>
         <div className="reception-stats" role="group" aria-label="Resumen de asistencia de hoy">
           {(["inside", "pending", "out", "all"] as const).map(value => (
@@ -256,30 +292,47 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
           <section className="reception-panel" aria-labelledby="movement-heading" aria-busy={phase === "verifying" || phase === "saving"}>
             <div className="reception-critical-context">
               <div className="reception-panel-top">
-                <h2 id="movement-heading" ref={panelHeading} tabIndex={-1}>{phase === "success" ? "Todo listo" : action ? `${action === "entry" ? entryLabel : "Salida"} · ${selected.length} ${selected.length === 1 ? "niño" : "niños"}` : selected.length ? `Selección · ${selected.length} ${selected.length === 1 ? "niño" : "niños"}` : "Registrar movimiento"}</h2>
-                {simulation && locked && <span className="reception-current-mode">Simulación</span>}
-                {!locked && selected.length > 0 && <button className="reception-text-button" onClick={() => setSelectedIds([])}>Limpiar selección</button>}
+                <div className="reception-panel-title">
+                  <h2 id="movement-heading" ref={panelHeading} tabIndex={-1}>Registrar movimiento</h2>
+                  {phase !== "success" && selected.length > 0 && <span className="reception-selection-count"><UsersRound size={20} aria-hidden="true" /><strong key={selected.length}>{selected.length}</strong> {selected.length === 1 ? "alumno" : "alumnos"}</span>}
+                </div>
+                {!locked && selected.length > 0 && <Button type="button" variant="ghost" size="operational" className="reception-clear-selection" onClick={() => setSelectedIds([])}><ListX size={16} aria-hidden="true" />Limpiar selección</Button>}
               </div>
-              {phase !== "success" && selected.length > 0 && <div className="reception-picked" aria-label="Niños seleccionados">
-                <strong><UsersRound size={14} aria-hidden="true" />{selected.length} {selected.length === 1 ? "niño" : "niños"}</strong>
-                <span>{selected.map(child => `${child.name} ${child.lastName}`).join(", ")}</span>
-              </div>}
-              {phase === "select" && noCommonAdult && <p className="reception-warning" role="status"><ShieldAlert size={16} aria-hidden="true" />No hay un adulto autorizado en común. Ajusta la selección para continuar.</p>}
-              {phase === "select" && selected.length > 0 && !canMove(selected, "entry") && !canMove(selected, "pickup") && <p className="reception-warning" role="status">{selected.some(child => child.attendanceStatus !== "inside" && child.serviceStatus !== "active")
-                    ? "Ingreso no habilitado. Solicita una revisión con administración."
-                    : "Estados incompatibles: ajusta la selección para registrar."}</p>}
+              <div className="reception-selection-context">
+                <MovementIndicator movement={phase === "success" ? null : action}
+                  label={action === "entry" ? entryLabel : "Salida"} />
+                {phase !== "success" && <SelectedChildrenTags children={selected} />}
+              </div>
+
             </div>
             <div className="reception-panel-content" ref={panelContent} tabIndex={0} role="region" aria-label="Contenido del movimiento">
               {authorization && ["review", "saving", "save-error"].includes(phase) && <AuthorizePickupStep relationship={relationship} candidateCount={compatibleAdults.length} childCount={selected.length} simulation={simulation} verifying={false} authorization={authorization} />}
-              {phase === "select" && <div className="reception-placeholder"><div className="reception-symbol"><MousePointer2 aria-hidden="true" /></div>
-                <h2>{selected.length ? "Elige el movimiento" : "¿Quién llega o se retira?"}</h2>
-                <p>{selected.length ? "Selecciona Entrada o Salida para continuar con el registro." : "Selecciona uno o varios niños de la lista para comenzar."}</p>
-
-              </div>}
+              {phase === "select" && (selectionIssue
+                ? <div className="reception-placeholder reception-selection-issue" role="status">
+                    <div className="reception-symbol" key={selectionIssue.title}><ShieldAlert aria-hidden="true" /></div>
+                    <h3>{selectionIssue.title}</h3>
+                    <p>{selectionIssue.description}</p>
+                  </div>
+                : <div className="reception-placeholder"><div className="reception-symbol" key={selected.length ? "choose-movement" : "choose-child"}><MousePointer2 aria-hidden="true" /></div>
+                    <h2>{selected.length ? "Elige el movimiento" : "¿Quién llega o se retira?"}</h2>
+                    <p>{selected.length ? "Selecciona Entrada o Salida para continuar con el registro." : "Selecciona uno o varios niños de la lista para comenzar."}</p>
+                  </div>)}
               {simulation && sharedState && action && phase === "belongings" && <>
                 <h2>Pertenencias y comentarios</h2>
-                <BelongingsEditor selected={selected} action={action} state={sharedState} details={movementDetails} disabled={false} needsDecision={needsDecision} onChange={details => { setMovementDetails(details); setNeedsDecision(false); }} />
-                <details className="movement-comment"><summary>Agregar comentario al movimiento (opcional)</summary><p>No es una nota del expediente ni un incidente. No se envía a la familia.</p>{selected.length > 1 && <label>Comentario común<textarea maxLength={1000} rows={2} value={movementDetails.commonComment} onChange={event => setMovementDetails(previous => ({ ...previous, commonComment: event.target.value }))} /></label>}{selected.map(child => <label key={child.id}>Comentario para {child.name} {child.lastName}<textarea maxLength={1000} rows={2} value={movementDetails.childComments[child.id] ?? ""} onChange={event => setMovementDetails(previous => ({ ...previous, childComments: { ...previous.childComments, [child.id]: event.target.value } }))} /></label>)}</details>
+                <BelongingsEditor selected={selected} action={action} state={sharedState} details={movementDetails} disabled={false} needsDecision={needsDecision} onToggleNone={toggleNoBelongings} onChange={details => { setMovementDetails(details); setNeedsDecision(false); }} />
+                <section className="movement-comment" aria-labelledby="movement-comment-heading">
+                  <h3 id="movement-comment-heading">Comentario del movimiento</h3>
+                  {selected.length > 1 && <label>Comentario común
+                    <MovementCommentInput maxLength={1000} rows={2} value={movementDetails.commonComment}
+                      placeholder="Opcional. Solo para este movimiento; no se envía a la familia."
+                      onChange={event => setMovementDetails(previous => ({ ...previous, commonComment: event.target.value }))} />
+                  </label>}
+                  {selected.map(child => <label key={child.id}>Comentario para {child.name} {child.lastName}
+                    <MovementCommentInput maxLength={1000} rows={2} value={movementDetails.childComments[child.id] ?? ""}
+                      placeholder="Opcional. Solo para este movimiento; no se envía a la familia."
+                      onChange={event => setMovementDetails(previous => ({ ...previous, childComments: { ...previous.childComments, [child.id]: event.target.value } }))} />
+                  </label>)}
+                </section>
               </>}
 
               {phase === "blocked" && <div className="reception-blocked" role="alert">
@@ -315,7 +368,6 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
                 <Button size="operational" variant="outline" className="reception-button" disabled={!canMove(selected, "pickup") || !pickupCandidates.length} onClick={() => chooseAction("pickup")}><LogOut size={18} aria-hidden="true" />Salida</Button>
               </div>}
               {phase === "belongings" && <>
-                <p className="reception-note">Al omitir, se conserva lo capturado. Los artículos sin comprobar seguirán pendientes.</p>
                 <div className="reception-actions">
                   <Button size="operational" variant="outline" className="reception-button" onClick={() => continueToBiometrics(true)}>Omitir</Button>
                   <Button size="operational" className="reception-button primary" onClick={() => continueToBiometrics()}>Continuar</Button>

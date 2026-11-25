@@ -1,7 +1,8 @@
-import { FiFile, FiDownload } from "react-icons/fi";
+import { parseLocalDate } from "../../../utils/date";
+import { FileText, Download } from "lucide-react";
 import "./ProfileTabs.css";
 
-export function DocumentsTab(_props: { childId: string }) {
+export function DocumentsTab({ childId }: { childId: string }) {
   const mock = [
     { name: "Acta de nacimiento.pdf",  size: "245 KB", date: "2023-08-01" },
     { name: "CURP.pdf",                size: "89 KB",  date: "2023-08-01" },
@@ -13,19 +14,19 @@ export function DocumentsTab(_props: { childId: string }) {
   }
 
   return (
-    <div className="tab-content">
+    <div className="tab-content" data-child-id={childId}>
       <div className="documents-list">
         {mock.map((doc, i) => (
           <div key={i} className="document-item">
             <div className="document-icon">
-              <FiFile size={18} />
+              <FileText size={18} />
             </div>
             <div className="document-info">
               <p className="document-name">{doc.name}</p>
-              <p className="document-meta">{doc.size} · {new Date(doc.date).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" })}</p>
+              <p className="document-meta">{doc.size} · {parseLocalDate(doc.date).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" })}</p>
             </div>
-            <button className="document-download">
-              <FiDownload size={15} />
+            <button className="document-download" disabled aria-label={`Descarga de ${doc.name} no disponible en esta demostración`}>
+              <Download size={15} />
             </button>
           </div>
         ))}

@@ -47,7 +47,7 @@ export const BiometricHandoverCapture = () => {
         {showOverlay && (
           <div className="scanface-overlay">
             <ScanFace size={300} color="var(--primary)" strokeWidth={1} />
-            <p className={`status ${false ? "success" : ""}`}>
+            <p className="status">
               {getDisplayMessage()}
             </p>
           </div>

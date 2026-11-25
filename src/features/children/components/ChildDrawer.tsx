@@ -1,3 +1,4 @@
+import { parseLocalDate } from "../../../utils/date";
 import { X, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ChildAvatar } from "./ChildAvatar";
@@ -33,7 +34,7 @@ export function ChildDrawer({ child, onClose }: ChildDrawerProps) {
                   </span>
                 </div>
               </div>
-              <button className="drawer-close" onClick={onClose}>
+              <button className="drawer-close" aria-label="Cerrar información del niño" onClick={onClose}>
                 <X size={18} />
               </button>
             </div>
@@ -52,7 +53,7 @@ export function ChildDrawer({ child, onClose }: ChildDrawerProps) {
                 <div className="drawer-field">
                   <span className="drawer-label">Fecha de nacimiento</span>
                   <span className="drawer-value">
-                    {new Date(child.birthDate).toLocaleDateString("es-MX", {
+                    {parseLocalDate(child.birthDate).toLocaleDateString("es-MX", {
                       day: "2-digit",
                       month: "long",
                       year: "numeric",
@@ -68,7 +69,7 @@ export function ChildDrawer({ child, onClose }: ChildDrawerProps) {
                 <div className="drawer-field">
                   <span className="drawer-label">Fecha de inscripción</span>
                   <span className="drawer-value">
-                    {new Date(child.enrollmentDate).toLocaleDateString("es-MX", {
+                    {parseLocalDate(child.enrollmentDate).toLocaleDateString("es-MX", {
                       day: "2-digit",
                       month: "long",
                       year: "numeric",

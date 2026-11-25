@@ -138,66 +138,28 @@
   justify-content: space-between;
   align-items: center;
 }
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  margin-left: auto;
-  transition: background 0.2s ease;
+/* Local reflow for operational tablets/laptops, without changing the steps. */
+@media (max-width: 1280px) {
+  .child-new-page .child-new-body { grid-template-columns: 180px minmax(0, 1fr); gap: 20px; }
+  .child-new-page .child-new-sidebar { padding-right: 16px; }
+  .child-new-page .step-panel-body, .child-new-page .step-panel-header, .child-new-page .step-panel-footer { padding-inline: 18px; }
+  .child-new-page .basic-info-step { grid-template-columns: 130px minmax(0, 1fr); gap: 20px; }
+  .child-new-page .form-right, .child-new-page .form-field { min-width: 0; }
+  .child-new-page .form-field input { width: 100%; min-width: 0; }
+  .child-new-page .form-row.three-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .child-new-page .form-row-horizontal { flex-wrap: wrap; gap: 24px; }
+  .child-new-page .option-cards { gap: 10px; }
 }
-
-.btn-primary:hover {
-  background: var(--primary-hover);
+@media (max-width: 900px) {
+  .child-new-page .child-new-body { grid-template-columns: 150px minmax(0, 1fr); gap: 16px; }
+  .child-new-page .basic-info-step { grid-template-columns: minmax(0, 1fr); }
+  .child-new-page .photo-section { align-items: flex-start; flex-direction: row; }
+  .child-new-page .form-row.three-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: transparent;
-  color: var(--muted-foreground);
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.2s ease;
+@media (max-width: 600px) {
+  .child-new-page { padding-inline: 16px; }
+  .child-new-page .child-new-body { grid-template-columns: minmax(0, 1fr); }
+  .child-new-page .child-new-sidebar { display: none; }
+  .child-new-page .form-row.three-cols { grid-template-columns: minmax(0, 1fr); }
 }
-
-.btn-secondary:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-}
-
-.btn-success {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: var(--success);
-  color: var(--primary-foreground);
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  margin-left: auto;
-  transition: background 0.2s ease;
-}
-
-.btn-success:hover {
-  background: var(--success-hover);
-}
+.child-new-page .step-panel-footer > .btn-primary, .child-new-page .step-panel-footer > .btn-success { margin-left: auto; }

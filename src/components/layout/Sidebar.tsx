@@ -1,11 +1,11 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, DoorOpen, Menu, X } from "lucide-react";
+import { LayoutDashboard, DoorOpen, UsersRound, Menu, X } from "lucide-react";
 import "./Sidebar.css";
 
 const NAV_ITEMS = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/children",    icon: DoorOpen,        label: "Niños" },
-  { to: "/access",    icon: DoorOpen,        label: "Control de acceso" },
+  { to: "/children",    icon: UsersRound,        label: "Niños" },
+  { to: "/access",    icon: DoorOpen,        label: "Recepción" },
 ];
 
 interface SidebarProps {
