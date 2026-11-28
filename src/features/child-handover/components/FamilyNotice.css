@@ -1,0 +1,10 @@
+.family-notice { display: flex; align-items: flex-start; gap: 10px; width: 100%; min-width: 0; padding: 12px; border-radius: 10px; background: var(--surface-subtle); color: var(--text-secondary); text-align: left; overflow-wrap: anywhere; }
+.family-notice > svg { flex: none; margin-top: 2px; color: var(--info); }
+.family-notice > div { min-width: 0; }
+.family-notice h3 { font-size: 14px; font-weight: 600; line-height: 1.5; color: var(--foreground); }
+.family-notice p { margin-top: 3px; font-size: 13px; line-height: 1.5; }
+.family-notice .family-notice-context { margin-top: 5px; font-size: 12px; }
+.family-notice[data-status="sent"] > svg { color: var(--success); }
+.family-notice[data-status="failed"] { background: var(--warning-soft); }
+.family-notice[data-status="failed"] > svg { color: var(--warning); }
+.family-notice[data-status="disabled"] > svg { color: var(--muted-foreground); }

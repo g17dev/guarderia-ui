@@ -1,0 +1,25 @@
+.attendance-content .attendance-right:has(> .attendance-record-body) { overflow: hidden; }
+.attendance-content .attendance-record-body { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; padding-inline: 2px 6px; }
+.attendance-record-body > :is(.operational-history, .attendance-movement-list, .attendance-overdue) { flex-shrink: 0; }
+.attendance-record-body:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+/* Preserve the daaaa77 card styles from AttendanceCalendar.css; one scroll area
+   also keeps the conditional follow-up accessible beneath the original cards. */
+.attendance-content .attendance-movement-list { display: flex; flex-direction: column; gap: 10px; list-style: none; padding: 4px; margin: 0; }
+.attendance-content .attendance-movement-list > li { padding: 0; }
+:is(.attendance-content, .attendance-detail-sheet) .attendance-movement-disclosure > summary { min-height: 44px; padding: 8px 0; color: var(--primary); font-size: 13px; line-height: 1.5; cursor: pointer; }
+:is(.attendance-content, .attendance-detail-sheet) .attendance-movement-disclosure { font-size: 13px; line-height: 1.5; }
+:is(.attendance-content, .attendance-detail-sheet) .attendance-movement-disclosure ul { margin: 0; padding-left: 16px; }
+:is(.attendance-content, .attendance-detail-sheet) .attendance-movement-disclosure li { padding: 4px 0; line-height: 1.5; overflow-wrap: anywhere; }
+.attendance-detail-sheet .attendance-movement-disclosure summary > svg { display: inline; vertical-align: middle; margin-right: 5px; }
+.attendance-detail-sheet .attendance-context-additions { margin-top: 18px; border-top: 1px solid var(--border); }
+.attendance-context-additions > summary { min-height: 44px; padding: 10px 0; color: var(--primary); font-size: 13px; cursor: pointer; }
+.attendance-content .operational-history { padding: 0; }
+.attendance-content .attendance-overdue { margin-top: 14px; padding: 12px; border: 0; border-radius: 10px; background: var(--warning-soft); color: var(--text-secondary); overflow-wrap: anywhere; }
+.attendance-overdue-heading { display: flex; align-items: flex-start; gap: 7px; color: var(--warning); }
+.attendance-overdue-heading > svg { flex: none; margin-top: 2px; }
+.attendance-overdue-heading h4 { font-size: 14px; font-weight: 600; line-height: 1.5; }
+.attendance-overdue > p { margin-top: 6px; font-size: 13px; line-height: 1.5; }
+.attendance-overdue .attendance-overdue-items { font-size: 12px; }
+.attendance-content .attendance-overdue details { margin-top: 4px; }
+.attendance-content .attendance-overdue > details > summary { color: var(--warning); padding-block: 8px; }
+:is(.attendance-content, .attendance-detail-sheet) :is(.attendance-movement-disclosure > summary, .attendance-overdue > details > summary, .attendance-context-additions > summary):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: 4px; }
