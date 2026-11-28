@@ -4,6 +4,7 @@ import { LogIn, LogOut, RotateCcw, MousePointer2, ArrowLeft, UsersRound, ShieldX
 import { SelectChildStep } from "./SelectChildStep";
 import { AuthorizePickupStep } from "./AuthorizePickupStep";
 import { ConfirmPickupStep } from "./ConfirmPickupStep";
+import { MovementReview } from "./ReceptionMovementReview";
 import { SelectedChildrenTags } from "./components/SelectedChildrenTags";
 import { MovementIndicator } from "./components/MovementIndicator";
 import { getMovementNotification } from "./movementNotification";
@@ -63,6 +64,7 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
     absenceCount > 0 ? `${absenceCount === 1 ? "Tenía una ausencia avisada" : `${absenceCount} niños tenían ausencia avisada`}. Al confirmar la entrada, ${absenceCount === 1 ? "su asistencia se actualizará" : "sus asistencias se actualizarán"} a «En guardería».` : "",
   ].filter(Boolean).join(" ");
   const locked = phase !== "select";
+  const isConfirmation = ["review", "saving", "save-error"].includes(phase);
   const simulation = gateway.mode === "simulation";
   const compatibleAdults = action ? getCompatibleAdults(adults, { childIds: selectedIds, action }) : [];
   const entryCandidates = getCompatibleAdults(adults, { childIds: selectedIds, action: "entry" });
@@ -107,7 +109,8 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
     const content = panelContent.current;
     content?.scrollTo({ top: 0 });
     content?.getAnimations().forEach(animation => animation.cancel());
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    // The fingerprint step animates its own elements and stays mounted while reading.
+    if (phase !== "ready" && phase !== "verifying" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       content?.animate([
         { opacity: 0.85, transform: "translateY(4px)" },
         { opacity: 1, transform: "translateY(0)" },
@@ -290,11 +293,17 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
               setSelectedIds(previous => previous.includes(id) ? previous.filter(value => value !== id) : [...previous, id]);
             }} />
           <section className="reception-panel" aria-labelledby="movement-heading" aria-busy={phase === "verifying" || phase === "saving"}>
-            <div className="reception-critical-context">
+            <div className="reception-critical-context" data-confirmation={isConfirmation}>
               <div className="reception-panel-top">
                 <div className="reception-panel-title">
-                  <h2 id="movement-heading" ref={panelHeading} tabIndex={-1}>Registrar movimiento</h2>
-                  {phase !== "success" && selected.length > 0 && <span className="reception-selection-count"><UsersRound size={20} aria-hidden="true" /><strong key={selected.length}>{selected.length}</strong> {selected.length === 1 ? "alumno" : "alumnos"}</span>}
+                  {isConfirmation ? <>
+                    <span className="reception-confirmation-movement" aria-hidden="true">{action === "entry" ? <LogIn size={28} /> : <LogOut size={28} />}</span>
+                    <div className="reception-confirmation-copy">
+                      <h2 id="movement-heading" ref={panelHeading} tabIndex={-1}>Confirmar {action === "entry" ? entryLabel.toLocaleLowerCase("es") : "salida"}</h2>
+                      <p className="reception-confirmation-subtitle">Revisa el resumen del movimiento antes de registrarlo</p>
+                    </div>
+                  </> : <h2 id="movement-heading" ref={panelHeading} tabIndex={-1}>{phase === "success" ? "Movimiento completado" : "Registrar movimiento"}</h2>}
+                  {!isConfirmation && phase !== "success" && selected.length > 0 && <span className="reception-selection-count"><UsersRound size={20} aria-hidden="true" /><strong key={selected.length}>{selected.length}</strong> {selected.length === 1 ? "alumno" : "alumnos"}</span>}
                 </div>
                 {!locked && selected.length > 0 && <Button type="button" variant="ghost" size="operational" className="reception-clear-selection" onClick={() => setSelectedIds([])}><ListX size={16} aria-hidden="true" />Limpiar selección</Button>}
               </div>
@@ -306,7 +315,10 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
 
             </div>
             <div className="reception-panel-content" ref={panelContent} tabIndex={0} role="region" aria-label="Contenido del movimiento">
-              {authorization && ["review", "saving", "save-error"].includes(phase) && <AuthorizePickupStep relationship={relationship} candidateCount={compatibleAdults.length} childCount={selected.length} simulation={simulation} verifying={false} authorization={authorization} />}
+              {authorization && action && ["review", "saving", "save-error"].includes(phase) && <MovementReview
+                selected={selected} action={action} entryLabel={entryLabel} authorization={authorization} adult={identifiedAdult}
+                details={movementDetails} state={simulation ? sharedState : undefined} simulation={simulation}
+                phase={phase === "saving" ? "saving" : phase === "save-error" ? "save-error" : "review"} />}
               {phase === "select" && (selectionIssue
                 ? <div className="reception-placeholder reception-selection-issue" role="status">
                     <div className="reception-symbol" key={selectionIssue.title}><ShieldAlert aria-hidden="true" /></div>
@@ -340,28 +352,21 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
                 <h2>No hay un adulto autorizado en común</h2>
                 <p>Revisa los permisos o selecciona los niños de una misma familia para continuar.</p>
               </div>}
-              {action && !authorization && compatibleAdults.length > 0 && ["ready", "denied", "verifying"].includes(phase) && <AuthorizePickupStep key={phase}
+              {action && !authorization && compatibleAdults.length > 0 && ["ready", "denied", "verifying"].includes(phase) && <AuthorizePickupStep key={phase === "denied" ? "denied" : "capture"}
                 denied={phase === "denied"} relationship={relationship} candidateCount={compatibleAdults.length} childCount={selected.length}
                 simulation={simulation} verifying={phase === "verifying"} authorization={authorization} />}
               {error && phase !== "denied" && <p className="reception-warning reception-error" role="alert">{error}</p>}
-              {simulation && sharedState && ["review", "saving", "save-error"].includes(phase) && <>
-                <details className="reception-belonging-review"><summary>Pertenencias del movimiento · {action === "entry" ? Object.values(movementDetails.entries).reduce((sum, entry) => sum + entry.items.length, 0) : movementDetails.checks.length} artículos</summary>{selected.map(child => <div key={child.id}><strong>{child.name} {child.lastName}</strong><p>{action === "entry" ? movementDetails.entries[child.id]?.items.map(item => `${item.label} × ${item.quantity}`).join(", ") || (movementDetails.entries[child.id]?.registration === "none" ? "Sin pertenencias declaradas" : "Sin registro de pertenencias") : movementDetails.checks.filter(check => sharedState.belongings.some(item => item.id === check.itemId && item.childId === child.id)).map(check => `${sharedState.belongings.find(item => item.id === check.itemId)?.label}: ${check.quantity} · ${check.outcome === "delivered" ? "Entregado" : check.outcome === "unchecked" ? "Sin comprobar" : "Con excepción"}`).join(", ")}</p></div>)}</details>
-                {(movementDetails.commonComment || Object.values(movementDetails.childComments).some(Boolean)) && <details className="reception-belonging-review"><summary>Comentarios del movimiento</summary>{movementDetails.commonComment && <p className="reception-comment-text">{movementDetails.commonComment}</p>}{selected.map(child => movementDetails.childComments[child.id] && <div key={child.id}><strong>{child.name} {child.lastName}</strong><p className="reception-comment-text">{movementDetails.childComments[child.id]}</p></div>)}</details>}
-              </>}
-              {["review", "saving", "save-error"].includes(phase) && <p className="reception-note reception-save-note" role="note">
-                <Info size={18} aria-hidden="true" />
-                <span>{action === "pickup"
-                  ? `Antes de entregar ${selected.length === 1 ? "al niño" : "a los niños"}, verifica que el adulto presente sea la persona identificada.`
-                  : "Antes de registrar la entrada, verifica que el adulto presente sea la persona identificada."}</span>
-              </p>}
               {simulation && onSimulationOutcomeChange && phase === "ready" && <details className="reception-simulation-options"><summary>Pruebas de simulación</summary><button className="reception-button quiet"
                   title="Simular la huella de un adulto sin autorización para este grupo" onClick={() => verify("unauthorized")}>
                   <ShieldX size={16} aria-hidden="true" />Probar rechazo
                 </button></details>}
-              {simulation && onSimulateSaveError && phase === "review" && <details className="reception-simulation-options"><summary>Pruebas de simulación</summary><button className="reception-button quiet" onClick={() => { onSimulateSaveError(); setError("El siguiente guardado fallará antes de confirmar; podrás reintentar sin duplicar."); }}>Probar error en el siguiente guardado</button></details>}
-              {phase === "success" && receipt && authorization && <ConfirmPickupStep receipt={receipt} selectedChildren={selected} adultName={authorization.adult.name} reentry={receiptReentry} simulation={simulation} />}
+              {simulation && onSimulateSaveError && phase === "review" && <details className="reception-simulation-options reception-review-options"><summary>Opciones de prueba</summary><button className="reception-button quiet" onClick={() => { onSimulateSaveError(); setError("El siguiente guardado fallará antes de confirmar; podrás reintentar sin duplicar."); }}>Probar error en el siguiente guardado</button></details>}
+              {phase === "success" && receipt && authorization && <ConfirmPickupStep receipt={receipt} selectedChildren={selected} adultName={authorization.adult.name} relationship={relationship} reentry={receiptReentry} simulation={simulation}
+                confirmedMovement={simulation ? sharedState?.movements.find(movement => movement.receipt.id === receipt.id) : undefined}
+                state={simulation ? sharedState : undefined} />}
             </div>
-            <footer className="reception-panel-footer" aria-label="Acciones del movimiento">
+            {isConfirmation && <p className="movement-review-reminder" role="note"><Info size={17} aria-hidden="true" /><span>Verifica que el adulto presente sea la persona identificada.</span></p>}
+            <footer className="reception-panel-footer" data-review={["review", "saving", "save-error"].includes(phase)} aria-label="Acciones del movimiento">
               {phase === "select" && entryContext && canMove(selected, "entry") && <p className="reception-entry-context" role="status"><Info size={22} aria-hidden="true" /><span>{entryContext}</span></p>}
               {phase === "select" && <div className="reception-actions">
                 <Button size="operational" variant="outline" className="reception-button" disabled={!canMove(selected, "entry") || !entryCandidates.length} onClick={() => chooseAction("entry")}>{reentry ? <RotateCcw size={18} aria-hidden="true" /> : <LogIn size={18} aria-hidden="true" />}{entryLabel}</Button>
@@ -373,7 +378,7 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
                   <Button size="operational" className="reception-button primary" onClick={() => continueToBiometrics()}>Continuar</Button>
                 </div>
               </>}
-              {action && compatibleAdults.length > 0 && ["ready", "denied", "verifying"].includes(phase) && <Button size="operational" className="reception-button primary full" loading={phase === "verifying"} onClick={() => verify()}>
+              {action && compatibleAdults.length > 0 && ["ready", "denied", "verifying"].includes(phase) && <Button size="operational" className="reception-button primary full reception-biometric-action" loading={phase === "verifying"} onClick={() => verify()}>
                 {phase !== "verifying" && <ScanLine size={18} aria-hidden="true" />}
                 {phase === "verifying" ? "Leyendo huella…" : phase === "denied" ? "Intentar de nuevo" : simulation ? "Simular huella" : "Leer huella"}
               </Button>}
@@ -383,7 +388,7 @@ export function ReceptionScreen({ initialChildren = RECEPTION_EXAMPLE_CHILDREN, 
               </Button>}
 
               {action && ["blocked", "belongings", "ready", "denied", "review"].includes(phase) && <div className="reception-flow-navigation">
-                {simulation && sharedState && ["ready", "denied", "review"].includes(phase) && <button className="reception-button quiet" onClick={backToBelongings}><ArrowLeft size={16} aria-hidden="true" />Volver a pertenencias</button>}
+                {simulation && sharedState && ["ready", "denied", "review"].includes(phase) && <button className={`reception-button quiet${phase === "review" ? " reception-review-back" : ""}`} onClick={backToBelongings}><ArrowLeft size={16} aria-hidden="true" />Volver a pertenencias</button>}
                 <button className="reception-button quiet" onClick={changeSelection}><ArrowLeft size={16} aria-hidden="true" />Cambiar selección</button>
               </div>}
               {phase === "success" && <Button size="operational" className="reception-button primary full" onClick={reset} autoFocus>Siguiente familia</Button>}

@@ -1,7 +1,7 @@
 import { createContext, lazy, Suspense, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { addMonths, format, isSameMonth, parseISO, startOfMonth } from "date-fns";
 import { es } from "date-fns/locale";
-import { LogIn, LogOut, Calendar as CalendarIcon, MapPin, ChevronLeft, ChevronRight, Info, BusFront, School, UserRound, Clock3 } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Info, Clock3 } from "lucide-react";
 
 import type { WeekdayProps } from "react-day-picker";
 import { createCurrentMonthAttendance } from "./attendancePreview";
@@ -14,6 +14,8 @@ import "./AttendanceCalendar.css";
 import { useOperationalSimulation } from "../../child-handover/operationalSimulation";
 import { OperationalHistory, BelongingsFollowUp } from "./OperationalHistory";
 import { localDateKey } from "./specialCare";
+import "./AttendanceRecords.css";
+import { AttendanceMovementCard } from "./AttendanceMovementCard";
 
 const AttendanceRecordDetail = lazy(() => import("./AttendanceRecordDetail").then(module => ({ default: module.AttendanceRecordDetail })));
 const MonthYearPicker = lazy(() => import("../../../components/MonthYearPicker").then(module => ({ default: module.MonthYearPicker })));
@@ -74,36 +76,6 @@ function generateMockAttendance(
 // One explicit school-journey preview. Real movements are supplied later by the backend.
 const MOCK_ATTENDANCE: AttendanceRecord[] = generateMockAttendance("2026-06-15", "2026-06-21").map(record => record.date === "2026-06-15"
   ? { ...record, schoolJourney: { schoolName: "Escuela de ejemplo", departure: "08:10", delivered: "08:30", pickedUp: "12:30", returned: "12:50" } } : record);
-
-interface EventCardProps {
-  selectedDate: Date;
-  event: AttendanceEvent;
-  delay: number;
-  onOpen: (trigger: HTMLButtonElement) => void;
-}
-
-const movementIcons = { entry: LogIn, exit: LogOut, school: School, transport: BusFront };
-
-function EventCard({ selectedDate, event, delay, onOpen }: EventCardProps) {
-  const Icon = movementIcons[event.kind];
-  const timestamp = parseISO(`${format(selectedDate, "yyyy-MM-dd")}T${event.time}`);
-  const person = event.adult ?? event.responsibleName;
-  const personLabel = event.adult ? event.kind === "entry" ? "Entregó" : "Recogió" : "Responsable";
-  return (
-    <button type="button" className={`event-card event-card-${event.kind}`} aria-haspopup="dialog" aria-label={`Ver detalle: ${event.label}, ${format(selectedDate, "d MMMM", { locale: es })}, ${event.time}${person ? `, ${personLabel}: ${person}` : ""}`} style={{ animationDelay: `${delay}ms` }} onClick={e => onOpen(e.currentTarget)}>
-      <span className="event-card-icon-container"><span className={`event-card-movement-icon ${event.kind}`}><Icon size={20} aria-hidden="true" /></span></span>
-      <span className="event-card-info">
-        <span className="event-card-label">{event.label}</span>
-        <span className="event-card-badges">
-          <span className="badge badge-datetime"><Clock3 size={13} aria-hidden="true" /><time dateTime={format(timestamp, "yyyy-MM-dd'T'HH:mm")}>{format(timestamp, "h:mm a", { locale: es })}</time></span>
-          <span className="badge badge-location" title={event.location}><MapPin size={13} aria-hidden="true" /><span>{event.location}</span></span>
-        </span>
-        {person && <span className="event-card-person"><UserRound size={13} aria-hidden="true" /><span>{personLabel}: {person}</span></span>}
-      </span>
-      <ChevronRight size={15} className="event-card-chevron" aria-hidden="true" />
-    </button>
-  );
-}
 
 const SelectedWeekdayContext = createContext<string | undefined>(undefined);
 
@@ -239,12 +211,16 @@ export function AttendanceTab({ childId, childName = "Niño seleccionado" }: { c
 
         <div className="attendance-right">
           <div className="attendance-record-heading"><div><h3>Registros del día <span className="attendance-record-preview" title="Datos ficticios de demostración">Demo</span></h3><p>{format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}</p></div>{movementCount > 0 && <span className="attendance-movement-count"><Clock3 size={13} aria-hidden="true" />{movementCount} {movementCount === 1 ? "movimiento" : "movimientos"}</span>}</div>
+          <div className="attendance-record-body" tabIndex={0} role="region" aria-label="Registros y seguimiento del día">
           <OperationalHistory childId={childId} date={toDateKey(selectedDate)} />
           {confirmedMovements.length ? null : selectedRecord?.status === "absent" ? <div key={`absence-${selectedRecord.date}`} className="attendance-no-record"><div className="no-record-icon"><Info size={28} aria-hidden="true" /></div><p className="no-record-title">Ausencia registrada</p><p className="no-record-desc">No hay entradas ni salidas registradas para este día.</p></div> : selectedRecord && cardsData.length > 0 ? (
-            <ol className="record-details attendance-day-timeline" key={selectedRecord.date} aria-label={`Movimientos del ${format(selectedDate, "d MMMM", { locale: es })}`} tabIndex={0}>
+            <ol className="attendance-movement-list attendance-day-timeline" key={selectedRecord.date} aria-label={`Movimientos del ${format(selectedDate, "d MMMM", { locale: es })}`}>
               {cardsData.map((event, index) => (
                 <li key={event.id}>
-                  <EventCard selectedDate={selectedDate} event={event} delay={index * 55} onOpen={trigger => openDetail(selectedRecord, event.id, trigger)} />
+                  <AttendanceMovementCard label={event.label} kind={event.kind} timestamp={parseISO(`${format(selectedDate, "yyyy-MM-dd")}T${event.time}`)}
+                    location={event.location} person={event.adult ?? event.responsibleName}
+                    personLabel={event.adult ? event.kind === "entry" ? "Entregó" : "Recogió" : "Responsable"}
+                    delay={index * 55} onOpen={trigger => openDetail(selectedRecord, event.id, trigger)} />
                 </li>
               ))}
             </ol>
@@ -261,6 +237,7 @@ export function AttendanceTab({ childId, childName = "Niño seleccionado" }: { c
             </div>
           )}
           <BelongingsFollowUp childId={childId} />
+          </div>
         </div>
       </div>
       {detail && <Suspense fallback={null}><AttendanceRecordDetail key={detail.request} record={detail.record} source={detail.source} initialEvent={detail.event} childName={childName} open={detailOpen} onClose={() => setDetailOpen(false)} onRestoreFocus={() => { if (detailTrigger.current?.isConnected) detailTrigger.current.focus(); }} /></Suspense>}

@@ -246,6 +246,23 @@
   .reception-panel .reception-button.quiet:not(:disabled):hover { color: var(--reception-ink); background: var(--surface-subtle); }
 }
 @media (prefers-reduced-motion: no-preference) {
+  .reception-verification:not(.reception-verification-denied) .reception-reader-symbol {
+    animation: reception-reader-in 300ms cubic-bezier(.22,1,.36,1) both;
+  }
+  .reception-verification:not(.reception-verification-denied) .reception-verification-heading > div:last-child {
+    animation: reception-biometric-in 260ms cubic-bezier(.2,.7,.2,1) 60ms both;
+  }
+  .reception-biometric-action {
+    animation: reception-biometric-in 240ms cubic-bezier(.2,.7,.2,1) 100ms both;
+  }
+  @keyframes reception-reader-in {
+    from { opacity: 0; transform: translateY(8px) scale(.92); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes reception-biometric-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
   .reception-movement-slot { animation: reception-movement-expand 340ms ease-out both; }
   .reception-movement-slot[data-exiting="true"] { animation: reception-movement-collapse 240ms ease-out both; }
   .reception-movement-label { animation: reception-movement-in 340ms ease-out both; }
